@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portal de Capacitação — PROJUDI | TJGO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --tjgo-navy: #0a3d6b;
+    --tjgo-blue: #0d5c9e;
+    --tjgo-gold: #e8b012;
+    --tjgo-light: #e8f3fb;
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.09);
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a5568;
+    --text-muted: #8a9ab0;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .portal-header {
+    background: var(--tjgo-navy);
+    color: white;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    height: 68px;
+    border-bottom: 4px solid var(--tjgo-gold);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .header-logo {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .header-logo span {
+    font-size: 11px; font-weight: 600; color: var(--tjgo-navy);
+    text-align: center; line-height: 1.2; letter-spacing: 0.03em;
+  }
+  .header-text h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 18px; font-weight: 600; letter-spacing: 0.01em;
+  }
+  .header-text p { font-size: 12px; opacity: 0.65; margin-top: 1px; }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; }
+  .header-badge {
+    background: var(--tjgo-gold); color: #1a1a1a;
+    font-size: 11px; font-weight: 600; padding: 4px 10px;
+    border-radius: 20px; letter-spacing: 0.04em;
+  }
+
+  /* ── SEARCH BAR ── */
+  .search-bar {
+    background: var(--tjgo-blue);
+    padding: 0.75rem 2rem;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .search-bar input {
+    flex: 1; max-width: 520px;
+    padding: 9px 14px 9px 38px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.13); color: white;
+    font-size: 14px; font-family: 'DM Sans', sans-serif;
+    outline: none; transition: background 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
+  .search-bar input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
+  .search-wrap { position: relative; flex: 1; max-width: 520px; }
+  .search-icon {
+    position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+    color: rgba(255,255,255,0.55); font-size: 16px; pointer-events: none;
+  }
+  .search-bar button {
+    padding: 9px 20px; border-radius: var(--radius);
+    background: var(--tjgo-gold); border: none; color: #1a1a1a;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.15s;
+  }
+  .search-bar button:hover { opacity: 0.88; }
+  .search-info {
+    margin-left: auto; font-size: 12px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; min-height: calc(100vh - 116px); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 230px; flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1rem 0;
+    position: sticky; top: 116px;
+    height: calc(100vh - 116px);
+    overflow-y: auto;
+  }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0.75rem 1.25rem 0.35rem;
+  }
+  .sidebar-item {
+    padding: 9px 1.25rem; font-size: 13px; cursor: pointer;
+    color: var(--text-secondary);
+    border-left: 3px solid transparent;
+    display: flex; align-items: center; gap: 9px;
+    transition: background 0.12s, color 0.12s;
+    user-select: none;
+  }
+  .sidebar-item:hover { background: #f0f4f8; color: var(--tjgo-navy); }
+  .sidebar-item.active {
+    background: var(--tjgo-light); color: var(--tjgo-navy);
+    border-left-color: var(--tjgo-navy); font-weight: 500;
+  }
+  .sidebar-item .count {
+    margin-left: auto; font-size: 11px;
+    background: #eef2f7; padding: 2px 8px;
+    border-radius: 10px; color: var(--text-muted);
+  }
+  .sidebar-item.active .count { background: #c5dcf0; color: var(--tjgo-navy); }
+  .sidebar-divider { height: 1px; background: var(--border); margin: 0.5rem 1.25rem; }
+
+  /* ── CONTENT ── */
+  .content {
+    flex: 1; padding: 1.75rem 2rem;
+    overflow-y: auto;
+    max-width: 1100px;
+  }
+
+  /* ── STATS ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin-bottom: 1.75rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    border-top: 3px solid var(--tjgo-navy);
+  }
+  .stat-card .s-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat-card .s-value { font-size: 26px; font-weight: 600; color: var(--tjgo-navy); line-height: 1; }
+  .stat-card .s-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── PROFILE BADGE ── */
+  .profile-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .profile-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--tjgo-navy); color: white;
+    padding: 7px 16px; border-radius: 20px;
+    font-size: 13px; font-weight: 500;
+  }
+  .result-count { font-size: 13px; color: var(--text-muted); }
+
+  /* ── SECTIONS ── */
+  .section-block { margin-bottom: 1.5rem; }
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 0.85rem; padding-bottom: 0.65rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header h3 {
+    font-size: 14px; font-weight: 600; color: var(--text-primary);
+  }
+  .section-tag {
+    font-size: 11px; padding: 3px 9px; border-radius: 10px;
+    background: var(--tjgo-light); color: var(--tjgo-navy); font-weight: 500;
+  }
+
+  /* ── VIDEO GRID ── */
+  .videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 12px;
+  }
+  .video-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden; cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    text-decoration: none; color: inherit;
+    display: block;
+  }
+  .video-card:hover {
+    transform: translateY(-2px);
+    border-color: #a0bcd8;
+    box-shadow: 0 4px 14px rgba(10,61,107,0.1);
+  }
+  .video-thumb {
+    aspect-ratio: 16/9;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .video-thumb::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 60%);
+  }
+  .play-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s, background 0.15s;
+    position: relative; z-index: 1;
+  }
+  .video-card:hover .play-btn { transform: scale(1.1); background: white; }
+  .play-btn i { font-size: 17px; color: var(--tjgo-navy); margin-left: 2px; }
+  .thumb-badge {
+    position: absolute; top: 8px; left: 9px;
+    font-size: 9px; font-weight: 700; color: var(--tjgo-gold);
+    letter-spacing: 0.08em; z-index: 1;
+  }
+  .duration-badge {
+    position: absolute; bottom: 6px; right: 8px;
+    background: rgba(0,0,0,0.72); color: white;
+    font-size: 11px; font-weight: 500;
+    padding: 1px 6px; border-radius: 4px; z-index: 1;
+  }
+  .video-info { padding: 9px 11px 11px; }
+  .v-title {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-primary); line-height: 1.45;
+    margin-bottom: 5px;
+  }
+  .v-meta {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--text-muted);
+  }
+
+  /* ── PROFILE GROUP HEADER ── */
+  .profile-group-title {
+    display: flex; align-items: center; gap: 9px;
+    margin: 1.5rem 0 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--tjgo-navy);
+  }
+  .profile-group-title span {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px; font-weight: 600; color: var(--tjgo-navy);
+  }
+  .profile-group-title .total-badge {
+    font-size: 11px; background: var(--tjgo-navy); color: white;
+    padding: 2px 9px; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    padding: 4rem 0; text-align: center; color: var(--text-muted);
+  }
+  .empty-state i { font-size: 40px; display: block; margin-bottom: 0.75rem; }
+  .empty-state p { font-size: 14px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--tjgo-navy); color: rgba(255,255,255,0.55);
+    text-align: center; padding: 1rem;
+    font-size: 12px; margin-top: 2rem;
+  }
+  footer strong { color: rgba(255,255,255,0.85); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .content { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="portal-header">
+  <div class="header-logo"><span>TJ<br>GO</span></div>
+  <div class="header-text">
+    <h1>Portal de Capacitação — PROJUDI</h1>
+    <p>Diretoria Judiciária · Divisão de Atendimento aos Usuários de Sistemas</p>
+  </div>
+  <div class="header-right">
+    <span class="header-badge">TJGO</span>
+  </div>
+</header>
+
+<!-- SEARCH BAR -->
+<div class="search-bar">
+  <div class="search-wrap">
+    <i class="ti ti-search search-icon" aria-hidden="true"></i>
+    <input type="text" id="search-input" placeholder="Buscar vídeo por nome ou tópico..." oninput="filterVideos(this.value)" />
+  </div>
+  <button onclick="filterVideos(document.getElementById('search-input').value)">
+    <i class="ti ti-search" aria-hidden="true"></i> Buscar
+  </button>
+  <span class="search-info" id="search-info">55 vídeos disponíveis</span>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" aria-label="Filtros de perfil e tópico">
+    <div class="sidebar-section-label">Perfis de acesso</div>
+    <div class="sidebar-item active" onclick="switchProfile('todos', this)" data-profile="todos">
+      <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
+      <span class="count">55</span>
+    </div>
+    <div class="sidebar-item" onclick="switchProfile('analista', this)" data-profile="analista">
+      <i class="ti ti-user-check" aria-hidden="true"></i> Analista judiciário
+      <span class="count">28</span>
+    </div>
+    <div class="sidebar-item" onclick="switchProfile('advogado', this)" data-profile="advogado">
+      <i class="ti ti-briefcase" aria-hidden="true"></i> Advogado
+      <span class="count">12</span>
+    </div>
+    <div class="sidebar-item" onclick="switchProfile('camara', this)" data-profile="camara">
+      <i class="ti ti-building" aria-hidden="true"></i> Câmara 2º grau
+      <span class="count">9</span>
+    </div>
+    <div class="sidebar-item" onclick="switchProfile('juiz', this)" data-profile="juiz">
+      <i class="ti ti-gavel" aria-hidden="true"></i> Magistrado
+      <span class="count">6</span>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">Filtrar por tópico</div>
+    <div class="sidebar-item" onclick="filterTopic('processos', this)">
+      <i class="ti ti-file-text" aria-hidden="true"></i> Processos e petições
+    </div>
+    <div class="sidebar-item" onclick="filterTopic('audiencias', this)">
+      <i class="ti ti-calendar" aria-hidden="true"></i> Audiências e agenda
+    </div>
+    <div class="sidebar-item" onclick="filterTopic('cadastro', this)">
+      <i class="ti ti-database" aria-hidden="true"></i> Cadastros e dados
+    </div>
+    <div class="sidebar-item" onclick="filterTopic('intimacao', this)">
+      <i class="ti ti-mail" aria-hidden="true"></i> Intimações e prazos
+    </div>
+    <div class="sidebar-item" onclick="filterTopic('arquivamento', this)">
+      <i class="ti ti-archive" aria-hidden="true"></i> Arquivamento
+    </div>
+    <div class="sidebar-item" onclick="filterTopic('distribuicao', this)">
+      <i class="ti ti-git-branch" aria-hidden="true"></i> Distribuição
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-item" onclick="resetFilters(this)" style="color:#c0392b;">
+      <i class="ti ti-refresh" aria-hidden="true"></i> Limpar filtros
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content" id="main-content">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="s-label">Total de vídeos</div>
+        <div class="s-value">55</div>
+        <div class="s-sub">na playlist oficial</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Perfis atendidos</div>
+        <div class="s-value">4</div>
+        <div class="s-sub">analista, advogado, câmara, juiz</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Subtópicos</div>
+        <div class="s-value">6</div>
+        <div class="s-sub">áreas funcionais</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Duração média</div>
+        <div class="s-value">2min</div>
+        <div class="s-sub">por vídeo</div>
+      </div>
+    </div>
+
+    <!-- DYNAMIC CONTENT -->
+    <div class="profile-header">
+      <span class="profile-pill" id="profile-pill">
+        <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
+      </span>
+      <span class="result-count" id="result-count"></span>
+    </div>
+
+    <div id="videos-container"></div>
+
+  </main>
+</div>
+
+<footer>
+  <strong>Tribunal de Justiça do Estado de Goiás</strong> — Secretaria de Governança Judiciária e Tecnológica · Diretoria Judiciária<br>
+  Portal de Capacitação PROJUDI · Divisão de Atendimento aos Usuários de Sistemas
+</footer>
+
+<script>
+const COLORS = ['#0a3d6b','#0d5c9e','#083c6a','#0b4a80','#0e6290','#084070'];
+
+const DATA = {
+  analista: {
+    label: 'Analista judiciário',
+    icon: 'ti-user-check',
+    sections: [
+      { title: 'Processos e petições', tag: 'processos', videos: [
+        { title: 'Analisar novas petições', duration: '2:10', url: '' },
+        { title: 'Analisar novos processos na serventia', duration: '1:55', url: '' },
+        { title: 'Analisar prevenção', duration: '1:40', url: '' },
+        { title: 'Apensar / desapensar processo dependente', duration: '2:30', url: '' },
+        { title: 'Bloquear movimentação / arquivo', duration: '1:20', url: '' },
+        { title: 'Cadastrar processos', duration: '3:00', url: '' },
+      ]},
+      { title: 'Audiências e agenda', tag: 'audiencias', videos: [
+        { title: 'Criar agenda de audiência', duration: '1:50', url: '' },
+        { title: 'Marcar audiência', duration: '1:57', url: '' },
+        { title: 'Acompanhar pendência', duration: '1:30', url: '' },
+        { title: 'Criar pendência para uma serventia', duration: '1:15', url: '' },
+      ]},
+      { title: 'Cadastros e dados', tag: 'cadastro', videos: [
+        { title: 'Alterar dados da parte', duration: '1:10', url: '' },
+        { title: 'Cadastrar benefício', duration: '2:05', url: '' },
+        { title: 'Cadastrar débito', duration: '1:45', url: '' },
+        { title: 'Desabilitar advogado', duration: '1:00', url: '' },
+      ]},
+      { title: 'Arquivamento', tag: 'arquivamento', videos: [
+        { title: 'Arquivamento de processo', duration: '2:20', url: '' },
+        { title: 'Analisar decurso de prazo', duration: '1:35', url: '' },
+        { title: 'Arquivar processo sigiloso', duration: '1:45', url: '' },
+      ]},
+    ]
+  },
+  advogado: {
+    label: 'Advogado',
+    icon: 'ti-briefcase',
+    sections: [
+      { title: 'Peticionamento', tag: 'processos', videos: [
+        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
+        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
+        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
+        { title: 'Consultar publicações', duration: '1:00', url: '' },
+      ]},
+      { title: 'Intimações e prazos', tag: 'intimacao', videos: [
+        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
+        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
+        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
+      ]},
+      { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
+        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
+        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
+        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
+      ]},
+    ]
+  },
+  camara: {
+    label: 'Câmara 2º grau',
+    icon: 'ti-building',
+    sections: [
+      { title: 'Distribuição e mandados', tag: 'distribuicao', videos: [
+        { title: 'Pré-distribuição do juízo das garantias', duration: '2:54', url: '' },
+        { title: 'Cadastro e distribuição de mandados via SEEU', duration: '2:38', url: '' },
+        { title: 'Intimar Ministério Público', duration: '1:00', url: '' },
+      ]},
+      { title: 'Controle e assinatura', tag: 'cadastro', videos: [
+        { title: 'Juiz autorizar assessor guardar para assinar', duration: '1:25', url: '' },
+        { title: 'Visualizar pauta de julgamentos', duration: '1:50', url: '' },
+        { title: 'Incluir processo em pauta', duration: '2:10', url: '' },
+      ]},
+    ]
+  },
+  juiz: {
+    label: 'Magistrado',
+    icon: 'ti-gavel',
+    sections: [
+      { title: 'Despachos e decisões', tag: 'processos', videos: [
+        { title: 'Assinar decisão monocrática', duration: '1:30', url: '' },
+        { title: 'Prolatar sentença', duration: '2:45', url: '' },
+        { title: 'Conceder liminar', duration: '1:20', url: '' },
+      ]},
+      { title: 'Delegação e gestão', tag: 'cadastro', videos: [
+        { title: 'Delegar assinatura ao assessor', duration: '1:05', url: '' },
+        { title: 'Consultar acervo processual', duration: '1:55', url: '' },
+        { title: 'Gerar relatório de produtividade', duration: '2:30', url: '' },
+      ]},
+    ]
+  }
+};
+
+let currentProfile = 'todos';
+let currentTopic = null;
+let searchTerm = '';
+
+const PROFILE_META = {
+  todos:    { label: 'Todos os perfis',     icon: 'ti-users' },
+  analista: { label: 'Analista judiciário', icon: 'ti-user-check' },
+  advogado: { label: 'Advogado',            icon: 'ti-briefcase' },
+  camara:   { label: 'Câmara 2º grau',      icon: 'ti-building' },
+  juiz:     { label: 'Magistrado',          icon: 'ti-gavel' },
+};
+
+function render() {
+  const container = document.getElementById('videos-container');
+  const pill = document.getElementById('profile-pill');
+  const meta = PROFILE_META[currentProfile];
+  pill.innerHTML = `<i class="ti ${meta.icon}" aria-hidden="true"></i> ${meta.label}`;
+
+  const profiles = currentProfile === 'todos' ? Object.keys(DATA) : [currentProfile];
+  let html = '';
+  let totalShown = 0;
+
+  profiles.forEach(pid => {
+    const p = DATA[pid];
+    let profileHtml = '';
+
+    p.sections.forEach((sec, si) => {
+      if (currentTopic && sec.tag !== currentTopic) return;
+      const filtered = searchTerm
+        ? sec.videos.filter(v => v.title.toLowerCase().includes(searchTerm.toLowerCase()))
+        : sec.videos;
+      if (filtered.length === 0) return;
+      totalShown += filtered.length;
+
+      profileHtml += `<div class="section-block">
+        <div class="section-header">
+          <h3>${sec.title}</h3>
+          <span class="section-tag">${filtered.length} vídeo${filtered.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="videos-grid">`;
+
+      filtered.forEach((v, vi) => {
+        const bg = COLORS[(si * 3 + vi) % COLORS.length];
+        const tag = v.url
+          ? `<a class="video-card" href="${v.url}" target="_blank" rel="noopener">`
+          : `<div class="video-card">`;
+        const endTag = v.url ? '</a>' : '</div>';
+        profileHtml += `${tag}
+          <div class="video-thumb" style="background:${bg}">
+            <span class="thumb-badge">PROJUDI</span>
+            <div class="play-btn"><i class="ti ti-player-play" aria-hidden="true"></i></div>
+            <span class="duration-badge">${v.duration}</span>
+          </div>
+          <div class="video-info">
+            <div class="v-title">${v.title}</div>
+            <div class="v-meta"><i class="ti ti-video" style="font-size:12px" aria-hidden="true"></i> Capacitação</div>
+          </div>
+        ${endTag}`;
+      });
+
+      profileHtml += `</div></div>`;
+    });
+
+    if (profileHtml && currentProfile === 'todos') {
+      const total = p.sections.reduce((a, s) => a + s.videos.length, 0);
+      html += `<div class="profile-group-title">
+        <i class="ti ${p.icon}" style="font-size:18px;color:var(--tjgo-navy)" aria-hidden="true"></i>
+        <span>${p.label}</span>
+        <span class="total-badge">${total} vídeos</span>
+      </div>` + profileHtml;
+    } else {
+      html += profileHtml;
+    }
+  });
+
+  if (totalShown === 0) {
+    html = `<div class="empty-state">
+      <i class="ti ti-search" aria-hidden="true"></i>
+      <p>Nenhum vídeo encontrado para os filtros selecionados.</p>
+    </div>`;
+  }
+
+  container.innerHTML = html;
+  document.getElementById('result-count').textContent =
+    totalShown > 0 ? `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} encontrado${totalShown !== 1 ? 's' : ''}` : '';
+  document.getElementById('search-info').textContent =
+    `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} disponíve${totalShown !== 1 ? 'is' : 'l'}`;
+}
+
+function switchProfile(profile, el) {
+  currentProfile = profile;
+  currentTopic = null;
+  document.querySelectorAll('.sidebar-item[data-profile]').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function filterTopic(tag, el) {
+  currentTopic = (currentTopic === tag) ? null : tag;
+  document.querySelectorAll('.sidebar-item:not([data-profile])').forEach(i => i.classList.remove('active'));
+  if (currentTopic) el.classList.add('active');
+  render();
+}
+
+function filterVideos(val) {
+  searchTerm = val.trim();
+  render();
+}
+
+function resetFilters(el) {
+  currentProfile = 'todos';
+  currentTopic = null;
+  searchTerm = '';
+  document.getElementById('search-input').value = '';
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  document.querySelector('[data-profile="todos"]').classList.add('active');
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
