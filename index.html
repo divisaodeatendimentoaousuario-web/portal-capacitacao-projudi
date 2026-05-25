@@ -340,6 +340,48 @@
     background: var(--tjgo-light); color: var(--tjgo-navy); font-weight: 500;
   }
 
+  /* ── VIDEO PLAYER ── */
+  .video-player-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .video-player-toolbar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 1rem;
+    background: var(--tjgo-navy);
+    color: white;
+  }
+  .video-player-toolbar .video-title {
+    flex: 1; font-size: 13px; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .video-player-toolbar a.open-yt {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #ff0000; color: white;
+    padding: 5px 12px; border-radius: var(--radius);
+    font-size: 12px; font-weight: 600; text-decoration: none;
+    flex-shrink: 0; transition: opacity 0.15s;
+  }
+  .video-player-toolbar a.open-yt:hover { opacity: 0.85; }
+  .video-player-toolbar .vp-btn {
+    background: rgba(255,255,255,0.15); border: none; color: white;
+    width: 28px; height: 28px; border-radius: var(--radius);
+    cursor: pointer; font-size: 15px; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background 0.12s;
+  }
+  .video-player-toolbar .vp-btn:hover { background: rgba(255,255,255,0.28); }
+  .video-player-frame { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
+  .video-player-panel.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; }
+  .video-player-panel.maximized .video-player-frame { height: calc(100vh - 48px); aspect-ratio: unset; }
+  .video-card.active {
+    border-color: var(--tjgo-navy);
+    box-shadow: 0 0 0 2px rgba(10,61,107,0.2);
+  }
+
   /* ── VIDEO GRID ── */
   .videos-grid {
     display: grid;
@@ -434,10 +476,69 @@
   footer strong { color: rgba(255,255,255,0.85); }
 
   /* ── RESPONSIVE ── */
+
+  /* Tablet (768px) */
   @media (max-width: 768px) {
-    .sidebar { display: none; }
-    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .sidebar {
+      width: 100%; height: auto;
+      position: static;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-wrap: wrap;
+      padding: 0.5rem 0;
+    }
+    .sidebar-section-label { width: 100%; }
+    .sidebar-item { flex: 1 1 auto; min-width: 120px; border-left: none; border-bottom: 2px solid transparent; justify-content: center; }
+    .sidebar-item.active { border-bottom-color: var(--tjgo-navy); border-left: none; background: var(--tjgo-light); }
+    .sidebar-divider { width: 100%; margin: 0.25rem 0; }
+    .layout { flex-direction: column; }
     .content { padding: 1rem; }
+    .videos-grid { grid-template-columns: repeat(2, 1fr); }
+    .pdf-cards-grid { grid-template-columns: 1fr; }
+    .search-info { display: none; }
+    .portal-header h1 { font-size: 15px; }
+    .portal-header p { display: none; }
+    .stat-card { padding: 0.6rem 0.75rem; }
+  }
+
+  /* Mobile (480px) */
+  @media (max-width: 480px) {
+    .portal-header { padding: 0.75rem 1rem; gap: 0.75rem; }
+    .portal-header h1 { font-size: 14px; }
+    .header-badge { display: none; }
+    .header-logo img { width: 34px; height: 34px; }
+
+    .search-bar { padding: 0.5rem 1rem; gap: 6px; }
+    .search-bar button span { display: none; }
+    .search-bar button { padding: 8px 12px; }
+
+    .sidebar { padding: 0; }
+    .sidebar-item { font-size: 11px; padding: 8px 0.5rem; gap: 5px; }
+    .sidebar-item .count { display: none; }
+    .sidebar-section-label { font-size: 9px; padding: 0.4rem 0.75rem 0.2rem; }
+
+    .content { padding: 0.75rem; }
+    .videos-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .pdf-cards-grid { grid-template-columns: 1fr; gap: 8px; }
+
+    .video-player-toolbar, .pdf-viewer-toolbar {
+      flex-wrap: wrap; gap: 6px; padding: 8px;
+    }
+    .video-title, .pdf-title { width: 100%; order: -1; font-size: 12px; }
+
+    .profile-group-title span { font-size: 14px; }
+    .section-header h3 { font-size: 13px; }
+
+    .pdf-category-header { font-size: 11px; padding: 7px 1rem; }
+    .sidebar-item[data-profile] { min-width: 80px; }
+
+    footer { font-size: 11px; padding: 0.75rem; }
+  }
+
+  /* Mobile pequeno (360px) */
+  @media (max-width: 360px) {
+    .videos-grid { grid-template-columns: 1fr; }
+    .portal-header h1 { font-size: 13px; }
   }
 </style>
 </head>
@@ -553,6 +654,26 @@
       <iframe id="pdf-viewer-frame" class="pdf-viewer-frame" title="Visualizador de PDF"></iframe>
     </div>
 
+    <!-- VIDEO PLAYER -->
+    <div id="video-player-panel" class="video-player-panel" style="display:none;">
+      <div class="video-player-toolbar">
+        <i class="ti ti-brand-youtube" style="font-size:16px;flex-shrink:0;color:#ff4444" aria-hidden="true"></i>
+        <span class="video-title" id="video-player-title"></span>
+        <a id="video-open-yt" href="#" target="_blank" rel="noopener" class="open-yt">
+          <i class="ti ti-brand-youtube" aria-hidden="true"></i> Abrir no YouTube
+        </a>
+        <button class="vp-btn" onclick="toggleVideoMaximize()" id="video-maximize-btn" title="Maximizar">
+          <i class="ti ti-maximize" aria-hidden="true"></i>
+        </button>
+        <button class="vp-btn" onclick="closeVideoPlayer()" title="Fechar">
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
+      </div>
+      <iframe id="video-player-frame" class="video-player-frame" allowfullscreen
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        title="Player de vídeo"></iframe>
+    </div>
+
     <div id="videos-container"></div>
 
   </main>
@@ -572,8 +693,8 @@ const DATA = {
     icon: 'ti-user-check',
     sections: [
       { title: 'Processos e petições', tag: 'processos', videos: [
-        { title: 'Fazer Certidão', duration: '1:44', url: 'https://youtu.be/v-MrQhyhk2k' },
-        { title: 'Analisar novos processos na serventia', duration: '1:44', url: '' },
+        { title: 'Analisar novas petições', duration: '2:10', url: '' },
+        { title: 'Analisar novos processos na serventia', duration: '1:55', url: '' },
         { title: 'Analisar prevenção', duration: '1:40', url: '' },
         { title: 'Apensar / desapensar processo dependente', duration: '2:30', url: '' },
         { title: 'Bloquear movimentação / arquivo', duration: '1:20', url: '' },
@@ -697,11 +818,11 @@ function render() {
 
       filtered.forEach((v, vi) => {
         const bg = COLORS[(si * 3 + vi) % COLORS.length];
-        const tag = v.url
-          ? `<a class="video-card" href="${v.url}" target="_blank" rel="noopener">`
-          : `<div class="video-card">`;
-        const endTag = v.url ? '</a>' : '</div>';
-        profileHtml += `${tag}
+        const cardId = `vid-${pid}-${si}-${vi}`;
+        const clickFn = v.url
+          ? `openVideoPlayer('${v.url.replace(/'/g,"\\'")}','${v.title.replace(/'/g,"\\'")}','${cardId}')`
+          : '';
+        profileHtml += `<div class="video-card" id="${cardId}" ${clickFn ? `onclick="${clickFn}"` : ''} style="${clickFn ? '' : 'opacity:.7;cursor:default'}">
           <div class="video-thumb" style="background:${bg}">
             <span class="thumb-badge">PROJUDI</span>
             <div class="play-btn"><i class="ti ti-player-play" aria-hidden="true"></i></div>
@@ -711,7 +832,7 @@ function render() {
             <div class="v-title">${v.title}</div>
             <div class="v-meta"><i class="ti ti-video" style="font-size:12px" aria-hidden="true"></i> Capacitação</div>
           </div>
-        ${endTag}`;
+        </div>`;
       });
 
       profileHtml += `</div></div>`;
@@ -750,6 +871,7 @@ function switchProfile(profile, el) {
   document.querySelectorAll('.sidebar-item[data-profile]').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
   closePDFViewer();
+  closeVideoPlayer();
   renderPDFList();
   render();
 }
@@ -1137,6 +1259,64 @@ function openPDFViewer(file, name, ci, pi) {
   document.getElementById('pdf-download-btn').download = file;
   document.getElementById('pdf-viewer-panel').style.display = 'block';
   document.getElementById('pdf-viewer-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── VIDEO PLAYER ──
+let activeVideoCard = null;
+
+function getYouTubeEmbedUrl(url) {
+  // Suporta youtube.com/watch?v=ID e youtu.be/ID
+  let id = '';
+  const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?&]+)/);
+  if (match) id = match[1];
+  // Extrai também list= para playlist
+  const listMatch = url.match(/[?&]list=([^&]+)/);
+  const list = listMatch ? `&list=${listMatch[1]}` : '';
+  return id ? `https://www.youtube.com/embed/${id}?autoplay=1${list}` : url;
+}
+
+function openVideoPlayer(url, title, cardId) {
+  // Remove destaque anterior
+  if (activeVideoCard) {
+    const prev = document.getElementById(activeVideoCard);
+    if (prev) prev.classList.remove('active');
+  }
+  activeVideoCard = cardId;
+  const el = document.getElementById(cardId);
+  if (el) {
+    el.classList.add('active');
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.getElementById('video-player-title').textContent = title;
+  document.getElementById('video-player-frame').src = getYouTubeEmbedUrl(url);
+  document.getElementById('video-open-yt').href = url;
+  const panel = document.getElementById('video-player-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeVideoPlayer() {
+  const panel = document.getElementById('video-player-panel');
+  panel.classList.remove('maximized');
+  document.body.style.overflow = '';
+  panel.style.display = 'none';
+  document.getElementById('video-player-frame').src = '';
+  if (activeVideoCard) {
+    const el = document.getElementById(activeVideoCard);
+    if (el) el.classList.remove('active');
+    activeVideoCard = null;
+  }
+}
+
+function toggleVideoMaximize() {
+  const panel = document.getElementById('video-player-panel');
+  const btn = document.getElementById('video-maximize-btn');
+  const isMax = panel.classList.toggle('maximized');
+  btn.title = isMax ? 'Restaurar' : 'Maximizar';
+  btn.querySelector('i').className = isMax ? 'ti ti-minimize' : 'ti ti-maximize';
+  document.body.style.overflow = isMax ? 'hidden' : '';
+  if (!isMax) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function toggleMaximize() {
