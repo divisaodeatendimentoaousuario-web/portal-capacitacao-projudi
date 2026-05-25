@@ -374,9 +374,9 @@
     transition: background 0.12s;
   }
   .video-player-toolbar .vp-btn:hover { background: rgba(255,255,255,0.28); }
-  .video-player-frame { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
-  .video-player-panel.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; }
-  .video-player-panel.maximized .video-player-frame { height: calc(100vh - 48px); aspect-ratio: unset; }
+  .video-player-frame { width: 100%; aspect-ratio: 16/9; border: none; display: block; background: #000; }
+  .video-player-panel.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; background: #000; }
+  .video-player-panel.maximized .video-player-frame { height: calc(100vh - 48px); aspect-ratio: unset; background: #000; }
   .video-card.active {
     border-color: var(--tjgo-navy);
     box-shadow: 0 0 0 2px rgba(10,61,107,0.2);
@@ -407,11 +407,6 @@
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     position: relative; overflow: hidden;
-  }
-  .video-thumb::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 60%);
   }
   .play-btn {
     width: 40px; height: 40px; border-radius: 50%;
@@ -474,6 +469,29 @@
     font-size: 12px; margin-top: 2rem;
   }
   footer strong { color: rgba(255,255,255,0.85); }
+
+  /* ── SIDEBAR TABS ── */
+  .sidebar-tabs {
+    display: flex; border-bottom: 2px solid var(--border);
+    position: sticky; top: 0;
+    background: var(--surface); z-index: 10;
+  }
+  .sidebar-tab {
+    flex: 1; padding: 11px 0.5rem; font-size: 12px; font-weight: 600;
+    text-align: center; cursor: pointer; color: var(--text-muted);
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    transition: color 0.15s, border-color 0.15s; user-select: none;
+  }
+  .sidebar-tab:hover { color: var(--tjgo-navy); }
+  .sidebar-tab.active { color: var(--tjgo-navy); border-bottom-color: var(--tjgo-navy); }
+  .sidebar-tab .tab-badge {
+    font-size: 10px; background: #eef2f7; color: var(--text-muted);
+    padding: 1px 6px; border-radius: 10px;
+  }
+  .sidebar-tab.active .tab-badge { background: var(--tjgo-light); color: var(--tjgo-navy); }
+  .sidebar-panel { display: none; padding-top: 0.5rem; }
+  .sidebar-panel.active { display: block; }
 
   /* ── RESPONSIVE ── */
 
@@ -574,46 +592,62 @@
 <div class="layout">
 
   <!-- SIDEBAR -->
-  <nav class="sidebar" aria-label="Filtros de perfil e tópico">
-    <div class="sidebar-section-label">Perfis de acesso</div>
-    <div class="sidebar-item active" onclick="switchProfile('todos', this)" data-profile="todos">
-      <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
-      <span class="count">55</span>
-    </div>
-    <div class="sidebar-item" onclick="switchProfile('analista', this)" data-profile="analista">
-      <i class="ti ti-user-check" aria-hidden="true"></i> Analista judiciário
-      <span class="count">28</span>
-    </div>
-    <div class="sidebar-item" onclick="switchProfile('advogado', this)" data-profile="advogado">
-      <i class="ti ti-briefcase" aria-hidden="true"></i> Advogado
-      <span class="count">12</span>
-    </div>
-    <div class="sidebar-item" onclick="switchProfile('camara', this)" data-profile="camara">
-      <i class="ti ti-building" aria-hidden="true"></i> Câmara 2º grau
-      <span class="count">9</span>
-    </div>
-    <div class="sidebar-item" onclick="switchProfile('juiz', this)" data-profile="juiz">
-      <i class="ti ti-gavel" aria-hidden="true"></i> Magistrado
-      <span class="count">6</span>
-    </div>
+  <nav class="sidebar" aria-label="Navegação principal">
 
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-section-label">Informativos em PDF</div>
-
-    <div style="padding: 0 1rem 0.5rem;">
-      <div style="position:relative;">
-        <i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);pointer-events:none" aria-hidden="true"></i>
-        <input type="text" id="pdf-search" placeholder="Buscar informativo..." oninput="filterPDFs(this.value)"
-          style="width:100%;padding:7px 9px 7px 28px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text-primary);font-family:'DM Sans',sans-serif;outline:none;" />
+    <!-- ABAS -->
+    <div class="sidebar-tabs">
+      <div class="sidebar-tab active" id="tab-videos" onclick="switchTab('videos')">
+        <i class="ti ti-video" aria-hidden="true"></i> Vídeos
+        <span class="tab-badge">55</span>
+      </div>
+      <div class="sidebar-tab" id="tab-pdfs" onclick="switchTab('pdfs')">
+        <i class="ti ti-file-type-pdf" aria-hidden="true"></i> Informativos
+        <span class="tab-badge">9</span>
       </div>
     </div>
 
-    <div id="pdf-list"></div>
+    <!-- PAINEL VÍDEOS -->
+    <div class="sidebar-panel active" id="panel-videos">
+      <div class="sidebar-section-label">Perfis de acesso</div>
+      <div class="sidebar-item active" onclick="switchProfile('todos', this)" data-profile="todos">
+        <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
+        <span class="count">55</span>
+      </div>
+      <div class="sidebar-item" onclick="switchProfile('analista', this)" data-profile="analista">
+        <i class="ti ti-user-check" aria-hidden="true"></i> Analista judiciário
+        <span class="count">28</span>
+      </div>
+      <div class="sidebar-item" onclick="switchProfile('advogado', this)" data-profile="advogado">
+        <i class="ti ti-briefcase" aria-hidden="true"></i> Advogado
+        <span class="count">12</span>
+      </div>
+      <div class="sidebar-item" onclick="switchProfile('camara', this)" data-profile="camara">
+        <i class="ti ti-building" aria-hidden="true"></i> Câmara 2º grau
+        <span class="count">9</span>
+      </div>
+      <div class="sidebar-item" onclick="switchProfile('juiz', this)" data-profile="juiz">
+        <i class="ti ti-gavel" aria-hidden="true"></i> Magistrado
+        <span class="count">6</span>
+      </div>
+    </div>
+
+    <!-- PAINEL PDFs -->
+    <div class="sidebar-panel" id="panel-pdfs">
+      <div style="padding: 0.5rem 1rem 0.5rem;">
+        <div style="position:relative;">
+          <i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);pointer-events:none" aria-hidden="true"></i>
+          <input type="text" id="pdf-search" placeholder="Buscar informativo..." oninput="filterPDFs(this.value)"
+            style="width:100%;padding:7px 9px 7px 28px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text-primary);font-family:'DM Sans',sans-serif;outline:none;" />
+        </div>
+      </div>
+      <div id="pdf-list"></div>
+    </div>
 
     <div class="sidebar-divider"></div>
     <div class="sidebar-item" onclick="resetFilters(this)" style="color:#c0392b;">
       <i class="ti ti-refresh" aria-hidden="true"></i> Limpar filtros
     </div>
+
   </nav>
 
   <!-- CONTENT -->
@@ -693,7 +727,7 @@ const DATA = {
     icon: 'ti-user-check',
     sections: [
       { title: 'Processos e petições', tag: 'processos', videos: [
-        { title: 'Fazer certidão', duration: '1:44', url: 'https://youtu.be/v-MrQhyhk2k' },
+        { title: 'Analisar novas petições', duration: '2:10', url: '' },
         { title: 'Analisar novos processos na serventia', duration: '1:55', url: '' },
         { title: 'Analisar prevenção', duration: '1:40', url: '' },
         { title: 'Apensar / desapensar processo dependente', duration: '2:30', url: '' },
@@ -864,6 +898,35 @@ function render() {
     `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} disponíve${totalShown !== 1 ? 'is' : 'l'}`;
 }
 
+// ── TAB SYSTEM ──
+function switchTab(tab) {
+  document.getElementById('tab-videos').classList.toggle('active', tab === 'videos');
+  document.getElementById('tab-pdfs').classList.toggle('active', tab === 'pdfs');
+  document.getElementById('panel-videos').classList.toggle('active', tab === 'videos');
+  document.getElementById('panel-pdfs').classList.toggle('active', tab === 'pdfs');
+
+  if (tab === 'videos') {
+    // Fecha PDF viewer e mostra vídeos
+    PDF_CATEGORIES.forEach(c => c.open = false);
+    closePDFViewer();
+    renderPDFList();
+    render();
+  } else {
+    // Fecha video player e mostra painel PDF
+    closeVideoPlayer();
+    renderPDFList();
+    // Limpa área principal para aguardar seleção de categoria PDF
+    const container = document.getElementById('videos-container');
+    document.querySelector('.profile-header').style.display = 'none';
+    document.getElementById('video-player-panel').style.display = 'none';
+    container.innerHTML = `<div class="empty-state">
+      <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
+      <p>Selecione uma categoria de informativos na barra lateral</p>
+    </div>`;
+    container.style.display = '';
+  }
+}
+
 function switchProfile(profile, el) {
   currentProfile = profile;
   currentTopic = null;
@@ -1012,9 +1075,7 @@ function resetFilters(el) {
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
   document.querySelector('[data-profile="todos"]').classList.add('active');
   document.getElementById('search-info').textContent = '55 vídeos disponíveis';
-  closePDFViewer();
-  renderPDFList();
-  render();
+  switchTab('videos');
 }
 
 // ── PDF INFORMATIVOS ──
