@@ -108,7 +108,7 @@
 
   /* ── SIDEBAR ── */
   .sidebar {
-    width: 230px; flex-shrink: 0;
+    width: 300px; flex-shrink: 0;
     background: var(--surface);
     border-right: 1px solid var(--border);
     padding: 1rem 0;
@@ -675,7 +675,7 @@ const PDF_CATEGORIES = [
   {
     title: 'Cadastros e dados',
     icon: 'ti-database',
-    open: true,
+    open: false,
     items: [
       { name: 'Informativo nº 01 — Disponibilização do campo comunidade quando for informada a etnia indígena e quilombola', file: 'Informativo nº 01 - Informa sobre a disponibilização do campo comunidade quando for informada a etnia indígena e quilombola.pdf' },
       { name: 'Informativo nº 03 — Cadastro de polo passivo de processo cível sem CPF ou CNPJ com justificativa obrigatória', file: 'Informativo nº 03 - Cadastro de polo passivo de processo cível sem CPF ou CNPJ por meio da inclusão obrigatória de justificativa no sistema PROJUDI.pdf' },
@@ -685,7 +685,7 @@ const PDF_CATEGORIES = [
   {
     title: 'Juízo das Garantias',
     icon: 'ti-shield-check',
-    open: true,
+    open: false,
     items: [
       { name: 'Informativo nº 02 — Orientação às autoridades policiais sobre a seleção da área de distribuição ao Juízo das Garantias', file: 'Informativo nº 02 - Orienta às autoridades policiais sobre a seleção da área de distribuição nos processos a serem distribuídos ao Juízo das Garantias.pdf' },
       { name: 'Informativo nº 05 — Encaminhamento não automático de processos de competência do Juízo das Garantias', file: 'Informativo nº 05 - Comunica acerca do encaminhamento não automático de processos de competência do Juízo das Garantias.pdf' },
@@ -695,7 +695,7 @@ const PDF_CATEGORIES = [
   {
     title: 'Melhorias do sistema',
     icon: 'ti-settings',
-    open: true,
+    open: false,
     items: [
       { name: 'Informativo nº 04 — Melhorias relacionadas à averbação de débitos no sistema PROJUDI', file: 'Informativo nº 04 - Melhorias relacionadas à averbação de débitos no sistema PROJUDI.pdf' },
       { name: 'Informativo nº 09 — Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI', file: 'Informativo nº 09 - Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI.pdf' },
@@ -704,7 +704,7 @@ const PDF_CATEGORIES = [
   {
     title: 'Encaminhamentos',
     icon: 'ti-send',
-    open: true,
+    open: false,
     items: [
       { name: 'Informativo nº 08 — Procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência', file: 'Informativo nº 08 - Orienta acerca do procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência.pdf' },
     ]
@@ -714,7 +714,9 @@ const PDF_CATEGORIES = [
 let pdfSearchTerm = '';
 
 function toggleCategory(idx) {
-  PDF_CATEGORIES[idx].open = !PDF_CATEGORIES[idx].open;
+  const wasOpen = PDF_CATEGORIES[idx].open;
+  PDF_CATEGORIES.forEach(c => c.open = false);
+  PDF_CATEGORIES[idx].open = !wasOpen;
   renderPDFList();
 }
 
