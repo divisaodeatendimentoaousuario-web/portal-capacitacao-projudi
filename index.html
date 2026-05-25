@@ -40,13 +40,13 @@
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    height: 68px;
+    height: 76px;
     border-bottom: 4px solid var(--tjgo-gold);
     position: sticky; top: 0; z-index: 100;
     box-shadow: 0 2px 12px rgba(0,0,0,0.18);
   }
   .header-logo {
-    width: 46px; height: 46px; border-radius: 50%;
+    width: 54px; height: 54px; border-radius: 50%;
     background: white;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -57,9 +57,9 @@
   }
   .header-text h1 {
     font-family: 'Source Serif 4', serif;
-    font-size: 18px; font-weight: 600; letter-spacing: 0.01em;
+    font-size: 20px; font-weight: 600; letter-spacing: 0.01em;
   }
-  .header-text p { font-size: 12px; opacity: 0.65; margin-top: 1px; }
+  .header-text p { font-size: 13px; opacity: 0.75; margin-top: 3px; }
   .header-right { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; }
   .header-badge {
     background: var(--tjgo-gold); color: #1a1a1a;
@@ -74,18 +74,18 @@
     display: flex; gap: 8px; align-items: center;
   }
   .search-bar input {
-    flex: 1; max-width: 520px;
+    flex: 1; max-width: 600px;
     padding: 9px 14px 9px 38px;
     border-radius: var(--radius);
     border: 1px solid rgba(255,255,255,0.25);
     background: rgba(255,255,255,0.13); color: white;
     font-size: 14px; font-family: 'DM Sans', sans-serif;
     outline: none; transition: background 0.2s, border-color 0.2s;
-    position: relative;
+    position: relative; min-width: 0;
   }
   .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
   .search-bar input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
-  .search-wrap { position: relative; flex: 1; max-width: 520px; }
+  .search-wrap { position: relative; flex: 1; max-width: 600px; min-width: 0; }
   .search-icon {
     position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
     color: rgba(255,255,255,0.55); font-size: 16px; pointer-events: none;
@@ -567,12 +567,14 @@
 <!-- HEADER -->
 <header class="portal-header">
   <div class="header-logo">
-    <img src="logo.png" alt="TJGO" style="width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:center top;" />
+    <img src="logo.png" alt="TJGO" style="width:50px;height:50px;border-radius:50%;object-fit:cover;object-position:center top;" />
   </div>
   <div class="header-text">
     <h1>Portal de Capacitação — PROJUDI</h1>
-    <p>Diretoria Judiciária 
-     Divisão de Atendimento aos Usuários de Sistemas</p>
+    <p>Diretoria Judiciária · Divisão de Atendimento aos Usuários de Sistemas</p>
+  </div>
+  <div class="header-right">
+    <span class="header-badge">TJGO</span>
   </div>
 </header>
 
@@ -727,7 +729,7 @@ const DATA = {
     icon: 'ti-user-check',
     sections: [
       { title: 'Processos e petições', tag: 'processos', videos: [
-        { title: 'Fazer certidão', duration: '1:44', url: 'https://youtu.be/v-MrQhyhk2k' },
+        { title: 'Analisar novas petições', duration: '2:10', url: '' },
         { title: 'Analisar novos processos na serventia', duration: '1:55', url: '' },
         { title: 'Analisar prevenção', duration: '1:40', url: '' },
         { title: 'Apensar / desapensar processo dependente', duration: '2:30', url: '' },
