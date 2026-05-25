@@ -677,7 +677,7 @@
     </button>
 
     <!-- STATS -->
-    <div style="margin-bottom:1.75rem;">
+    <div id="stat-videos" style="margin-bottom:1.75rem;">
       <div class="stat-card" style="max-width:220px;">
         <div class="s-label">Total de vídeos</div>
         <div class="s-value">55</div>
@@ -750,7 +750,7 @@ const DATA = {
     icon: 'ti-user-check',
     sections: [
       { title: 'Processos e petições', tag: 'processos', videos: [
-       { title: 'Alterar classificador do processo', duration: '0:58', url: 'https://youtu.be/lqEVMIWwKL0' },
+        { title: 'Alterar classificador do processo', duration: '0:58', url: 'https://youtu.be/lqEVMIWwKL0' },
         { title: 'Cadastrar modelo', duration: '0:58', url: 'https://youtu.be/wk29L_tvm4I' },
         { title: 'Fazer certidão', duration: '1:44', url: 'https://youtu.be/v-MrQhyhk2k' },
         { title: 'Analisar novas petições', duration: '2:10', url: '' },
@@ -948,18 +948,16 @@ function switchTab(tab) {
   document.getElementById('tab-pdfs').classList.toggle('active', tab === 'pdfs');
   document.getElementById('panel-videos').classList.toggle('active', tab === 'videos');
   document.getElementById('panel-pdfs').classList.toggle('active', tab === 'pdfs');
+  document.getElementById('stat-videos').style.display = tab === 'videos' ? '' : 'none';
 
   if (tab === 'videos') {
-    // Fecha PDF viewer e mostra vídeos
     PDF_CATEGORIES.forEach(c => c.open = false);
     closePDFViewer();
     renderPDFList();
     render();
   } else {
-    // Fecha video player e mostra painel PDF
     closeVideoPlayer();
     renderPDFList();
-    // Limpa área principal para aguardar seleção de categoria PDF
     const container = document.getElementById('videos-container');
     document.querySelector('.profile-header').style.display = 'none';
     document.getElementById('video-player-panel').style.display = 'none';
