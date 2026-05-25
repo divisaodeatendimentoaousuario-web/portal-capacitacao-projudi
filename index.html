@@ -616,11 +616,9 @@
     <div class="sidebar-tabs">
       <div class="sidebar-tab active" id="tab-videos" onclick="switchTab('videos')">
         <i class="ti ti-video" aria-hidden="true"></i> Vídeos
-        <span class="tab-badge">55</span>
       </div>
       <div class="sidebar-tab" id="tab-pdfs" onclick="switchTab('pdfs')">
         <i class="ti ti-file-type-pdf" aria-hidden="true"></i> Informativos
-        <span class="tab-badge">9</span>
       </div>
     </div>
 
@@ -682,6 +680,13 @@
         <div class="s-label">Total de vídeos</div>
         <div class="s-value">55</div>
         <div class="s-sub">na playlist oficial</div>
+      </div>
+    </div>
+    <div id="stat-pdfs" style="margin-bottom:1.75rem;display:none;">
+      <div class="stat-card" style="max-width:220px;">
+        <div class="s-label">Total de informativos</div>
+        <div class="s-value">9</div>
+        <div class="s-sub">em PDF disponíveis</div>
       </div>
     </div>
 
@@ -750,7 +755,7 @@ const DATA = {
     icon: 'ti-user-check',
     sections: [
       { title: 'Processos e petições', tag: 'processos', videos: [
-        { title: 'Alterar classificador do processo', duration: '0:58', url: 'https://youtu.be/lqEVMIWwKL0' },
+       { title: 'Alterar classificador do processo', duration: '0:58', url: 'https://youtu.be/lqEVMIWwKL0' },
         { title: 'Cadastrar modelo', duration: '0:58', url: 'https://youtu.be/wk29L_tvm4I' },
         { title: 'Fazer certidão', duration: '1:44', url: 'https://youtu.be/v-MrQhyhk2k' },
         { title: 'Analisar novas petições', duration: '2:10', url: '' },
@@ -949,6 +954,7 @@ function switchTab(tab) {
   document.getElementById('panel-videos').classList.toggle('active', tab === 'videos');
   document.getElementById('panel-pdfs').classList.toggle('active', tab === 'pdfs');
   document.getElementById('stat-videos').style.display = tab === 'videos' ? '' : 'none';
+  document.getElementById('stat-pdfs').style.display = tab === 'pdfs' ? '' : 'none';
 
   if (tab === 'videos') {
     PDF_CATEGORIES.forEach(c => c.open = false);
