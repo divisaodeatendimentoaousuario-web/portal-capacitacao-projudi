@@ -177,6 +177,38 @@
     color: var(--text-muted); font-style: italic;
   }
 
+  /* ── PDF CATEGORIES ── */
+  .pdf-category-header {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 1.25rem; font-size: 12px; font-weight: 600;
+    color: var(--tjgo-navy); cursor: pointer;
+    background: var(--tjgo-light);
+    border-left: 3px solid var(--tjgo-navy);
+    margin: 3px 0;
+    user-select: none;
+    transition: background 0.12s;
+  }
+  .pdf-category-header:hover { background: #d4e8f5; }
+  .pdf-category-header .cat-arrow {
+    margin-left: auto; font-size: 13px;
+    transition: transform 0.2s;
+  }
+  .pdf-category-header.collapsed .cat-arrow { transform: rotate(-90deg); }
+  .pdf-category-body { overflow: hidden; }
+  .pdf-category-body.collapsed { display: none; }
+  .pdf-item {
+    display: flex; align-items: flex-start; gap: 7px;
+    padding: 7px 1.25rem 7px 2rem; font-size: 11.5px;
+    color: var(--text-secondary);
+    border-left: 3px solid #e8b012;
+    margin: 1px 0; cursor: pointer;
+    transition: background 0.12s;
+    text-decoration: none; line-height: 1.4;
+  }
+  .pdf-item:hover { background: #fffbf0; color: var(--tjgo-navy); }
+  .pdf-item i { color: #c0392b; flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+  .pdf-item .pdf-ext { margin-left: auto; flex-shrink: 0; font-size: 10px; color: var(--text-muted); }
+
   /* ── CONTENT ── */
   .content {
     flex: 1; padding: 1.75rem 2rem;
@@ -385,7 +417,17 @@
 
     <div class="sidebar-divider"></div>
     <div class="sidebar-section-label">Informativos em PDF</div>
+
+    <div style="padding: 0 1rem 0.5rem;">
+      <div style="position:relative;">
+        <i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);pointer-events:none" aria-hidden="true"></i>
+        <input type="text" id="pdf-search" placeholder="Buscar informativo..." oninput="filterPDFs(this.value)"
+          style="width:100%;padding:7px 9px 7px 28px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text-primary);font-family:'DM Sans',sans-serif;outline:none;" />
+      </div>
+    </div>
+
     <div id="pdf-list"></div>
+
     <div class="sidebar-divider"></div>
     <div class="sidebar-item" onclick="resetFilters(this)" style="color:#c0392b;">
       <i class="ti ti-refresh" aria-hidden="true"></i> Limpar filtros
@@ -396,26 +438,11 @@
   <main class="content" id="main-content">
 
     <!-- STATS -->
-    <div class="stats-row">
-      <div class="stat-card">
+    <div style="margin-bottom:1.75rem;">
+      <div class="stat-card" style="max-width:220px;">
         <div class="s-label">Total de vídeos</div>
         <div class="s-value">55</div>
         <div class="s-sub">na playlist oficial</div>
-      </div>
-      <div class="stat-card">
-        <div class="s-label">Perfis atendidos</div>
-        <div class="s-value">4</div>
-        <div class="s-sub">analista, advogado, câmara, juiz</div>
-      </div>
-      <div class="stat-card">
-        <div class="s-label">Subtópicos</div>
-        <div class="s-value">6</div>
-        <div class="s-sub">áreas funcionais</div>
-      </div>
-      <div class="stat-card">
-        <div class="s-label">Duração média</div>
-        <div class="s-value">2min</div>
-        <div class="s-sub">por vídeo</div>
       </div>
     </div>
 
@@ -641,34 +668,97 @@ function resetFilters(el) {
 }
 
 // ── PDF INFORMATIVOS ──
-// Para adicionar PDFs: coloque os arquivos na pasta "pdfs/" do repositório
-// e cadastre-os na lista abaixo seguindo o mesmo padrão:
-// { name: 'Nome exibido na sidebar', file: 'nome-do-arquivo.pdf' }
+// Categorias: adicione { name, file } em cada categoria.
+// Para incluir novos PDFs, acrescente na categoria correspondente.
 
-const PDFS = [
-  { name: 'Informativo nº 01 — Disponibilização do campo comunidade (etnia indígena e quilombola)', file: 'Informativo nº 01 - Informa sobre a disponibilização do campo comunidade quando for informada a etnia indígena e quilombola.pdf' },
-  { name: 'Informativo nº 02 — Seleção da área de distribuição ao Juízo das Garantias', file: 'Informativo nº 02 - Orienta às autoridades policiais sobre a seleção da área de distribuição nos processos a serem distribuídos ao Juízo das Garantias.pdf' },
-  { name: 'Informativo nº 03 — Cadastro de polo passivo sem CPF ou CNPJ', file: 'Informativo nº 03 - Cadastro de polo passivo de processo cível sem CPF ou CNPJ por meio da inclusão obrigatória de justificativa no sistema PROJUDI.pdf' },
-  { name: 'Informativo nº 04 — Melhorias na averbação de débitos', file: 'Informativo nº 04 - Melhorias relacionadas à averbação de débitos no sistema PROJUDI.pdf' },
-  { name: 'Informativo nº 05 — Encaminhamento não automático ao Juízo das Garantias', file: 'Informativo nº 05 - Comunica acerca do encaminhamento não automático de processos de competência do Juízo das Garantias.pdf' },
-  { name: 'Informativo nº 06 — Devolução e arquivamento de processos do Juízo das Garantias', file: 'Informativo nº 06 - Comunica acerca do procedimento sistêmico para devolução e arquivamento dos processos encaminhados para o Juízo das Garantias.pdf' },
-  { name: 'Informativo nº 07 — Cadastro de Precatório para o DEPRE', file: 'Informativo nº 07 - Cadastro de Precatório para o DEPRE no sistema PROJUDI.pdf' },
-  { name: 'Informativo nº 08 — Encaminhamento de processos aos gabinetes dos juízes auxiliares', file: 'Informativo nº 08 - Orienta acerca do procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência.pdf' },
-  { name: 'Informativo nº 09 — Consulta de precedentes via novos campos de pesquisa', file: 'Informativo nº 09 - Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI.pdf' },
+const PDF_CATEGORIES = [
+  {
+    title: 'Cadastros e dados',
+    icon: 'ti-database',
+    open: true,
+    items: [
+      { name: 'Informativo nº 01 — Disponibilização do campo comunidade quando for informada a etnia indígena e quilombola', file: 'Informativo nº 01 - Informa sobre a disponibilização do campo comunidade quando for informada a etnia indígena e quilombola.pdf' },
+      { name: 'Informativo nº 03 — Cadastro de polo passivo de processo cível sem CPF ou CNPJ com justificativa obrigatória', file: 'Informativo nº 03 - Cadastro de polo passivo de processo cível sem CPF ou CNPJ por meio da inclusão obrigatória de justificativa no sistema PROJUDI.pdf' },
+      { name: 'Informativo nº 07 — Cadastro de Precatório para o DEPRE no sistema PROJUDI', file: 'Informativo nº 07 - Cadastro de Precatório para o DEPRE no sistema PROJUDI.pdf' },
+    ]
+  },
+  {
+    title: 'Juízo das Garantias',
+    icon: 'ti-shield-check',
+    open: true,
+    items: [
+      { name: 'Informativo nº 02 — Orientação às autoridades policiais sobre a seleção da área de distribuição ao Juízo das Garantias', file: 'Informativo nº 02 - Orienta às autoridades policiais sobre a seleção da área de distribuição nos processos a serem distribuídos ao Juízo das Garantias.pdf' },
+      { name: 'Informativo nº 05 — Encaminhamento não automático de processos de competência do Juízo das Garantias', file: 'Informativo nº 05 - Comunica acerca do encaminhamento não automático de processos de competência do Juízo das Garantias.pdf' },
+      { name: 'Informativo nº 06 — Devolução e arquivamento dos processos encaminhados para o Juízo das Garantias', file: 'Informativo nº 06 - Comunica acerca do procedimento sistêmico para devolução e arquivamento dos processos encaminhados para o Juízo das Garantias.pdf' },
+    ]
+  },
+  {
+    title: 'Melhorias do sistema',
+    icon: 'ti-settings',
+    open: true,
+    items: [
+      { name: 'Informativo nº 04 — Melhorias relacionadas à averbação de débitos no sistema PROJUDI', file: 'Informativo nº 04 - Melhorias relacionadas à averbação de débitos no sistema PROJUDI.pdf' },
+      { name: 'Informativo nº 09 — Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI', file: 'Informativo nº 09 - Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI.pdf' },
+    ]
+  },
+  {
+    title: 'Encaminhamentos',
+    icon: 'ti-send',
+    open: true,
+    items: [
+      { name: 'Informativo nº 08 — Procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência', file: 'Informativo nº 08 - Orienta acerca do procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência.pdf' },
+    ]
+  },
 ];
+
+let pdfSearchTerm = '';
+
+function toggleCategory(idx) {
+  PDF_CATEGORIES[idx].open = !PDF_CATEGORIES[idx].open;
+  renderPDFList();
+}
+
+function filterPDFs(val) {
+  pdfSearchTerm = val.trim().toLowerCase();
+  PDF_CATEGORIES.forEach(c => c.open = true);
+  renderPDFList();
+}
 
 function renderPDFList() {
   const list = document.getElementById('pdf-list');
-  if (PDFS.length === 0) {
-    list.innerHTML = '<div class="pdf-empty">Nenhum informativo cadastrado</div>';
-    return;
+  let html = '';
+  let totalShown = 0;
+
+  PDF_CATEGORIES.forEach((cat, ci) => {
+    const filtered = pdfSearchTerm
+      ? cat.items.filter(p => p.name.toLowerCase().includes(pdfSearchTerm))
+      : cat.items;
+    if (filtered.length === 0) return;
+    totalShown += filtered.length;
+
+    html += `<div>
+      <div class="pdf-category-header ${cat.open ? '' : 'collapsed'}" onclick="toggleCategory(${ci})">
+        <i class="ti ${cat.icon}" style="font-size:13px" aria-hidden="true"></i>
+        ${cat.title}
+        <span style="margin-left:4px;font-size:10px;background:#c5dcf0;color:var(--tjgo-navy);padding:1px 6px;border-radius:8px;font-weight:500;">${filtered.length}</span>
+        <i class="ti ti-chevron-down cat-arrow" aria-hidden="true"></i>
+      </div>
+      <div class="pdf-category-body ${cat.open ? '' : 'collapsed'}">
+        ${filtered.map(p => `
+          <a class="pdf-item" href="pdfs/${encodeURIComponent(p.file)}" target="_blank" rel="noopener" title="${p.name}">
+            <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
+            <span>${p.name}</span>
+            <i class="ti ti-external-link pdf-ext" aria-hidden="true"></i>
+          </a>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  if (totalShown === 0) {
+    html = '<div class="pdf-empty">Nenhum informativo encontrado</div>';
   }
-  list.innerHTML = PDFS.map((p, i) => `
-    <a class="pdf-item" href="pdfs/${p.file}" target="_blank" rel="noopener" title="Abrir ${p.name}">
-      <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</span>
-      <i class="ti ti-external-link" style="font-size:12px;color:var(--text-muted);flex-shrink:0" aria-hidden="true"></i>
-    </a>`).join('');
+
+  list.innerHTML = html;
 }
 
 renderPDFList();
