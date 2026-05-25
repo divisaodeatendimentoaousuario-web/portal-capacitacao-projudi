@@ -143,6 +143,40 @@
   .sidebar-item.active .count { background: #c5dcf0; color: var(--tjgo-navy); }
   .sidebar-divider { height: 1px; background: var(--border); margin: 0.5rem 1.25rem; }
 
+  .pdf-upload-btn {
+    display: flex; align-items: center; gap: 7px;
+    width: 100%; padding: 8px 0.25rem;
+    font-size: 13px; font-weight: 500;
+    color: var(--tjgo-navy); cursor: pointer;
+    border: 1.5px dashed #a0bcd8;
+    border-radius: var(--radius);
+    justify-content: center;
+    transition: background 0.12s, border-color 0.12s;
+    margin-top: 4px;
+  }
+  .pdf-upload-btn:hover { background: var(--tjgo-light); border-color: var(--tjgo-navy); }
+  .pdf-item {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 1.25rem; font-size: 12px;
+    color: var(--text-secondary);
+    border-left: 3px solid #e8b012;
+    margin: 2px 0; cursor: pointer;
+    transition: background 0.12s;
+    word-break: break-word;
+    text-decoration: none;
+  }
+  .pdf-item:hover { background: #fffbf0; color: var(--tjgo-navy); }
+  .pdf-item i { color: #c0392b; flex-shrink: 0; font-size: 15px; }
+  .pdf-item .pdf-remove {
+    margin-left: auto; font-size: 13px; color: var(--text-muted);
+    flex-shrink: 0; padding: 2px 4px; border-radius: 4px;
+  }
+  .pdf-item .pdf-remove:hover { background: #fee; color: #c0392b; }
+  .pdf-empty {
+    padding: 6px 1.25rem; font-size: 12px;
+    color: var(--text-muted); font-style: italic;
+  }
+
   /* ── CONTENT ── */
   .content {
     flex: 1; padding: 1.75rem 2rem;
@@ -350,26 +384,8 @@
     </div>
 
     <div class="sidebar-divider"></div>
-    <div class="sidebar-section-label">Filtrar por tópico</div>
-    <div class="sidebar-item" onclick="filterTopic('processos', this)">
-      <i class="ti ti-file-text" aria-hidden="true"></i> Processos e petições
-    </div>
-    <div class="sidebar-item" onclick="filterTopic('audiencias', this)">
-      <i class="ti ti-calendar" aria-hidden="true"></i> Audiências e agenda
-    </div>
-    <div class="sidebar-item" onclick="filterTopic('cadastro', this)">
-      <i class="ti ti-database" aria-hidden="true"></i> Cadastros e dados
-    </div>
-    <div class="sidebar-item" onclick="filterTopic('intimacao', this)">
-      <i class="ti ti-mail" aria-hidden="true"></i> Intimações e prazos
-    </div>
-    <div class="sidebar-item" onclick="filterTopic('arquivamento', this)">
-      <i class="ti ti-archive" aria-hidden="true"></i> Arquivamento
-    </div>
-    <div class="sidebar-item" onclick="filterTopic('distribuicao', this)">
-      <i class="ti ti-git-branch" aria-hidden="true"></i> Distribuição
-    </div>
-
+    <div class="sidebar-section-label">Informativos em PDF</div>
+    <div id="pdf-list"></div>
     <div class="sidebar-divider"></div>
     <div class="sidebar-item" onclick="resetFilters(this)" style="color:#c0392b;">
       <i class="ti ti-refresh" aria-hidden="true"></i> Limpar filtros
@@ -609,13 +625,6 @@ function switchProfile(profile, el) {
   render();
 }
 
-function filterTopic(tag, el) {
-  currentTopic = (currentTopic === tag) ? null : tag;
-  document.querySelectorAll('.sidebar-item:not([data-profile])').forEach(i => i.classList.remove('active'));
-  if (currentTopic) el.classList.add('active');
-  render();
-}
-
 function filterVideos(val) {
   searchTerm = val.trim();
   render();
@@ -631,6 +640,33 @@ function resetFilters(el) {
   render();
 }
 
+// ── PDF INFORMATIVOS ──
+// Para adicionar PDFs: coloque os arquivos na pasta "pdfs/" do repositório
+// e cadastre-os na lista abaixo seguindo o mesmo padrão:
+// { name: 'Nome exibido na sidebar', file: 'nome-do-arquivo.pdf' }
+
+const PDFS = [
+  // Exemplos — substitua pelos seus arquivos reais:
+  // { name: 'Informativo 01 — Cadastro de Processos', file: 'informativo-01-cadastro.pdf' },
+  // { name: 'Informativo 02 — Peticionamento', file: 'informativo-02-peticao.pdf' },
+  // { name: 'Manual do Analista Judiciário', file: 'manual-analista.pdf' },
+];
+
+function renderPDFList() {
+  const list = document.getElementById('pdf-list');
+  if (PDFS.length === 0) {
+    list.innerHTML = '<div class="pdf-empty">Nenhum informativo cadastrado</div>';
+    return;
+  }
+  list.innerHTML = PDFS.map((p, i) => `
+    <a class="pdf-item" href="pdfs/${p.file}" target="_blank" rel="noopener" title="Abrir ${p.name}">
+      <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</span>
+      <i class="ti ti-external-link" style="font-size:12px;color:var(--text-muted);flex-shrink:0" aria-hidden="true"></i>
+    </a>`).join('');
+}
+
+renderPDFList();
 render();
 </script>
 </body>
