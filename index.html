@@ -629,20 +629,44 @@
         <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
         <span class="count">55</span>
       </div>
-      <div class="sidebar-item" onclick="switchProfile('analista', this)" data-profile="analista">
-        <i class="ti ti-user-check" aria-hidden="true"></i> Analista judiciário
-        <span class="count">28</span>
-      </div>
       <div class="sidebar-item" onclick="switchProfile('advogado', this)" data-profile="advogado">
         <i class="ti ti-briefcase" aria-hidden="true"></i> Advogado
         <span class="count">12</span>
       </div>
-     <!-- <div class="sidebar-item" onclick="switchProfile('camara', this)" data-profile="camara">
-        <i class="ti ti-building" aria-hidden="true"></i> Câmara 2º grau
-        <span class="count">9</span>
-      </div>-->
+      <div class="sidebar-item" onclick="switchProfile('analista judiciário', this)" data-profile="analista">
+        <i class="ti ti-user-check" aria-hidden="true"></i> Analista judiciário
+        <span class="count">28</span>
+      </div>
+     <div class="sidebar-item" onclick="switchProfile('analista 2º grau', this)" data-profile="analista">
+        <i class="ti ti-user-check" aria-hidden="true"></i> Analista Judiciário 2º Grau
+        <span class="count">28</span>
+      </div>
+     <div class="sidebar-item" onclick="switchProfile('assistente de gabinete', this)" data-profile="analista">
+        <i class="ti ti-user-check" aria-hidden="true"></i> Assistente de Gabinete
+        <span class="count">28</span>
+      </div>
+     <div class="sidebar-item" onclick="switchProfile('autoridade policial', this)" data-profile="analista">
+        <i class="ti ti-user-check" aria-hidden="true"></i> Autoridade Policial
+        <span class="count">28</span>
+      </div>
+     <div class="sidebar-item" onclick="switchProfile('conciliador', this)" data-profile="analista">
+        <i class="ti ti-user-check" aria-hidden="true"></i> Conciliador
+        <span class="count">28</span>
+      </div>
+      <div class="sidebar-item" onclick="switchProfile('desembargador', this)" data-profile="analista">
+        <i class="ti ti-user-check" aria-hidden="true"></i> Desembargador
+        <span class="count">28</span>
+      </div>
+      <div class="sidebar-item" onclick="switchProfile('distribuidor', this)" data-profile="advogado">
+        <i class="ti ti-briefcase" aria-hidden="true"></i> Distribuidor
+        <span class="count">12</span>
+      </div>
+     <div class="sidebar-item" onclick="switchProfile('distribuidor de gabinete', this)" data-profile="advogado">
+        <i class="ti ti-briefcase" aria-hidden="true"></i> Distribuidor de Gabinete
+        <span class="count">12</span>
+      </div>
       <div class="sidebar-item" onclick="switchProfile('juiz', this)" data-profile="juiz">
-        <i class="ti ti-gavel" aria-hidden="true"></i> Magistrado
+        <i class="ti ti-gavel" aria-hidden="true"></i> Juiz
         <span class="count">6</span>
       </div>
     </div>
@@ -814,8 +838,8 @@ const DATA = {
       ]},
     ]
   },
-  distribuidor: {
-    label: 'Distribuidor',
+ analista 2: {
+    label: 'Analista Judiciário 2º Grau',
     icon: 'ti-briefcase',
     sections: [
       { title: 'Peticionamento', tag: 'processos', videos: [
@@ -836,8 +860,118 @@ const DATA = {
       ]},
     ]
   },
-  /*camara: {
-    label: 'Câmara 2º grau',
+ assistente: {
+    label: 'Assistente de Gabinete',
+    icon: 'ti-briefcase',
+    sections: [
+      { title: 'Peticionamento', tag: 'processos', videos: [
+        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
+        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
+        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
+        { title: 'Consultar publicações', duration: '1:00', url: '' },
+      ]},
+      { title: 'Intimações e prazos', tag: 'intimacao', videos: [
+        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
+        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
+        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
+      ]},
+      { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
+        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
+        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
+        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
+      ]},
+    ]
+  },
+  autoridade: {
+    label: 'Autoridade Policial',
+    icon: 'ti-briefcase',
+    sections: [
+      { title: 'Peticionamento', tag: 'processos', videos: [
+        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
+        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
+        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
+        { title: 'Consultar publicações', duration: '1:00', url: '' },
+      ]},
+      { title: 'Intimações e prazos', tag: 'intimacao', videos: [
+        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
+        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
+        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
+      ]},
+      { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
+        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
+        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
+        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
+      ]},
+    ]
+  },
+  conciliador: {
+    label: 'Conciliador',
+    icon: 'ti-briefcase',
+    sections: [
+      { title: 'Peticionamento', tag: 'processos', videos: [
+        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
+        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
+        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
+        { title: 'Consultar publicações', duration: '1:00', url: '' },
+      ]},
+      { title: 'Intimações e prazos', tag: 'intimacao', videos: [
+        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
+        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
+        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
+      ]},
+      { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
+        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
+        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
+        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
+      ]},
+    ]
+  }
+   conciliador: {
+    label: 'Conciliador',
+    icon: 'ti-briefcase',
+    sections: [
+      { title: 'Peticionamento', tag: 'processos', videos: [
+        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
+        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
+        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
+        { title: 'Consultar publicações', duration: '1:00', url: '' },
+      ]},
+      { title: 'Intimações e prazos', tag: 'intimacao', videos: [
+        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
+        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
+        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
+      ]},
+      { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
+        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
+        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
+        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
+      ]},
+    ]
+  }
+ desembargador: {
+    label: 'Desembargador',
+    icon: 'ti-briefcase',
+    sections: [
+      { title: 'Peticionamento', tag: 'processos', videos: [
+        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
+        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
+        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
+        { title: 'Consultar publicações', duration: '1:00', url: '' },
+      ]},
+      { title: 'Intimações e prazos', tag: 'intimacao', videos: [
+        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
+        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
+        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
+      ]},
+      { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
+        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
+        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
+        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
+      ]},
+    ]
+  },
+  distribuidor: {
+    label: 'Distribuidor',
     icon: 'ti-building',
     sections: [
       { title: 'Distribuição e mandados', tag: 'distribuicao', videos: [
@@ -851,7 +985,23 @@ const DATA = {
         { title: 'Incluir processo em pauta', duration: '2:10', url: '' },
       ]},
     ]
-  },*/
+  },
+  distribuidor gabinete: {
+    label: 'Distribuidor de Gabinete',
+    icon: 'ti-building',
+    sections: [
+      { title: 'Distribuição e mandados', tag: 'distribuicao', videos: [
+        { title: 'Pré-distribuição do juízo das garantias', duration: '2:54', url: '' },
+        { title: 'Cadastro e distribuição de mandados via SEEU', duration: '2:38', url: '' },
+        { title: 'Intimar Ministério Público', duration: '1:00', url: '' },
+      ]},
+      { title: 'Controle e assinatura', tag: 'cadastro', videos: [
+        { title: 'Juiz autorizar assessor guardar para assinar', duration: '1:25', url: '' },
+        { title: 'Visualizar pauta de julgamentos', duration: '1:50', url: '' },
+        { title: 'Incluir processo em pauta', duration: '2:10', url: '' },
+      ]},
+    ]
+  },
   juiz: {
     label: 'Magistrado',
     icon: 'ti-gavel',
