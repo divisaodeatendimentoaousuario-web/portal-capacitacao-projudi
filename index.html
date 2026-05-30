@@ -750,6 +750,28 @@
 const COLORS = ['#0a3d6b','#0d5c9e','#083c6a','#0b4a80','#0e6290','#084070'];
 
 const DATA = {
+   advogado: {
+    label: 'Advogado',
+    icon: 'ti-briefcase',
+    sections: [
+      { title: 'Peticionamento', tag: 'processos', videos: [
+        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
+        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
+        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
+        { title: 'Consultar publicações', duration: '1:00', url: '' },
+      ]},
+      { title: 'Intimações e prazos', tag: 'intimacao', videos: [
+        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
+        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
+        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
+      ]},
+      { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
+        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
+        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
+        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
+      ]},
+    ]
+  },
   analista: {
     label: 'Analista judiciário',
     icon: 'ti-user-check',
@@ -792,8 +814,8 @@ const DATA = {
       ]},
     ]
   },
-  advogado: {
-    label: 'Advogado',
+  distribuidor: {
+    label: 'Distribuidor',
     icon: 'ti-briefcase',
     sections: [
       { title: 'Peticionamento', tag: 'processos', videos: [
