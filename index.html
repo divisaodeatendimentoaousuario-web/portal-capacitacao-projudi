@@ -74,18 +74,18 @@
     display: flex; gap: 8px; align-items: center;
   }
   .search-bar input {
-    flex: 1; max-width: 900px;
+    flex: 1;
     padding: 11px 16px 11px 42px;
     border-radius: var(--radius);
     border: 1px solid rgba(255,255,255,0.25);
     background: rgba(255,255,255,0.13); color: white;
     font-size: 15px; font-family: 'DM Sans', sans-serif;
     outline: none; transition: background 0.2s, border-color 0.2s;
-    position: relative; min-width: 0;
+    position: relative; min-width: 0; width: 100%;
   }
   .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
   .search-bar input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
-  .search-wrap { position: relative; flex: 1; max-width: 900px; min-width: 0; }
+  .search-wrap { position: relative; flex: 1; min-width: 0; }
   .search-icon {
     position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
     color: rgba(255,255,255,0.55); font-size: 16px; pointer-events: none;
@@ -650,11 +650,11 @@
         <span class="count">28</span>
       </div>
      <div class="sidebar-item" onclick="switchProfile('conciliador', this)" data-profile="conciliador">
-        <i class="ti ti-handshake" aria-hidden="true"></i> Conciliador
+        <i class="ti ti-heart-handshake" aria-hidden="true"></i> Conciliador
         <span class="count">28</span>
       </div>
       <div class="sidebar-item" onclick="switchProfile('desembargador', this)" data-profile="desembargador">
-        <i class="ti ti-building-courthouse" aria-hidden="true"></i> Desembargador
+        <i class="ti ti-building-bank" aria-hidden="true"></i> Desembargador
         <span class="count">28</span>
       </div>
       <div class="sidebar-item" onclick="switchProfile('distribuidor', this)" data-profile="distribuidor">
@@ -906,7 +906,7 @@ const DATA = {
   },
   conciliador: {
     label: 'Conciliador',
-    icon: 'ti-handshake',
+    icon: 'ti-heart-handshake',
     sections: [
         { title: 'Peticionamento', tag: 'processos', videos: [
         { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
@@ -928,7 +928,7 @@ const DATA = {
   },
   desembargador: {
     label: 'Desembargador',
-    icon: 'ti-building-courthouse',
+    icon: 'ti-building-bank',
     sections: [
         { title: 'Peticionamento', tag: 'processos', videos: [
         { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
@@ -1010,8 +1010,8 @@ const PROFILE_META = {
   'analista 2': { label: 'Analista Judiciário 2º Grau', icon: 'ti-clipboard-list' },
   assistente: { label: 'Assistente de Gabinete', icon: 'ti-home-2' },
   autoridade: { label: 'Autoridade Policial', icon: 'ti-shield-lock' },
-  conciliador: { label: 'Conciliador', icon: 'ti-handshake' },
-  desembargador: { label: 'Desembargador', icon: 'ti-building-courthouse' },
+  conciliador: { label: 'Conciliador', icon: 'ti-heart-handshake' },
+  desembargador: { label: 'Desembargador', icon: 'ti-building-bank' },
   distribuidor: { label: 'Distribuidor', icon: 'ti-send' },
   distribuidor_gabinete: { label: 'Distribuidor de Gabinete', icon: 'ti-mail-forward' },
   juiz: { label: 'Magistrado', icon: 'ti-gavel' },
