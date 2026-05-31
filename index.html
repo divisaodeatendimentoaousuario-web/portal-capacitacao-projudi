@@ -926,8 +926,7 @@ const DATA = {
       ]},
     ]
   },
-   
- desembargador: {
+  desembargador: {
     label: 'Desembargador',
     icon: 'ti-scale',
     sections: [
@@ -965,7 +964,7 @@ const DATA = {
       ]},
     ]
   },
-  distribuidor gabinete: {
+  distribuidor: {
     label: 'Distribuidor de Gabinete',
     icon: 'ti-building',
     sections: [
@@ -1005,11 +1004,17 @@ let currentTopic = null;
 let searchTerm = '';
 
 const PROFILE_META = {
-  todos:    { label: 'Todos os perfis',     icon: 'ti-users' },
+  todos: { label: 'Todos os perfis', icon: 'ti-users' },
+  advogado: { label: 'Advogado', icon: 'ti-briefcase' },
   analista: { label: 'Analista judiciário', icon: 'ti-user-check' },
-  advogado: { label: 'Advogado',            icon: 'ti-briefcase' },
-  //camara:   { label: 'Câmara 2º grau',      icon: 'ti-building' },
-  juiz:     { label: 'Magistrado',          icon: 'ti-gavel' },
+  analista 2: { label: 'Analista Judiciário 2º Grau', icon: 'ti-user-check' },
+  assistente: { label: 'Assistente de Gabinete', icon: 'ti-user-check' },
+  autoridade: { label: 'Autoridade Policial', icon: 'ti-user-check' },
+  conciliador: { label: 'Conciliador', icon: 'ti-user-check' },
+  desembargador: { label: 'Desembargador', icon: 'ti-scale' },
+  distribuidor: { label: 'Distribuidor', icon: 'ti-building' },
+  distribuidor: { label: 'Distribuidor de Gabinete', icon: 'ti-building' },
+  juiz: { label: 'Magistrado', icon: 'ti-gavel' },
 };
 
 function render() {
