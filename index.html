@@ -594,6 +594,27 @@
   </div>
 </header>
 
+<!-- BARRA DE ACESSIBILIDADE -->
+<div class="a11y-bar" id="a11y-bar" role="region" aria-label="Opções de acessibilidade">
+  <span class="a11y-label">
+    <i class="ti ti-accessible" aria-hidden="true"></i> Acessibilidade
+  </span>
+  <div class="a11y-group">
+    <span class="a11y-group-label">Texto</span>
+    <button class="a11y-btn" id="fs-sm"  onclick="setFontSize('sm')"  title="Fonte pequena"      aria-label="Fonte pequena">A-</button>
+    <button class="a11y-btn active" id="fs-md" onclick="setFontSize('md')" title="Fonte padrão"  aria-label="Fonte padrão">A</button>
+    <button class="a11y-btn" id="fs-lg"  onclick="setFontSize('lg')"  title="Fonte grande"       aria-label="Fonte grande">A+</button>
+    <button class="a11y-btn" id="fs-xl"  onclick="setFontSize('xl')"  title="Fonte extra grande" aria-label="Fonte extra grande">A++</button>
+  </div>
+  <div class="a11y-sep"></div>
+  <div class="a11y-group">
+    <span class="a11y-group-label">Tema</span>
+    <button class="a11y-btn active" id="th-padrao"    onclick="setTheme('padrao')"    aria-label="Tema padrão">☀ Padrão</button>
+    <button class="a11y-btn"        id="th-escuro"    onclick="setTheme('escuro')"    aria-label="Tema escuro">☾ Escuro</button>
+    <button class="a11y-btn"        id="th-contraste" onclick="setTheme('contraste')" aria-label="Alto contraste">◑ Contraste</button>
+  </div>
+</div>
+
 <!-- SEARCH BAR -->
 <div class="search-bar">
   <div class="search-wrap">
@@ -1634,6 +1655,37 @@ function closePDFViewer() {
     activePDFItem = null;
   }
 }
+
+// ── ACESSIBILIDADE ──
+const FONT_SIZES = {
+  sm: '13px', md: '15px', lg: '17px', xl: '19px'
+};
+
+function setFontSize(size) {
+  document.documentElement.style.fontSize = FONT_SIZES[size];
+  ['sm','md','lg','xl'].forEach(s => document.getElementById('fs-' + s).classList.toggle('active', s === size));
+  try { localStorage.setItem('a11y-font', size); } catch(e) {}
+}
+
+function setTheme(theme) {
+  document.body.className = document.body.className
+    .replace(/theme-\S+/g, '').trim();
+  if (theme !== 'padrao') document.body.classList.add('theme-' + theme);
+  ['padrao','escuro','contraste'].forEach(t => {
+    document.getElementById('th-' + t).classList.toggle('active', t === theme);
+  });
+  try { localStorage.setItem('a11y-theme', theme); } catch(e) {}
+}
+
+// Restaurar preferências salvas
+(function() {
+  try {
+    const fs = localStorage.getItem('a11y-font');
+    if (fs && FONT_SIZES[fs]) setFontSize(fs);
+    const th = localStorage.getItem('a11y-theme');
+    if (th) setTheme(th);
+  } catch(e) {}
+})();
 
 renderPDFList();
 render();
