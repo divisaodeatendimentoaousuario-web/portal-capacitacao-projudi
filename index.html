@@ -74,18 +74,18 @@
     display: flex; gap: 8px; align-items: center;
   }
   .search-bar input {
-    flex: 1; max-width: 600px;
-    padding: 9px 14px 9px 38px;
+    flex: 1; max-width: 900px;
+    padding: 11px 16px 11px 42px;
     border-radius: var(--radius);
     border: 1px solid rgba(255,255,255,0.25);
     background: rgba(255,255,255,0.13); color: white;
-    font-size: 14px; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-family: 'DM Sans', sans-serif;
     outline: none; transition: background 0.2s, border-color 0.2s;
     position: relative; min-width: 0;
   }
   .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
   .search-bar input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
-  .search-wrap { position: relative; flex: 1; max-width: 600px; min-width: 0; }
+  .search-wrap { position: relative; flex: 1; max-width: 900px; min-width: 0; }
   .search-icon {
     position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
     color: rgba(255,255,255,0.55); font-size: 16px; pointer-events: none;
@@ -630,39 +630,39 @@
         <span class="count">55</span>
       </div>
       <div class="sidebar-item" onclick="switchProfile('advogado', this)" data-profile="advogado">
-        <i class="ti ti-briefcase" aria-hidden="true"></i> Advogado
+        <i class="ti ti-scale" aria-hidden="true"></i> Advogado
         <span class="count">12</span>
       </div>
-      <div class="sidebar-item" onclick="switchProfile('analista judiciário', this)" data-profile="analista">
-        <i class="ti ti-user-check" aria-hidden="true"></i> Analista judiciário
+      <div class="sidebar-item" onclick="switchProfile('analista', this)" data-profile="analista">
+        <i class="ti ti-clipboard-check" aria-hidden="true"></i> Analista judiciário
         <span class="count">28</span>
       </div>
-     <div class="sidebar-item" onclick="switchProfile('analista 2º grau', this)" data-profile="analista 2º grau">
-        <i class="ti ti-user-check" aria-hidden="true"></i> Analista Judiciário 2º Grau
+     <div class="sidebar-item" onclick="switchProfile('analista 2', this)" data-profile="analista 2º grau">
+        <i class="ti ti-clipboard-list" aria-hidden="true"></i> Analista Judiciário 2º Grau
         <span class="count">28</span>
       </div>
-     <div class="sidebar-item" onclick="switchProfile('assistente de gabinete', this)" data-profile="assistente de gabinete">
-        <i class="ti ti-user-check" aria-hidden="true"></i> Assistente de Gabinete
+     <div class="sidebar-item" onclick="switchProfile('assistente', this)" data-profile="assistente de gabinete">
+        <i class="ti ti-home-2" aria-hidden="true"></i> Assistente de Gabinete
         <span class="count">28</span>
       </div>
-     <div class="sidebar-item" onclick="switchProfile('autoridade policial', this)" data-profile="autoridade policial">
-        <i class="ti ti-user-check" aria-hidden="true"></i> Autoridade Policial
+     <div class="sidebar-item" onclick="switchProfile('autoridade', this)" data-profile="autoridade policial">
+        <i class="ti ti-shield-lock" aria-hidden="true"></i> Autoridade Policial
         <span class="count">28</span>
       </div>
      <div class="sidebar-item" onclick="switchProfile('conciliador', this)" data-profile="conciliador">
-        <i class="ti ti-user-check" aria-hidden="true"></i> Conciliador
+        <i class="ti ti-handshake" aria-hidden="true"></i> Conciliador
         <span class="count">28</span>
       </div>
       <div class="sidebar-item" onclick="switchProfile('desembargador', this)" data-profile="desembargador">
-        <i class="ti ti-user-check" aria-hidden="true"></i> Desembargador
+        <i class="ti ti-building-courthouse" aria-hidden="true"></i> Desembargador
         <span class="count">28</span>
       </div>
       <div class="sidebar-item" onclick="switchProfile('distribuidor', this)" data-profile="distribuidor">
-        <i class="ti ti-briefcase" aria-hidden="true"></i> Distribuidor
+        <i class="ti ti-send" aria-hidden="true"></i> Distribuidor
         <span class="count">12</span>
       </div>
-     <div class="sidebar-item" onclick="switchProfile('distribuidor de gabinete', this)" data-profile="distribuidor de gabinete">
-        <i class="ti ti-briefcase" aria-hidden="true"></i> Distribuidor de Gabinete
+     <div class="sidebar-item" onclick="switchProfile('distribuidor_gabinete', this)" data-profile="distribuidor de gabinete">
+        <i class="ti ti-mail-forward" aria-hidden="true"></i> Distribuidor de Gabinete
         <span class="count">12</span>
       </div>
       <div class="sidebar-item" onclick="switchProfile('juiz', this)" data-profile="juiz">
@@ -776,7 +776,7 @@ const COLORS = ['#0a3d6b','#0d5c9e','#083c6a','#0b4a80','#0e6290','#084070'];
 const DATA = {
    advogado: {
     label: 'Advogado',
-    icon: 'ti-briefcase',
+    icon: 'ti-scale',
     sections: [
         { title: 'Peticionamento', tag: 'processos', videos: [
         { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
@@ -838,9 +838,9 @@ const DATA = {
       ]},
     ]
   },
- analista 2: {
+ 'analista 2': {
     label: 'Analista Judiciário 2º Grau',
-    icon: 'ti-briefcase',
+    icon: 'ti-clipboard-list',
     sections: [
         { title: 'Peticionamento', tag: 'processos', videos: [
         { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
@@ -862,7 +862,7 @@ const DATA = {
   },
  assistente: {
     label: 'Assistente de Gabinete',
-    icon: 'ti-briefcase',
+    icon: 'ti-home-2',
     sections: [
       { title: 'Peticionamento', tag: 'processos', videos: [
         { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
@@ -884,7 +884,7 @@ const DATA = {
   },
   autoridade: {
     label: 'Autoridade Policial',
-    icon: 'ti-briefcase',
+    icon: 'ti-shield-lock',
     sections: [
         { title: 'Peticionamento', tag: 'processos', videos: [
         { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
@@ -906,7 +906,7 @@ const DATA = {
   },
   conciliador: {
     label: 'Conciliador',
-    icon: 'ti-briefcase',
+    icon: 'ti-handshake',
     sections: [
         { title: 'Peticionamento', tag: 'processos', videos: [
         { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
@@ -950,7 +950,7 @@ const DATA = {
   },
   distribuidor: {
     label: 'Distribuidor',
-    icon: 'ti-building',
+    icon: 'ti-send',
     sections: [
         { title: 'Distribuição e mandados', tag: 'distribuicao', videos: [
         { title: 'Pré-distribuição do juízo das garantias', duration: '2:54', url: '' },
@@ -964,9 +964,9 @@ const DATA = {
       ]},
     ]
   },
-  distribuidor: {
+  distribuidor_gabinete: {
     label: 'Distribuidor de Gabinete',
-    icon: 'ti-building',
+    icon: 'ti-mail-forward',
     sections: [
         { title: 'Distribuição e mandados', tag: 'distribuicao', videos: [
         { title: 'Pré-distribuição do juízo das garantias', duration: '2:54', url: '' },
@@ -1005,15 +1005,15 @@ let searchTerm = '';
 
 const PROFILE_META = {
   todos: { label: 'Todos os perfis', icon: 'ti-users' },
-  advogado: { label: 'Advogado', icon: 'ti-briefcase' },
-  analista: { label: 'Analista judiciário', icon: 'ti-user-check' },
-  analista 2: { label: 'Analista Judiciário 2º Grau', icon: 'ti-user-check' },
-  assistente: { label: 'Assistente de Gabinete', icon: 'ti-user-check' },
-  autoridade: { label: 'Autoridade Policial', icon: 'ti-user-check' },
-  conciliador: { label: 'Conciliador', icon: 'ti-user-check' },
-  desembargador: { label: 'Desembargador', icon: 'ti-scale' },
-  distribuidor: { label: 'Distribuidor', icon: 'ti-building' },
-  distribuidor: { label: 'Distribuidor de Gabinete', icon: 'ti-building' },
+  advogado: { label: 'Advogado', icon: 'ti-scale' },
+  analista: { label: 'Analista judiciário', icon: 'ti-clipboard-check' },
+  'analista 2': { label: 'Analista Judiciário 2º Grau', icon: 'ti-clipboard-list' },
+  assistente: { label: 'Assistente de Gabinete', icon: 'ti-home-2' },
+  autoridade: { label: 'Autoridade Policial', icon: 'ti-shield-lock' },
+  conciliador: { label: 'Conciliador', icon: 'ti-handshake' },
+  desembargador: { label: 'Desembargador', icon: 'ti-building-courthouse' },
+  distribuidor: { label: 'Distribuidor', icon: 'ti-send' },
+  distribuidor_gabinete: { label: 'Distribuidor de Gabinete', icon: 'ti-mail-forward' },
   juiz: { label: 'Magistrado', icon: 'ti-gavel' },
 };
 
@@ -1502,6 +1502,13 @@ function renderPDFList() {
         ${cat.title}
         <span style="margin-left:4px;font-size:10px;background:#c5dcf0;color:var(--tjgo-navy);padding:1px 6px;border-radius:8px;font-weight:500;">${filtered.length}</span>
         <i class="ti ti-chevron-down cat-arrow" aria-hidden="true"></i>
+      </div>
+      <div class="pdf-category-body ${cat.open ? '' : 'collapsed'}">
+        ${filtered.map((p, pi) => `
+          <a class="pdf-item" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi})">
+            <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
+            <span>${p.name}</span>
+          </a>`).join('')}
       </div>
     </div>`;
   });
