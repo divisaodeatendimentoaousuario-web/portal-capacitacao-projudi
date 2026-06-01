@@ -769,7 +769,7 @@
       </div>
       <div id="pdf-list"></div>
     </div>
-
+   
     <div class="sidebar-divider"></div>
     <div class="sidebar-item" onclick="resetFilters(this)" style="color:#c0392b;">
       <i class="ti ti-refresh" aria-hidden="true"></i> Limpar filtros
@@ -1215,28 +1215,29 @@ function switchTab(tab) {
     render();
   } else {
     closeVideoPlayer();
+    PDF_CATEGORIES.forEach(c => c.open = false);
     renderPDFList();
-    const container = document.getElementById('videos-container');
-    document.querySelector('.profile-header').style.display = 'none';
+    // Seleciona "Todos os informativos" como padrão
+    const todosItem = document.getElementById('pdf-todos-item');
+    if (todosItem) {
+      document.querySelectorAll('#panel-pdfs .pdf-category-header').forEach(h => h.classList.remove('open'));
+      todosItem.classList.add('active');
+    }
+    showAllPDFsContent();
+    document.querySelector('.profile-header').style.display = '';
     document.getElementById('video-player-panel').style.display = 'none';
-    container.innerHTML = `<div class="empty-state">
-      <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
-      <p>Selecione uma categoria de informativos na barra lateral</p>
-    </div>`;
-    container.style.display = '';
   }
 }
 
-function switchProfile(profile, el) {
-  currentProfile = profile;
-  currentTopic = null;
+function showAllPDFs(el) {
+  // Destaca item "Todos" e remove destaque das categorias
+  document.querySelectorAll('#panel-pdfs .pdf-category-header').forEach(h => h.classList.remove('open'));
+  document.querySelectorAll('#pdf-list .sidebar-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('pdf-todos-item').classList.add('active');
   PDF_CATEGORIES.forEach(c => c.open = false);
-  document.querySelectorAll('.sidebar-item[data-profile]').forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
-  closePDFViewer();
-  closeVideoPlayer();
   renderPDFList();
-  render();
+  closePDFViewer();
+  showAllPDFsContent();
   mobileSelectContent();
 }
 
