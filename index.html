@@ -140,7 +140,7 @@ window._renderIcons = _renderIcons;
     background: var(--bg);
     color: var(--text-primary);
     min-height: 100vh;
-    font-size: calc(16px * var(--font-scale));
+    font-size: calc(15px * var(--font-scale));
   }
 
   /* ── HEADER ── */
@@ -168,13 +168,13 @@ window._renderIcons = _renderIcons;
   }
   .header-text h1 {
     font-family: 'Source Serif 4', serif;
-    font-size: calc(24px * var(--font-scale)); font-weight: 600; letter-spacing: 0.01em;
+    font-size: calc(22px * var(--font-scale)); font-weight: 600; letter-spacing: 0.01em;
   }
-  .header-text p { font-size: calc(15px * var(--font-scale)); opacity: 0.8; margin-top: 3px; }
+  .header-text p { font-size: calc(14px * var(--font-scale)); opacity: 0.8; margin-top: 3px; }
   .header-right { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; }
   .header-badge {
     background: var(--tjgo-gold); color: #1a1a1a;
-    font-size: 14px; font-weight: 600; padding: 5px 12px;
+    font-size: 12px; font-weight: 600; padding: 5px 12px;
     border-radius: 20px; letter-spacing: 0.04em;
   }
 
@@ -378,14 +378,14 @@ window._renderIcons = _renderIcons;
     color: white;
   }
   .pdf-viewer-toolbar .pdf-title {
-    flex: 1; font-size: 14.5px; font-weight: 500;
+    flex: 1; font-size: 13px; font-weight: 500;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .pdf-viewer-toolbar a {
     display: inline-flex; align-items: center; gap: 5px;
     background: var(--tjgo-gold); color: #1a1a1a;
     padding: 5px 12px; border-radius: var(--radius);
-    font-size: 13.5px; font-weight: 600; text-decoration: none;
+    font-size: 12px; font-weight: 600; text-decoration: none;
     flex-shrink: 0; transition: opacity 0.15s;
   }
   .pdf-viewer-toolbar a:hover { opacity: 0.85; }
@@ -397,7 +397,7 @@ window._renderIcons = _renderIcons;
     transition: background 0.12s;
   }
   .pdf-viewer-toolbar .close-btn:hover { background: rgba(255,255,255,0.28); }
-  .pdf-viewer-frame { width: 100%; height: calc(100vh - 200px); min-height: 500px; border: none; display: block; }
+  .pdf-viewer-frame { width: 100%; height: 600px; border: none; display: block; }
   .pdf-viewer-panel.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; }
   .pdf-viewer-panel.maximized .pdf-viewer-frame { height: calc(100vh - 48px); }
 
@@ -434,13 +434,51 @@ window._renderIcons = _renderIcons;
   .pdf-card-icon i { color: #c0392b; font-size: 20px; }
   .pdf-card-body { flex: 1; min-width: 0; }
   .pdf-card-title { font-size: 12.5px; font-weight: 500; color: var(--text-primary); line-height: 1.45; margin-bottom: 5px; }
-  .pdf-card-meta { font-size: 12.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+  .pdf-card-meta { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
 
   /* ── CONTENT ── */
   .content {
-    flex: 1; padding: 1.75rem 2rem;
+    flex: 1;
+    padding: 1.75rem 2rem;
     overflow-y: auto;
-    max-width: 1100px;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    min-width: 0;
+  }
+  .content-left { flex: 1; min-width: 0; }
+  /* ── PAINEL LATERAL PLAYER ── */
+  .content-right {
+    width: 400px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 1.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .side-player-wrap {
+    display: none;
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+  }
+  .side-player-wrap.visible { display: flex; }
+  .side-placeholder {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1rem; padding: 3rem 1.5rem;
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    color: var(--text-muted); text-align: center;
+  }
+  .side-placeholder i { font-size: 40px; opacity:.5; display:block; }
+  .side-placeholder p { font-size: 13px; line-height: 1.6; }
+  html.theme-escuro .side-placeholder { background: #1f2937; }
+  @media (max-width: 960px) {
+    .content { flex-direction: column; padding: 1rem; }
+    .content-right { width: 100%; position: static; }
   }
 
   /* ── STATS ── */
@@ -456,9 +494,9 @@ window._renderIcons = _renderIcons;
     padding: 1rem 1.25rem;
     border-top: 3px solid var(--tjgo-navy);
   }
-  .stat-card .s-label { font-size: 12.5px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .stat-card .s-value { font-size: 30px; font-weight: 600; color: var(--tjgo-navy); line-height: 1; }
-  .stat-card .s-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 4px; }
+  .stat-card .s-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat-card .s-value { font-size: 26px; font-weight: 600; color: var(--tjgo-navy); line-height: 1; }
+  .stat-card .s-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
   /* ── PROFILE BADGE ── */
   .profile-header {
@@ -471,7 +509,7 @@ window._renderIcons = _renderIcons;
     padding: 7px 16px; border-radius: 20px;
     font-size: 13px; font-weight: 500;
   }
-  .result-count { font-size: 14px; color: var(--text-muted); }
+  .result-count { font-size: 13px; color: var(--text-muted); }
 
   /* ── SECTIONS ── */
   .section-block { margin-bottom: 1.5rem; }
@@ -524,9 +562,10 @@ window._renderIcons = _renderIcons;
     transition: background 0.12s;
   }
   .video-player-toolbar .vp-btn:hover { background: rgba(255,255,255,0.28); }
-  .video-player-frame { width: 100%; height: calc(100vh - 220px); min-height: 400px; border: none; display: block; background: #000; aspect-ratio: unset; }
-  .video-player-panel.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; background: #000; }
-  .video-player-panel.maximized .video-player-frame { height: calc(100vh - 48px); aspect-ratio: unset; background: #000; }
+  .video-player-frame { width: 100%; aspect-ratio: 16/9; border: none; display: block; background: #000; }
+  .side-player-wrap.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; background: #000; }
+  .side-player-wrap.maximized .video-player-frame { height: calc(100vh - 48px); aspect-ratio: unset; background: #000; }
+  .side-player-wrap.maximized .pdf-viewer-frame { height: calc(100vh - 48px); }
   .video-card.active {
     border-color: var(--tjgo-navy);
     box-shadow: 0 0 0 2px rgba(10,61,107,0.2);
@@ -625,28 +664,36 @@ window._renderIcons = _renderIcons;
 
   /* Foco visível em todos os elementos interativos */
   a:focus-visible, button:focus-visible,
-  input:focus-visible, [tabindex]:focus-visible {
+  input:focus-visible, select:focus-visible,
+  [tabindex]:focus-visible {
     outline: 3px solid var(--tjgo-gold);
     outline-offset: 2px;
     border-radius: 4px;
   }
 
-  /* Alto contraste: reforço de bordas */
+  /* Modo alto contraste */
   html.theme-contraste .video-card,
-  html.theme-contraste .pdf-card { border: 2px solid #000; }
-  html.theme-contraste .sidebar-item.active { border-left: 4px solid #000; }
+  html.theme-contraste .pdf-card-item { border: 2px solid #fff; }
+  html.theme-contraste .sidebar-item.active { border-left: 4px solid #ff0; }
+  html.theme-contraste .side-placeholder { border-color: #fff; color: #fff; }
+  html.theme-contraste .side-player-wrap .video-player-toolbar,
+  html.theme-contraste .side-player-wrap .pdf-viewer-toolbar { background: #000; color: #ff0; }
 
-  /* Tamanhos de fonte nos cards conforme A- A A+ A++ */
-  html.font-aa .video-card-title,
-  html.font-aa .pdf-card-name  { font-size: 15px; }
-  html.font-aaa .video-card-title,
-  html.font-aaa .pdf-card-name { font-size: 17px; }
+  /* Tamanho de fonte acessível nos cards */
+  html.font-aa .video-card-title { font-size: 15px; }
+  html.font-aaa .video-card-title { font-size: 17px; }
+  html.font-aa .pdf-card-name { font-size: 14px; }
+  html.font-aaa .pdf-card-name { font-size: 16px; }
+  html.font-aa .section-header h3 { font-size: 16px; }
+  html.font-aaa .section-header h3 { font-size: 19px; }
+  html.font-aa .sidebar-item span { font-size: 14px; }
+  html.font-aaa .sidebar-item span { font-size: 16px; }
 
   /* ── FOOTER ── */
   footer {
     background: var(--tjgo-navy); color: rgba(255,255,255,0.65);
     text-align: center; padding: 1.25rem;
-    font-size: calc(14.5px * var(--font-scale)); margin-top: 2rem;
+    font-size: calc(13px * var(--font-scale)); margin-top: 2rem;
     line-height: 1.7;
   }
   footer strong { color: rgba(255,255,255,0.9); }
@@ -802,7 +849,7 @@ window._renderIcons = _renderIcons;
 <div class="search-bar" role="search">
   <div class="search-wrap">
     <i class="ti ti-search search-icon" aria-hidden="true"></i>
-    <input type="text" id="search-input" placeholder="Buscar vídeo ou informativo PDF..." aria-label="Buscar vídeo ou informativo PDF" oninput="globalSearch(this.value)" />
+    <input type="text" id="search-input" placeholder="Buscar vídeo ou informativo PDF..." aria-label="Campo de busca de vídeos e informativos" oninput="globalSearch(this.value)" />
   </div>
   <button onclick="globalSearch(document.getElementById('search-input').value)">
     <i class="ti ti-search" aria-hidden="true"></i> Buscar
@@ -877,56 +924,14 @@ window._renderIcons = _renderIcons;
 
     <!-- PAINEL PDFs -->
     <div class="sidebar-panel" id="panel-pdfs">
-
-      <!-- BUSCA -->
-      <div style="padding: 0.5rem 1rem 0.25rem;">
+      <div style="padding: 0.5rem 1rem 0.5rem;">
         <div style="position:relative;">
           <i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);pointer-events:none" aria-hidden="true"></i>
-          <input type="text" id="pdf-search" placeholder="Buscar informativo..."
-            oninput="filterPDFs(this.value)" aria-label="Buscar informativo"
-            style="width:100%;padding:7px 9px 7px 28px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text-primary);font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box;" />
+          <input type="text" id="pdf-search" placeholder="Buscar informativo..." oninput="filterPDFs(this.value)"
+            style="width:100%;padding:7px 9px 7px 28px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text-primary);font-family:'DM Sans',sans-serif;outline:none;" />
         </div>
       </div>
-
-      <!-- PERFIS DE ACESSO -->
-      <div class="sidebar-section-label">Perfis de acesso</div>
-      <div class="sidebar-item active" id="pdf-perfil-todos" onclick="switchPDFPerfil('todos', this)">
-        <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
-        <span class="count" id="pdf-perfil-todos-count">9</span>
-      </div>
-      <div class="sidebar-item" id="pdf-perfil-advogado" onclick="switchPDFPerfil('advogado', this)">
-        <i class="ti ti-scale" aria-hidden="true"></i> Advogado
-      </div>
-      <div class="sidebar-item" id="pdf-perfil-analista" onclick="switchPDFPerfil('analista', this)">
-        <i class="ti ti-clipboard-check" aria-hidden="true"></i> Analista judiciário
-      </div>
-      <div class="sidebar-item" id="pdf-perfil-analista2" onclick="switchPDFPerfil('analista2', this)">
-        <i class="ti ti-clipboard-list" aria-hidden="true"></i> Analista 2º Grau
-      </div>
-      <div class="sidebar-item" id="pdf-perfil-assistente" onclick="switchPDFPerfil('assistente', this)">
-        <i class="ti ti-home-2" aria-hidden="true"></i> Assistente de Gabinete
-      </div>
-      <div class="sidebar-item" id="pdf-perfil-autoridade" onclick="switchPDFPerfil('autoridade', this)">
-        <i class="ti ti-shield-lock" aria-hidden="true"></i> Autoridade Policial
-      </div>
-      <div class="sidebar-item" id="pdf-perfil-conciliador" onclick="switchPDFPerfil('conciliador', this)">
-        <i class="ti ti-heart-handshake" aria-hidden="true"></i> Conciliador
-      </div>
-      <div class="sidebar-item" id="pdf-perfil-desembargador" onclick="switchPDFPerfil('desembargador', this)">
-        <i class="ti ti-building-bank" aria-hidden="true"></i> Desembargador
-      </div>
-      <div class="sidebar-item" id="pdf-perfil-distribuidor" onclick="switchPDFPerfil('distribuidor', this)">
-        <i class="ti ti-send" aria-hidden="true"></i> Distribuidor
-      </div>
-      <div class="sidebar-item" id="pdf-perfil-distribuidor_gabinete" onclick="switchPDFPerfil('distribuidor_gabinete', this)">
-        <i class="ti ti-mail-forward" aria-hidden="true"></i> Dist. de Gabinete
-      </div>
-      <div class="sidebar-item" id="pdf-perfil-juiz" onclick="switchPDFPerfil('juiz', this)">
-        <i class="ti ti-gavel" aria-hidden="true"></i> Juiz
-      </div>
-
-      <!-- CATEGORIAS -->
-      <div class="sidebar-section-label" style="margin-top:0.5rem;">Categorias</div>
+      <div class="sidebar-section-label">Categorias</div>
       <div class="sidebar-item active" id="pdf-todos-item" onclick="showAllPDFs(this)">
         <i class="ti ti-files" aria-hidden="true"></i> Todos os informativos
         <span class="count" id="pdf-todos-count">9</span>
@@ -944,74 +949,90 @@ window._renderIcons = _renderIcons;
   <!-- CONTENT -->
   <main class="content" id="main-content" role="main" aria-label="Conteúdo principal">
 
-    <!-- BOTÃO VOLTAR MOBILE -->
-    <button class="mobile-back-btn" id="mobile-back-btn" onclick="mobileGoBack()" style="display:none;">
-      <i class="ti ti-arrow-left" aria-hidden="true"></i> Voltar
-    </button>
+    <!-- COLUNA ESQUERDA: cards -->
+    <div class="content-left">
 
-    <!-- STATS -->
-    <div id="stat-videos" style="margin-bottom:1.75rem;">
-      <div class="stat-card" style="max-width:220px;">
-        <div class="s-label">Total de vídeos</div>
-        <div class="s-value">55</div>
-        <div class="s-sub">na playlist oficial</div>
+      <!-- BOTÃO VOLTAR MOBILE -->
+      <button class="mobile-back-btn" id="mobile-back-btn" onclick="mobileGoBack()" style="display:none;">
+        <i class="ti ti-arrow-left" aria-hidden="true"></i> Voltar
+      </button>
+
+      <!-- STATS -->
+      <div id="stat-videos" style="margin-bottom:1.75rem;">
+        <div class="stat-card" style="max-width:220px;">
+          <div class="s-label">Total de vídeos</div>
+          <div class="s-value">55</div>
+          <div class="s-sub">na playlist oficial</div>
+        </div>
       </div>
-    </div>
-    <div id="stat-pdfs" style="margin-bottom:1.75rem;display:none;">
-      <div class="stat-card" style="max-width:220px;">
-        <div class="s-label">Total de informativos</div>
-        <div class="s-value">9</div>
-        <div class="s-sub">em PDF disponíveis</div>
+      <div id="stat-pdfs" style="margin-bottom:1.75rem;display:none;">
+        <div class="stat-card" style="max-width:220px;">
+          <div class="s-label">Total de informativos</div>
+          <div class="s-value">9</div>
+          <div class="s-sub">em PDF disponíveis</div>
+        </div>
       </div>
-    </div>
 
-    <!-- DYNAMIC CONTENT -->
-    <div class="profile-header">
-      <span class="profile-pill" id="profile-pill">
-        <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
-      </span>
-      <span class="result-count" id="result-count" aria-live="polite" aria-atomic="true"></span>
-    </div>
-
-    <!-- PDF VIEWER -->
-    <div id="pdf-viewer-panel" class="pdf-viewer-panel" style="display:none;">
-      <div class="pdf-viewer-toolbar">
-        <i class="ti ti-file-type-pdf" style="font-size:16px;flex-shrink:0" aria-hidden="true"></i>
-        <span class="pdf-title" id="pdf-viewer-title"></span>
-        <a id="pdf-download-btn" href="#" download target="_blank">
-          <i class="ti ti-download" aria-hidden="true"></i> Baixar PDF
-        </a>
-        <button class="close-btn" onclick="toggleMaximize()" id="maximize-btn" title="Maximizar">
-          <i class="ti ti-maximize" aria-hidden="true"></i>
-        </button>
-        <button class="close-btn" onclick="closePDFViewer()" title="Fechar visualizador">
-          <i class="ti ti-x" aria-hidden="true"></i>
-        </button>
+      <!-- DYNAMIC CONTENT -->
+      <div class="profile-header">
+        <span class="profile-pill" id="profile-pill">
+          <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
+        </span>
+        <span class="result-count" id="result-count" aria-live="polite" aria-atomic="true"></span>
       </div>
-      <iframe id="pdf-viewer-frame" class="pdf-viewer-frame" title="Visualizador de PDF"></iframe>
-    </div>
 
-    <!-- VIDEO PLAYER -->
-    <div id="video-player-panel" class="video-player-panel" style="display:none;">
-      <div class="video-player-toolbar">
-        <i class="ti ti-brand-youtube" style="font-size:16px;flex-shrink:0;color:#ff4444" aria-hidden="true"></i>
-        <span class="video-title" id="video-player-title"></span>
-        <a id="video-open-yt" href="#" target="_blank" rel="noopener" class="open-yt">
-          <i class="ti ti-brand-youtube" aria-hidden="true"></i> Abrir no YouTube
-        </a>
-        <button class="vp-btn" onclick="toggleVideoMaximize()" id="video-maximize-btn" title="Maximizar">
-          <i class="ti ti-maximize" aria-hidden="true"></i>
-        </button>
-        <button class="vp-btn" onclick="closeVideoPlayer()" title="Fechar">
-          <i class="ti ti-x" aria-hidden="true"></i>
-        </button>
+      <div id="videos-container"></div>
+
+    </div><!-- fim .content-left -->
+
+    <!-- COLUNA DIREITA: player lateral sticky -->
+    <div class="content-right" id="content-right">
+
+      <!-- Placeholder inicial -->
+      <div class="side-placeholder" id="side-placeholder">
+        <i class="ti ti-player-play" aria-hidden="true"></i>
+        <p>Selecione um vídeo ou informativo<br>para reproduzir aqui</p>
       </div>
-      <iframe id="video-player-frame" class="video-player-frame" allowfullscreen
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        title="Player de vídeo"></iframe>
-    </div>
 
-    <div id="videos-container"></div>
+      <!-- VIDEO PLAYER lateral -->
+      <div id="video-player-panel" class="side-player-wrap">
+        <div class="video-player-toolbar">
+          <i class="ti ti-brand-youtube" style="font-size:16px;flex-shrink:0;color:#ff4444" aria-hidden="true"></i>
+          <span class="video-title" id="video-player-title"></span>
+          <a id="video-open-yt" href="#" target="_blank" rel="noopener" class="open-yt">
+            <i class="ti ti-brand-youtube" aria-hidden="true"></i> YouTube
+          </a>
+          <button class="vp-btn" onclick="toggleVideoMaximize()" id="video-maximize-btn" title="Maximizar">
+            <i class="ti ti-maximize" aria-hidden="true"></i>
+          </button>
+          <button class="vp-btn" onclick="closeVideoPlayer()" title="Fechar" aria-label="Fechar player">
+            <i class="ti ti-x" aria-hidden="true"></i>
+          </button>
+        </div>
+        <iframe id="video-player-frame" class="video-player-frame" allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          title="Player de vídeo"></iframe>
+      </div>
+
+      <!-- PDF VIEWER lateral -->
+      <div id="pdf-viewer-panel" class="side-player-wrap">
+        <div class="pdf-viewer-toolbar">
+          <i class="ti ti-file-type-pdf" style="font-size:16px;flex-shrink:0" aria-hidden="true"></i>
+          <span class="pdf-title" id="pdf-viewer-title"></span>
+          <a id="pdf-download-btn" href="#" download target="_blank">
+            <i class="ti ti-download" aria-hidden="true"></i> Baixar PDF
+          </a>
+          <button class="close-btn" onclick="toggleMaximize()" id="maximize-btn" title="Maximizar">
+            <i class="ti ti-maximize" aria-hidden="true"></i>
+          </button>
+          <button class="close-btn" onclick="closePDFViewer()" title="Fechar visualizador" aria-label="Fechar visualizador">
+            <i class="ti ti-x" aria-hidden="true"></i>
+          </button>
+        </div>
+        <iframe id="pdf-viewer-frame" class="pdf-viewer-frame" title="Visualizador de PDF"></iframe>
+      </div>
+
+    </div><!-- fim .content-right -->
 
   </main>
 </div>
@@ -1381,11 +1402,6 @@ function switchTab(tab) {
   } else {
     closeVideoPlayer();
     PDF_CATEGORIES.forEach(c => c.open = false);
-    // Resetar perfil para "todos" ao entrar na aba
-    currentPDFPerfil = 'todos';
-    document.querySelectorAll('[id^="pdf-perfil-"]').forEach(e => e.classList.remove('active'));
-    const perfilTodos = document.getElementById('pdf-perfil-todos');
-    if (perfilTodos) perfilTodos.classList.add('active');
     renderPDFList();
     // Seleciona "Todos os informativos" como padrão
     const todosItem = document.getElementById('pdf-todos-item');
@@ -1395,6 +1411,7 @@ function switchTab(tab) {
     }
     showAllPDFsContent();
     document.querySelector('.profile-header').style.display = '';
+    document.getElementById('video-player-panel').classList.remove('visible');
   }
 }
 
@@ -1412,13 +1429,8 @@ function showAllPDFs(el) {
 
 function showAllPDFsContent() {
   const container = document.getElementById('videos-container');
-  document.getElementById('pdf-viewer-panel').style.display = 'none';
+  document.getElementById('pdf-viewer-panel').classList.remove('visible');
   document.querySelector('.profile-header').style.display = '';
-  // Atualiza contagem do "Todos" conforme perfil ativo
-  let total = 0;
-  PDF_CATEGORIES.forEach(c => { total += getFilteredItems(c).length; });
-  const el = document.getElementById('pdf-todos-count');
-  if (el) el.textContent = total;
 
   const pill = document.getElementById('profile-pill');
   pill.innerHTML = `<i class="ti ti-files" aria-hidden="true"></i> Todos os informativos`;
@@ -1429,23 +1441,21 @@ function showAllPDFsContent() {
 
   let html = '';
   PDF_CATEGORIES.forEach((cat, ci) => {
-    const filteredItems = getFilteredItems(cat);
-    if (filteredItems.length === 0) return;
+    if (cat.items.length === 0) return;
     html += `<div class="profile-group-title">
       <i class="ti ${cat.icon}" style="font-size:18px;color:var(--tjgo-navy)" aria-hidden="true"></i>
       <span>${cat.title}</span>
-      <span class="total-badge">${filteredItems.length} informativo${filteredItems.length !== 1 ? 's' : ''}</span>
+      <span class="total-badge">${cat.items.length} informativo${cat.items.length !== 1 ? 's' : ''}</span>
     </div>
     <div class="section-block">
       <div class="section-header">
         <h3>Informativos em PDF</h3>
-        <span class="section-tag">${filteredItems.length} arquivo${filteredItems.length !== 1 ? 's' : ''}</span>
+        <span class="section-tag">${cat.items.length} arquivo${cat.items.length !== 1 ? 's' : ''}</span>
       </div>
       <div class="pdf-cards-grid">`;
-    filteredItems.forEach((p) => {
-      const pi_real = cat.items.indexOf(p);
-      const cardId = `pdf-card-${ci}-${pi_real}`;
-      html += `<div class="pdf-card" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi_real})">
+    cat.items.forEach((p, pi) => {
+      const cardId = `pdf-card-${ci}-${pi}`;
+      html += `<div class="pdf-card" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi})">
         <div class="pdf-card-icon"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
         <div class="pdf-card-body">
           <div class="pdf-card-title">${p.name}</div>
@@ -1455,10 +1465,6 @@ function showAllPDFsContent() {
     });
     html += `</div></div>`;
   });
-
-  if (!html) {
-    html = `<div class="empty-state"><i class="ti ti-file-type-pdf" style="font-size:48px;opacity:.4" aria-hidden="true"></i><p>Nenhum informativo para este perfil</p></div>`;
-  }
 
   container.innerHTML = html;
   _renderIcons(container);
@@ -1624,21 +1630,15 @@ function resetFilters(el) {
 // Categorias: adicione { name, file } em cada categoria.
 // Para incluir novos PDFs, acrescente na categoria correspondente.
 
-// Perfis disponíveis nos informativos
-// Cada item pode ter um campo 'perfis': array de perfis que veem o item.
-// Se omitido ou vazio, aparece para todos.
 const PDF_CATEGORIES = [
   {
     title: 'Cadastros e dados',
     icon: 'ti-database',
     open: false,
     items: [
-      { name: 'Informativo nº 01 — Disponibilização do campo comunidade quando for informada a etnia indígena e quilombola', file: 'Informativo nº 01 - Informa sobre a disponibilização do campo comunidade quando for informada a etnia indígena e quilombola.pdf',
-        perfis: ['todos','advogado','analista','analista2','assistente','autoridade','conciliador','desembargador','distribuidor','distribuidor_gabinete','juiz'] },
-      { name: 'Informativo nº 03 — Cadastro de polo passivo de processo cível sem CPF ou CNPJ com justificativa obrigatória', file: 'Informativo nº 03 - Cadastro de polo passivo de processo cível sem CPF ou CNPJ por meio da inclusão obrigatória de justificativa no sistema PROJUDI.pdf',
-        perfis: ['todos','advogado','analista','analista2','assistente','autoridade','conciliador','desembargador','distribuidor','distribuidor_gabinete','juiz'] },
-      { name: 'Informativo nº 07 — Cadastro de Precatório para o DEPRE no sistema PROJUDI', file: 'Informativo nº 07 - Cadastro de Precatório para o DEPRE no sistema PROJUDI.pdf',
-        perfis: ['todos','analista','analista2','assistente','desembargador','juiz'] },
+      { name: 'Informativo nº 01 — Disponibilização do campo comunidade quando for informada a etnia indígena e quilombola', file: 'Informativo nº 01 - Informa sobre a disponibilização do campo comunidade quando for informada a etnia indígena e quilombola.pdf' },
+      { name: 'Informativo nº 03 — Cadastro de polo passivo de processo cível sem CPF ou CNPJ com justificativa obrigatória', file: 'Informativo nº 03 - Cadastro de polo passivo de processo cível sem CPF ou CNPJ por meio da inclusão obrigatória de justificativa no sistema PROJUDI.pdf' },
+      { name: 'Informativo nº 07 — Cadastro de Precatório para o DEPRE no sistema PROJUDI', file: 'Informativo nº 07 - Cadastro de Precatório para o DEPRE no sistema PROJUDI.pdf' },
     ]
   },
   {
@@ -1646,12 +1646,9 @@ const PDF_CATEGORIES = [
     icon: 'ti-shield-check',
     open: false,
     items: [
-      { name: 'Informativo nº 02 — Orientação às autoridades policiais sobre a seleção da área de distribuição ao Juízo das Garantias', file: 'Informativo nº 02 - Orienta às autoridades policiais sobre a seleção da área de distribuição nos processos a serem distribuídos ao Juízo das Garantias.pdf',
-        perfis: ['todos','autoridade','analista','analista2','juiz','desembargador'] },
-      { name: 'Informativo nº 05 — Encaminhamento não automático de processos de competência do Juízo das Garantias', file: 'Informativo nº 05 - Comunica acerca do encaminhamento não automático de processos de competência do Juízo das Garantias.pdf',
-        perfis: ['todos','analista','analista2','juiz','desembargador','assistente'] },
-      { name: 'Informativo nº 06 — Devolução e arquivamento dos processos encaminhados para o Juízo das Garantias', file: 'Informativo nº 06 - Comunica acerca do procedimento sistêmico para devolução e arquivamento dos processos encaminhados para o Juízo das Garantias.pdf',
-        perfis: ['todos','analista','analista2','juiz','desembargador','assistente'] },
+      { name: 'Informativo nº 02 — Orientação às autoridades policiais sobre a seleção da área de distribuição ao Juízo das Garantias', file: 'Informativo nº 02 - Orienta às autoridades policiais sobre a seleção da área de distribuição nos processos a serem distribuídos ao Juízo das Garantias.pdf' },
+      { name: 'Informativo nº 05 — Encaminhamento não automático de processos de competência do Juízo das Garantias', file: 'Informativo nº 05 - Comunica acerca do encaminhamento não automático de processos de competência do Juízo das Garantias.pdf' },
+      { name: 'Informativo nº 06 — Devolução e arquivamento dos processos encaminhados para o Juízo das Garantias', file: 'Informativo nº 06 - Comunica acerca do procedimento sistêmico para devolução e arquivamento dos processos encaminhados para o Juízo das Garantias.pdf' },
     ]
   },
   {
@@ -1659,10 +1656,8 @@ const PDF_CATEGORIES = [
     icon: 'ti-settings',
     open: false,
     items: [
-      { name: 'Informativo nº 04 — Melhorias relacionadas à averbação de débitos no sistema PROJUDI', file: 'Informativo nº 04 - Melhorias relacionadas à averbação de débitos no sistema PROJUDI.pdf',
-        perfis: ['todos','analista','analista2','assistente','juiz','desembargador','distribuidor','distribuidor_gabinete'] },
-      { name: 'Informativo nº 09 — Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI', file: 'Informativo nº 09 - Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI.pdf',
-        perfis: ['todos','analista','analista2','assistente','juiz','desembargador','advogado'] },
+      { name: 'Informativo nº 04 — Melhorias relacionadas à averbação de débitos no sistema PROJUDI', file: 'Informativo nº 04 - Melhorias relacionadas à averbação de débitos no sistema PROJUDI.pdf' },
+      { name: 'Informativo nº 09 — Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI', file: 'Informativo nº 09 - Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI.pdf' },
     ]
   },
   {
@@ -1670,35 +1665,10 @@ const PDF_CATEGORIES = [
     icon: 'ti-send',
     open: false,
     items: [
-      { name: 'Informativo nº 08 — Procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência', file: 'Informativo nº 08 - Orienta acerca do procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência.pdf',
-        perfis: ['todos','analista','analista2','assistente','juiz','desembargador','distribuidor','distribuidor_gabinete'] },
+      { name: 'Informativo nº 08 — Procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência', file: 'Informativo nº 08 - Orienta acerca do procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência.pdf' },
     ]
   },
 ];
-
-// Perfil ativo na aba de informativos
-let currentPDFPerfil = 'todos';
-
-function switchPDFPerfil(perfil, el) {
-  currentPDFPerfil = perfil;
-  // Atualiza destaque na sidebar
-  document.querySelectorAll('[id^="pdf-perfil-"]').forEach(e => e.classList.remove('active'));
-  if (el) el.classList.add('active');
-  // Remove destaque do "Todos os informativos" de categorias
-  PDF_CATEGORIES.forEach(c => c.open = false);
-  closePDFViewer();
-  renderPDFList();
-  showAllPDFs(document.getElementById('pdf-todos-item'));
-}
-
-function getFilteredItems(cat) {
-  // Filtra por perfil atual e por busca
-  return cat.items.filter(p => {
-    const perfilOk = currentPDFPerfil === 'todos' || !p.perfis || p.perfis.includes(currentPDFPerfil);
-    const buscaOk  = !pdfSearchTerm || p.name.toLowerCase().includes(pdfSearchTerm);
-    return perfilOk && buscaOk;
-  });
-}
 
 let pdfSearchTerm = '';
 
@@ -1724,11 +1694,9 @@ function toggleCategory(idx) {
 
 function renderPDFCards(idx) {
   const cat = PDF_CATEGORIES[idx];
-  const filteredItems = getFilteredItems(cat);
   const container = document.getElementById('videos-container');
   const panel = document.getElementById('pdf-viewer-panel');
 
-  panel.style.display = 'none';
   document.querySelector('.profile-header').style.display = 'none';
 
   let html = `<div class="profile-group-title">
@@ -1750,7 +1718,7 @@ function renderPDFCards(idx) {
 
   cat.items.forEach((p, pi) => {
     const cardId = `pdf-card-${idx}-${pi}`;
-    html += `<div class="pdf-card" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${idx},${pi_real})">
+    html += `<div class="pdf-card" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${idx},${pi})">
       <div class="pdf-card-icon"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
       <div class="pdf-card-body">
         <div class="pdf-card-title">${p.name}</div>
@@ -1779,7 +1747,7 @@ function filterPDFCards(val, idx) {
     shown++;
     const cardId = `pdf-card-${idx}-${pi}`;
     const isActive = activePDFItem === cardId;
-    html += `<div class="pdf-card${isActive ? ' active' : ''}" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${idx},${pi_real})">
+    html += `<div class="pdf-card${isActive ? ' active' : ''}" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${idx},${pi})">
       <div class="pdf-card-icon"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
       <div class="pdf-card-body">
         <div class="pdf-card-title">${p.name}</div>
@@ -1809,14 +1777,12 @@ function filterPDFs(val) {
   renderPDFList();
 
   const container = document.getElementById('videos-container');
-  document.getElementById('pdf-viewer-panel').style.display = 'none';
   document.querySelector('.profile-header').style.display = 'none';
 
   let allItems = [];
   PDF_CATEGORIES.forEach((cat, ci) => {
     cat.items.forEach((p, pi) => {
-      const perfilOk = currentPDFPerfil === 'todos' || !p.perfis || p.perfis.includes(currentPDFPerfil);
-      if (perfilOk && p.name.toLowerCase().includes(pdfSearchTerm)) {
+      if (p.name.toLowerCase().includes(pdfSearchTerm)) {
         allItems.push({ ...p, ci, pi, catTitle: cat.title, catIcon: cat.icon });
       }
     });
@@ -1861,7 +1827,9 @@ function renderPDFList() {
   let totalShown = 0;
 
   PDF_CATEGORIES.forEach((cat, ci) => {
-    const filtered = getFilteredItems(cat);
+    const filtered = pdfSearchTerm
+      ? cat.items.filter(p => p.name.toLowerCase().includes(pdfSearchTerm))
+      : cat.items;
     if (filtered.length === 0) return;
     totalShown += filtered.length;
 
@@ -1874,7 +1842,7 @@ function renderPDFList() {
       </div>
       <div class="pdf-category-body ${cat.open ? '' : 'collapsed'}">
         ${filtered.map((p, pi) => `
-          <a class="pdf-item" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi_real})">
+          <a class="pdf-item" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi})">
             <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
             <span>${p.name}</span>
           </a>`).join('')}
@@ -1893,27 +1861,25 @@ function renderPDFList() {
 let activePDFItem = null;
 
 function openPDFViewer(file, name, ci, pi) {
-  // Remove destaque anterior
   if (activePDFItem) {
     const prev = document.getElementById(activePDFItem);
     if (prev) prev.classList.remove('active');
   }
-  // Destaca card atual
   const cardId = `pdf-card-${ci}-${pi}`;
   activePDFItem = cardId;
   const el = document.getElementById(cardId);
   if (el) el.classList.add('active');
 
-  // Mostra viewer com toolbar
   const url = 'pdfs/' + encodeURIComponent(file);
-  const toolbar = document.getElementById('pdf-viewer-panel').querySelector('.pdf-viewer-toolbar');
-  toolbar.style.display = '';
   document.getElementById('pdf-viewer-title').textContent = name;
   document.getElementById('pdf-viewer-frame').src = url;
   document.getElementById('pdf-download-btn').href = url;
   document.getElementById('pdf-download-btn').download = file;
-  document.getElementById('pdf-viewer-panel').style.display = 'block';
-  document.getElementById('pdf-viewer-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Fecha vídeo se estiver aberto
+  document.getElementById('video-player-panel').classList.remove('visible');
+  document.getElementById('side-placeholder').style.display = 'none';
+  document.getElementById('pdf-viewer-panel').classList.add('visible');
 }
 
 // ── VIDEO PLAYER ──
@@ -1931,36 +1897,38 @@ function getYouTubeEmbedUrl(url) {
 }
 
 function openVideoPlayer(url, title, cardId) {
-  // Remove destaque anterior
   if (activeVideoCard) {
     const prev = document.getElementById(activeVideoCard);
     if (prev) prev.classList.remove('active');
   }
   activeVideoCard = cardId;
   const el = document.getElementById(cardId);
-  if (el) {
-    el.classList.add('active');
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
+  if (el) { el.classList.add('active'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
 
   document.getElementById('video-player-title').textContent = title;
   document.getElementById('video-player-frame').src = getYouTubeEmbedUrl(url);
   document.getElementById('video-open-yt').href = url;
-  const panel = document.getElementById('video-player-panel');
-  panel.style.display = 'block';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Fecha PDF se estiver aberto
+  document.getElementById('pdf-viewer-panel').classList.remove('visible');
+  document.getElementById('side-placeholder').style.display = 'none';
+  document.getElementById('video-player-panel').classList.add('visible');
 }
 
 function closeVideoPlayer() {
   const panel = document.getElementById('video-player-panel');
   panel.classList.remove('maximized');
+  panel.classList.remove('visible');
   document.body.style.overflow = '';
-  panel.style.display = 'none';
   document.getElementById('video-player-frame').src = '';
   if (activeVideoCard) {
     const el = document.getElementById(activeVideoCard);
     if (el) el.classList.remove('active');
     activeVideoCard = null;
+  }
+  // Mostra placeholder se nenhum PDF aberto
+  if (!document.getElementById('pdf-viewer-panel').classList.contains('visible')) {
+    document.getElementById('side-placeholder').style.display = '';
   }
 }
 
@@ -1971,7 +1939,7 @@ function toggleVideoMaximize() {
   btn.title = isMax ? 'Restaurar' : 'Maximizar';
   btn.querySelector('i').className = isMax ? 'ti ti-minimize' : 'ti ti-maximize';
   document.body.style.overflow = isMax ? 'hidden' : '';
-  if (!isMax) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  _renderIcons(btn);
 }
 
 function toggleMaximize() {
@@ -1980,28 +1948,24 @@ function toggleMaximize() {
   const isMax = panel.classList.toggle('maximized');
   btn.title = isMax ? 'Restaurar' : 'Maximizar';
   btn.querySelector('i').className = isMax ? 'ti ti-minimize' : 'ti ti-maximize';
-  if (isMax) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = '';
-    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  document.body.style.overflow = isMax ? 'hidden' : '';
+  _renderIcons(btn);
 }
 
 function closePDFViewer() {
   const panel = document.getElementById('pdf-viewer-panel');
   panel.classList.remove('maximized');
+  panel.classList.remove('visible');
   document.body.style.overflow = '';
-  panel.style.display = 'none';
   document.getElementById('pdf-viewer-frame').src = '';
-  document.getElementById('videos-container').style.display = '';
-  document.querySelector('.profile-header').style.display = '';
-  const toolbar = document.getElementById('pdf-viewer-panel').querySelector('.pdf-viewer-toolbar');
-  if (toolbar) toolbar.style.display = '';
   if (activePDFItem) {
     const el = document.getElementById(activePDFItem);
     if (el) el.classList.remove('active');
     activePDFItem = null;
+  }
+  // Mostra placeholder se nenhum vídeo aberto
+  if (!document.getElementById('video-player-panel').classList.contains('visible')) {
+    document.getElementById('side-placeholder').style.display = '';
   }
 }
 
