@@ -397,7 +397,7 @@ window._renderIcons = _renderIcons;
     transition: background 0.12s;
   }
   .pdf-viewer-toolbar .close-btn:hover { background: rgba(255,255,255,0.28); }
-  .pdf-viewer-frame { width: 100%; height: 600px; border: none; display: block; }
+  .pdf-viewer-frame { width: 100%; height: 100%; min-height: 500px; border: none; display: block; }
   .pdf-viewer-panel.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; }
   .pdf-viewer-panel.maximized .pdf-viewer-frame { height: calc(100vh - 48px); }
 
@@ -445,16 +445,22 @@ window._renderIcons = _renderIcons;
     gap: 1.5rem;
     align-items: flex-start;
     min-width: 0;
+    /* necessário para sticky funcionar na altura total */
+    min-height: 100vh;
   }
   .content-left { flex: 1; min-width: 0; }
+
   /* ── PAINEL LATERAL PLAYER ── */
   .content-right {
-    width: 400px;
+    width: 46%;
+    max-width: 680px;
     flex-shrink: 0;
     position: sticky;
-    top: 1.75rem;
+    top: 0;
+    height: 100vh;
     display: flex;
     flex-direction: column;
+    padding: 1rem 0;
   }
   .side-player-wrap {
     display: none;
@@ -462,8 +468,25 @@ window._renderIcons = _renderIcons;
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+    flex: 1;
+    height: 100%;
   }
   .side-player-wrap.visible { display: flex; }
+
+  /* iframe PDF ocupa toda a altura disponível */
+  .side-player-wrap .pdf-viewer-frame {
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+  }
+  /* iframe vídeo mantém aspecto 16:9 mas pode crescer */
+  .side-player-wrap .video-player-frame {
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: unset;
+  }
+
   .side-placeholder {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
@@ -472,13 +495,15 @@ window._renderIcons = _renderIcons;
     border: 2px dashed var(--border);
     border-radius: var(--radius-lg);
     color: var(--text-muted); text-align: center;
+    flex: 1;
   }
-  .side-placeholder i { font-size: 40px; opacity:.5; display:block; }
-  .side-placeholder p { font-size: 13px; line-height: 1.6; }
+  .side-placeholder i { font-size: 48px; opacity:.4; display:block; }
+  .side-placeholder p { font-size: 14px; line-height: 1.7; }
   html.theme-escuro .side-placeholder { background: #1f2937; }
+
   @media (max-width: 960px) {
     .content { flex-direction: column; padding: 1rem; }
-    .content-right { width: 100%; position: static; }
+    .content-right { width: 100%; position: static; height: 70vh; padding: 0; }
   }
 
   /* ── STATS ── */
@@ -562,7 +587,7 @@ window._renderIcons = _renderIcons;
     transition: background 0.12s;
   }
   .video-player-toolbar .vp-btn:hover { background: rgba(255,255,255,0.28); }
-  .video-player-frame { width: 100%; aspect-ratio: 16/9; border: none; display: block; background: #000; }
+  .video-player-frame { width: 100%; aspect-ratio: 16/9; border: none; display: block; background: #000; min-height: 220px; }
   .side-player-wrap.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; background: #000; }
   .side-player-wrap.maximized .video-player-frame { height: calc(100vh - 48px); aspect-ratio: unset; background: #000; }
   .side-player-wrap.maximized .pdf-viewer-frame { height: calc(100vh - 48px); }
