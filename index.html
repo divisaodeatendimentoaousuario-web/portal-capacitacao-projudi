@@ -755,12 +755,10 @@
 
     <!-- PAINEL PDFs -->
     <div class="sidebar-panel" id="panel-pdfs">
-      <div style="padding: 0.5rem 1rem 0.5rem;">
-        <div style="position:relative;">
-          <i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);pointer-events:none" aria-hidden="true"></i>
-          <input type="text" id="pdf-search" placeholder="Buscar informativo..." oninput="filterPDFs(this.value)"
-            style="width:100%;padding:7px 9px 7px 28px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text-primary);font-family:'DM Sans',sans-serif;outline:none;" />
-        </div>
+      <div class="sidebar-section-label">Categorias</div>
+      <div class="sidebar-item active" id="pdf-todos-item" onclick="switchPDFTodos(this)" data-pdf-cat="todos">
+        <i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos
+        <span class="count" id="pdf-todos-count">9</span>
       </div>
       <div id="pdf-list"></div>
     </div>
@@ -1210,15 +1208,17 @@ function switchTab(tab) {
     render();
   } else {
     closeVideoPlayer();
+    PDF_CATEGORIES.forEach(c => c.open = false);
     renderPDFList();
-    const container = document.getElementById('videos-container');
-    document.querySelector('.profile-header').style.display = 'none';
-    document.getElementById('video-player-panel').style.display = 'none';
-    container.innerHTML = `<div class="empty-state">
-      <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
-      <p>Selecione uma categoria de informativos na barra lateral</p>
-    </div>`;
-    container.style.display = '';
+    // Ativa "Todos os informativos" e renderiza os cards
+    document.querySelectorAll('[data-pdf-cat]').forEach(i => i.classList.remove('active'));
+    const todosEl = document.getElementById('pdf-todos-item');
+    if (todosEl) todosEl.classList.add('active');
+    renderPDFCardsTodos();
+    document.querySelector('.profile-header').style.display = 'flex';
+    document.getElementById('profile-pill').innerHTML = `<i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos`;
+    const total = PDF_CATEGORIES.reduce((a,c) => a + c.items.length, 0);
+    document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
   }
 }
 
@@ -1366,8 +1366,6 @@ function resetFilters(el) {
   PDF_CATEGORIES.forEach(c => c.open = false);
   activePDFItem = null;
   document.getElementById('search-input').value = '';
-  const pdfSearch = document.getElementById('pdf-search');
-  if (pdfSearch) pdfSearch.value = '';
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
   document.querySelector('[data-profile="todos"]').classList.add('active');
   document.getElementById('search-info').textContent = '55 vídeos disponíveis';
@@ -1428,13 +1426,75 @@ function toggleCategory(idx) {
   PDF_CATEGORIES[idx].open = !wasOpen;
   activePDFItem = null;
 
+  // Sincroniza destaque: remove active de todos os itens pdf
+  document.querySelectorAll('[data-pdf-cat]').forEach(i => i.classList.remove('active'));
+
   if (PDF_CATEGORIES[idx].open) {
     renderPDFCards(idx);
     mobileSelectContent();
+    document.querySelector('.profile-header').style.display = 'flex';
+    const cat = PDF_CATEGORIES[idx];
+    document.getElementById('profile-pill').innerHTML = `<i class="ti ${cat.icon}" aria-hidden="true"></i> ${cat.title}`;
+    document.getElementById('result-count').textContent = `${cat.items.length} informativo${cat.items.length !== 1 ? 's' : ''}`;
   } else {
+    // Voltou a fechar: volta para "Todos"
+    const todosEl = document.getElementById('pdf-todos-item');
+    if (todosEl) todosEl.classList.add('active');
+    renderPDFCardsTodos();
+    document.querySelector('.profile-header').style.display = 'flex';
+    document.getElementById('profile-pill').innerHTML = `<i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos`;
+    const total = PDF_CATEGORIES.reduce((a,c) => a + c.items.length, 0);
+    document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
     closePDFViewer();
   }
   renderPDFList();
+}
+
+function switchPDFTodos(el) {
+  PDF_CATEGORIES.forEach(c => c.open = false);
+  activePDFItem = null;
+  document.querySelectorAll('[data-pdf-cat]').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  closePDFViewer();
+  renderPDFCardsTodos();
+  renderPDFList();
+  document.querySelector('.profile-header').style.display = 'flex';
+  document.getElementById('profile-pill').innerHTML = `<i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos`;
+  const total = PDF_CATEGORIES.reduce((a,c) => a + c.items.length, 0);
+  document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
+  mobileSelectContent();
+}
+
+function renderPDFCardsTodos() {
+  const container = document.getElementById('videos-container');
+  document.getElementById('pdf-viewer-panel').style.display = 'none';
+  let html = '';
+  PDF_CATEGORIES.forEach((cat, ci) => {
+    html += `<div class="profile-group-title">
+      <i class="ti ${cat.icon}" style="font-size:18px;color:var(--tjgo-navy)" aria-hidden="true"></i>
+      <span>${cat.title}</span>
+      <span class="total-badge">${cat.items.length} informativo${cat.items.length !== 1 ? 's' : ''}</span>
+    </div>
+    <div class="section-block">
+      <div class="section-header">
+        <h3>Informativos em PDF</h3>
+        <span class="section-tag">${cat.items.length} arquivo${cat.items.length !== 1 ? 's' : ''}</span>
+      </div>
+      <div class="pdf-cards-grid">`;
+    cat.items.forEach((p, pi) => {
+      const cardId = `pdf-card-${ci}-${pi}`;
+      html += `<div class="pdf-card" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi})">
+        <div class="pdf-card-icon"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
+        <div class="pdf-card-body">
+          <div class="pdf-card-title">${p.name}</div>
+          <div class="pdf-card-meta"><i class="ti ti-eye" style="font-size:11px" aria-hidden="true"></i> Clique para visualizar</div>
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+  container.style.display = '';
 }
 
 function renderPDFCards(idx) {
