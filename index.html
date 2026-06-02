@@ -6,7 +6,81 @@
 <title>Portal de Capacitação — PROJUDI | TJGO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+<style>
+/* ── INLINE SVG ICON SYSTEM (fallback sem CDN) ── */
+.ti {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1em;
+  height: 1.1em;
+  vertical-align: -0.2em;
+  flex-shrink: 0;
+}
+.ti svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+</style>
+<script>
+// Mapa de SVG paths por ícone
+const _ICONS = {
+  'accessibility': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M10 16.5l2 -3l2 3m-2 -3v-2l3 -1m-6 0l3 1" /><circle cx="12" cy="7.5" r=".5" fill="currentColor" />`,
+  'arrow-left': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" />`,
+  'brand-youtube': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M2 8a4 4 0 0 1 4 -4h12a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-12a4 4 0 0 1 -4 -4v-8z" /><path d="M10 9l5 3l-5 3z" />`,
+  'building-bank': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l18 0" /><path d="M3 10l18 0" /><path d="M5 6l7 -3l7 3" /><path d="M4 10l0 11" /><path d="M20 10l0 11" /><path d="M8 14l0 3" /><path d="M12 14l0 3" /><path d="M16 14l0 3" />`,
+  'chevron-down': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 9l6 6l6 -6" />`,
+  'clipboard-check': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /><path d="M9 14l2 2l4 -4" />`,
+  'clipboard-list': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /><path d="M9 12l.01 0" /><path d="M13 12l2 0" /><path d="M9 16l.01 0" /><path d="M13 16l2 0" />`,
+  'contrast': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 17a5 5 0 0 0 0 -10v10" />`,
+  'database': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6m-8 0a8 3 0 1 0 16 0a8 3 0 1 0 -16 0" /><path d="M4 6v6a8 3 0 0 0 16 0v-6" /><path d="M4 12v6a8 3 0 0 0 16 0v-6" />`,
+  'download': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" />`,
+  'eye': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />`,
+  'file-type-pdf': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" /><path d="M5 18h1.5a1.5 1.5 0 0 0 0 -3h-1.5v6" /><path d="M17 18h2" /><path d="M20 15h-3v6" /><path d="M11 15v6h1a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2h-1z" />`,
+  'files': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 3v4a1 1 0 0 0 1 1h4" /><path d="M18 17h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h4l5 5v7a2 2 0 0 1 -2 2z" /><path d="M16 17v2a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h2" />`,
+  'folder': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" />`,
+  'gavel': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385" /><path d="M6 9l4 4" /><path d="M13 10l-4 -4" /><path d="M3 21h7" /><path d="M6.793 15.793l-3.586 -3.586a1 1 0 0 1 0 -1.414l2.293 -2.293l.5 .5l3 -3l-.5 -.5l2.293 -2.293a1 1 0 0 1 1.414 0l3.586 3.586a1 1 0 0 1 0 1.414l-2.293 2.293l-.5 -.5l-3 3l.5 .5l-2.293 2.293a1 1 0 0 1 -1.414 0z" />`,
+  'heart-handshake': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" /><path d="M12 6l-3.293 3.293a1 1 0 0 0 0 1.414l.543 .543c.69 .69 1.81 .69 2.5 0l1 -1a3.182 3.182 0 0 1 4.5 0l2.25 2.25" /><path d="M12.5 15.5l2 2" /><path d="M15 13l2 2" />`,
+  'home-2': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M10 12h4v4h-4z" />`,
+  'mail-forward': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 18h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v7.5" /><path d="M3 6l9 6l9 -6" /><path d="M15 18h6" /><path d="M18 15l3 3l-3 3" />`,
+  'maximize': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 8v-2a2 2 0 0 1 2 -2h2" /><path d="M4 16v2a2 2 0 0 0 2 2h2" /><path d="M16 4h2a2 2 0 0 1 2 2v2" /><path d="M16 20h2a2 2 0 0 0 2 -2v-2" />`,
+  'minimize': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 19v-2a2 2 0 0 1 2 -2h2" /><path d="M15 5v2a2 2 0 0 0 2 2h2" /><path d="M5 15h2a2 2 0 0 1 2 2v2" /><path d="M5 9h2a2 2 0 0 0 2 -2v-2" />`,
+  'moon': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />`,
+  'player-play': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4v16l13 -8z" />`,
+  'refresh': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />`,
+  'scale': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 20l10 0" /><path d="M6 6l6 -1l6 1" /><path d="M12 3l0 17" /><path d="M9 12l-3 -6l-3 6a3 3 0 0 0 6 0" /><path d="M21 12l-3 -6l-3 6a3 3 0 0 0 6 0" />`,
+  'search': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" />`,
+  'send': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />`,
+  'settings': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />`,
+  'shield-check': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11.46 20.846a12 12 0 0 1 -7.96 -14.846a12 12 0 0 0 8.5 -3a12 12 0 0 0 8.5 3a12 12 0 0 1 -.09 7.06" /><path d="M15 19l2 2l4 -4" />`,
+  'shield-lock': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /><path d="M12 11m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M12 12l0 2.5" />`,
+  'sun': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />`,
+  'user': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />`,
+  'users': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />`,
+  'video': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" /><path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />`,
+  'x': `<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" />`,
+};
+
+function _renderIcons(root) {
+  (root || document).querySelectorAll('i.ti').forEach(el => {
+    const cls = Array.from(el.classList).find(c => c.startsWith('ti-') && c !== 'ti');
+    if (!cls) return;
+    const name = cls.replace('ti-', '');
+    const paths = _ICONS[name];
+    if (!paths) return;
+    el.innerHTML = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' + paths + '</svg>';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() { _renderIcons(); });
+// Also expose for dynamic content
+window._renderIcons = _renderIcons;
+</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -23,13 +97,50 @@
     --text-muted: #8a9ab0;
     --radius: 10px;
     --radius-lg: 14px;
+    --font-scale: 1;
   }
+
+  /* ── TEMAS DE ACESSIBILIDADE ── */
+  html.theme-alto-contraste {
+    --tjgo-navy: #000000;
+    --tjgo-blue: #000080;
+    --tjgo-gold: #ffdd00;
+    --tjgo-light: #e0ecff;
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.3);
+    --text-primary: #000000;
+    --text-secondary: #111111;
+    --text-muted: #333333;
+  }
+  html.theme-escuro {
+    --tjgo-navy: #1a2a3a;
+    --tjgo-blue: #1e4a7a;
+    --tjgo-gold: #f0c030;
+    --tjgo-light: #1e3450;
+    --bg: #111827;
+    --surface: #1f2937;
+    --border: rgba(255,255,255,0.1);
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+  }
+  html.theme-escuro .portal-header { background: #0f172a; }
+  html.theme-escuro footer { background: #0f172a; }
+  html.theme-escuro .sidebar { background: #1f2937; border-color: rgba(255,255,255,0.08); }
+  html.theme-escuro .sidebar-tabs { background: #1f2937; }
+  html.theme-escuro .video-card { background: #1f2937; border-color: rgba(255,255,255,0.1); }
+  html.theme-escuro .stat-card { background: #1f2937; border-color: rgba(255,255,255,0.1); }
+  html.theme-escuro .pdf-card { background: #1f2937; border-color: rgba(255,255,255,0.1); }
+  html.theme-escuro .sidebar-item:hover { background: #2d3748; }
+  html.theme-escuro .sidebar-item.active { background: #1e3a5f; }
 
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
     color: var(--text-primary);
     min-height: 100vh;
+    font-size: calc(15px * var(--font-scale));
   }
 
   /* ── HEADER ── */
@@ -40,93 +151,69 @@
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    height: 76px;
+    height: 84px;
     border-bottom: 4px solid var(--tjgo-gold);
     position: sticky; top: 0; z-index: 100;
     box-shadow: 0 2px 12px rgba(0,0,0,0.18);
   }
   .header-logo {
-    width: 54px; height: 54px; border-radius: 50%;
+    width: 70px; height: 70px; border-radius: 50%;
     background: white;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
   .header-logo span {
-    font-size: 11px; font-weight: 600; color: var(--tjgo-navy);
+    font-size: 12px; font-weight: 600; color: var(--tjgo-navy);
     text-align: center; line-height: 1.2; letter-spacing: 0.03em;
   }
   .header-text h1 {
     font-family: 'Source Serif 4', serif;
-    font-size: 20px; font-weight: 600; letter-spacing: 0.01em;
+    font-size: calc(22px * var(--font-scale)); font-weight: 600; letter-spacing: 0.01em;
   }
-  .header-text p { font-size: 13px; opacity: 0.75; margin-top: 3px; }
+  .header-text p { font-size: calc(14px * var(--font-scale)); opacity: 0.8; margin-top: 3px; }
   .header-right { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; }
   .header-badge {
     background: var(--tjgo-gold); color: #1a1a1a;
-    font-size: 11px; font-weight: 600; padding: 4px 10px;
+    font-size: 12px; font-weight: 600; padding: 5px 12px;
     border-radius: 20px; letter-spacing: 0.04em;
   }
 
-/* ── BARRA DE ACESSIBILIDADE ── */
+  /* ── ACCESSIBILITY BAR ── */
   .a11y-bar {
-    background: #eef2f7;
+    background: #f0f4f8;
     border-bottom: 1px solid var(--border);
     padding: 5px 2rem;
-    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-    font-size: 12px; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-secondary);
   }
+  html.theme-escuro .a11y-bar { background: #1a2535; border-color: rgba(255,255,255,0.08); }
+  html.theme-alto-contraste .a11y-bar { background: #e8e8e8; border-color: #000; }
   .a11y-label {
     font-weight: 600; font-size: 12px; color: var(--tjgo-navy);
-    display: flex; align-items: center; gap: 5px; white-space: nowrap;
+    display: flex; align-items: center; gap: 5px;
+    white-space: nowrap;
   }
+  html.theme-escuro .a11y-label { color: #93c5fd; }
   .a11y-group { display: flex; align-items: center; gap: 4px; }
   .a11y-group-label { font-size: 11px; color: var(--text-muted); margin-right: 2px; white-space: nowrap; }
   .a11y-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
   .a11y-btn {
-    padding: 3px 10px; border-radius: 6px;
+    padding: 3px 9px; border-radius: 6px;
     border: 1px solid var(--border);
     background: var(--surface); color: var(--text-secondary);
     font-size: 12px; font-weight: 600; cursor: pointer;
     font-family: 'DM Sans', sans-serif;
     transition: background 0.12s, border-color 0.12s, color 0.12s;
-    display: inline-flex; align-items: center; gap: 4px;
+    display: flex; align-items: center; gap: 4px;
     white-space: nowrap;
   }
   .a11y-btn:hover { background: var(--tjgo-light); border-color: var(--tjgo-navy); color: var(--tjgo-navy); }
   .a11y-btn.active { background: var(--tjgo-navy); border-color: var(--tjgo-navy); color: white; }
-
-  /* ── Tema escuro ── */
-  body.theme-escuro { background: #111827; color: #f1f5f9; }
-  body.theme-escuro .portal-header { background: #0f172a; }
-  body.theme-escuro footer { background: #0f172a; }
-  body.theme-escuro .sidebar { background: #1f2937; border-color: rgba(255,255,255,0.08); }
-  body.theme-escuro .sidebar-tabs { background: #1f2937; }
-  body.theme-escuro .sidebar-section-label { color: #94a3b8; }
-  body.theme-escuro .sidebar-item { color: #cbd5e1; }
-  body.theme-escuro .sidebar-item:hover { background: #2d3748; color: #93c5fd; }
-  body.theme-escuro .sidebar-item.active { background: #1e3a5f; color: #93c5fd; }
-  body.theme-escuro .video-card { background: #1f2937; border-color: rgba(255,255,255,0.1); color: #f1f5f9; }
-  body.theme-escuro .stat-card { background: #1f2937; border-color: rgba(255,255,255,0.1); }
-  body.theme-escuro .pdf-card { background: #1f2937; border-color: rgba(255,255,255,0.1); }
-  body.theme-escuro .a11y-bar { background: #1a2535; border-color: rgba(255,255,255,0.08); }
-  body.theme-escuro .a11y-label { color: #93c5fd; }
-  body.theme-escuro .a11y-btn { background: #2d3748; border-color: rgba(255,255,255,0.15); color: #cbd5e1; }
-  body.theme-escuro .a11y-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
-  body.theme-escuro .search-bar { background: #1e3a5f; }
-  body.theme-escuro .content { background: #111827; }
-
-  /* ── Alto contraste ── */
-  body.theme-contraste { background: #ffffff; color: #000000; }
-  body.theme-contraste .portal-header { background: #000000; }
-  body.theme-contraste footer { background: #000000; }
-  body.theme-contraste .sidebar { background: #ffffff; border-color: #000000; }
-  body.theme-contraste .sidebar-item { color: #000000; }
-  body.theme-contraste .sidebar-item:hover { background: #e0ecff; color: #000080; }
-  body.theme-contraste .sidebar-item.active { background: #e0ecff; color: #000080; border-left-color: #000080; }
-  body.theme-contraste .video-card { background: #ffffff; border-color: #000000; color: #000000; }
-  body.theme-contraste .stat-card { background: #ffffff; border-color: #000000; }
-  body.theme-contraste .a11y-bar { background: #e8e8e8; border-color: #000000; }
-  body.theme-contraste .a11y-btn.active { background: #000080; border-color: #000080; color: white; }
+  html.theme-escuro .a11y-btn { background: #2d3748; border-color: rgba(255,255,255,0.15); color: #cbd5e1; }
+  html.theme-escuro .a11y-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
+  html.theme-alto-contraste .a11y-btn.active { background: #000080; border-color: #000080; color: white; }
 
   /* ── SEARCH BAR ── */
   .search-bar {
@@ -173,18 +260,18 @@
     background: var(--surface);
     border-right: 1px solid var(--border);
     padding: 1rem 0;
-    position: sticky; top: 116px;
-    height: calc(100vh - 116px);
+    position: sticky; top: 160px;
+    height: calc(100vh - 160px);
     overflow-y: auto;
   }
   .sidebar-section-label {
-    font-size: 10px; font-weight: 600;
+    font-size: calc(11px * var(--font-scale)); font-weight: 600;
     letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--text-muted);
     padding: 0.75rem 1.25rem 0.35rem;
   }
   .sidebar-item {
-    padding: 9px 1.25rem; font-size: 13px; cursor: pointer;
+    padding: 10px 1.25rem; font-size: calc(14px * var(--font-scale)); cursor: pointer;
     color: var(--text-secondary);
     border-left: 3px solid transparent;
     display: flex; align-items: center; gap: 9px;
@@ -310,7 +397,7 @@
     transition: background 0.12s;
   }
   .pdf-viewer-toolbar .close-btn:hover { background: rgba(255,255,255,0.28); }
-  .pdf-viewer-frame { width: 100%; height: 600px; border: none; display: block; }
+  .pdf-viewer-frame { width: 100%; height: calc(100vh - 200px); min-height: 500px; border: none; display: block; }
   .pdf-viewer-panel.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; }
   .pdf-viewer-panel.maximized .pdf-viewer-frame { height: calc(100vh - 48px); }
 
@@ -394,7 +481,7 @@
     border-bottom: 1px solid var(--border);
   }
   .section-header h3 {
-    font-size: 14px; font-weight: 600; color: var(--text-primary);
+    font-size: calc(15px * var(--font-scale)); font-weight: 600; color: var(--text-primary);
   }
   .section-tag {
     font-size: 11px; padding: 3px 9px; border-radius: 10px;
@@ -437,7 +524,7 @@
     transition: background 0.12s;
   }
   .video-player-toolbar .vp-btn:hover { background: rgba(255,255,255,0.28); }
-  .video-player-frame { width: 100%; aspect-ratio: 16/9; border: none; display: block; background: #000; }
+  .video-player-frame { width: 100%; height: calc(100vh - 220px); min-height: 400px; border: none; display: block; background: #000; aspect-ratio: unset; }
   .video-player-panel.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; background: #000; }
   .video-player-panel.maximized .video-player-frame { height: calc(100vh - 48px); aspect-ratio: unset; background: #000; }
   .video-card.active {
@@ -493,13 +580,13 @@
   }
   .video-info { padding: 9px 11px 11px; }
   .v-title {
-    font-size: 12px; font-weight: 500;
+    font-size: calc(13px * var(--font-scale)); font-weight: 500;
     color: var(--text-primary); line-height: 1.45;
     margin-bottom: 5px;
   }
   .v-meta {
     display: flex; align-items: center; gap: 5px;
-    font-size: 11px; color: var(--text-muted);
+    font-size: calc(12px * var(--font-scale)); color: var(--text-muted);
   }
 
   /* ── PROFILE GROUP HEADER ── */
@@ -511,7 +598,7 @@
   }
   .profile-group-title span {
     font-family: 'Source Serif 4', serif;
-    font-size: 16px; font-weight: 600; color: var(--tjgo-navy);
+    font-size: calc(18px * var(--font-scale)); font-weight: 600; color: var(--tjgo-navy);
   }
   .profile-group-title .total-badge {
     font-size: 11px; background: var(--tjgo-navy); color: white;
@@ -525,13 +612,44 @@
   .empty-state i { font-size: 40px; display: block; margin-bottom: 0.75rem; }
   .empty-state p { font-size: 14px; }
 
+
+  /* ── ACESSIBILIDADE ── */
+  .skip-link {
+    position: absolute; top: -100px; left: 1rem;
+    background: var(--tjgo-navy); color: #fff;
+    padding: 10px 18px; border-radius: 0 0 6px 6px;
+    font-size: 14px; font-weight: 600; z-index: 9999;
+    text-decoration: none; transition: top .2s;
+  }
+  .skip-link:focus { top: 0; outline: 3px solid var(--tjgo-gold); }
+
+  /* Foco visível em todos os elementos interativos */
+  a:focus-visible, button:focus-visible,
+  input:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid var(--tjgo-gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Alto contraste: reforço de bordas */
+  html.theme-contraste .video-card,
+  html.theme-contraste .pdf-card { border: 2px solid #000; }
+  html.theme-contraste .sidebar-item.active { border-left: 4px solid #000; }
+
+  /* Tamanhos de fonte nos cards conforme A- A A+ A++ */
+  html.font-aa .video-card-title,
+  html.font-aa .pdf-card-name  { font-size: 15px; }
+  html.font-aaa .video-card-title,
+  html.font-aaa .pdf-card-name { font-size: 17px; }
+
   /* ── FOOTER ── */
   footer {
-    background: var(--tjgo-navy); color: rgba(255,255,255,0.55);
-    text-align: center; padding: 1rem;
-    font-size: 12px; margin-top: 2rem;
+    background: var(--tjgo-navy); color: rgba(255,255,255,0.65);
+    text-align: center; padding: 1.25rem;
+    font-size: calc(13px * var(--font-scale)); margin-top: 2rem;
+    line-height: 1.7;
   }
-  footer strong { color: rgba(255,255,255,0.85); }
+  footer strong { color: rgba(255,255,255,0.9); }
 
   /* ── SIDEBAR TABS ── */
   .sidebar-tabs {
@@ -540,7 +658,7 @@
     background: var(--surface); z-index: 10;
   }
   .sidebar-tab {
-    flex: 1; padding: 11px 0.5rem; font-size: 12px; font-weight: 600;
+    flex: 1; padding: 12px 0.5rem; font-size: calc(13px * var(--font-scale)); font-weight: 600;
     text-align: center; cursor: pointer; color: var(--text-muted);
     border-bottom: 2px solid transparent; margin-bottom: -2px;
     display: flex; align-items: center; justify-content: center; gap: 5px;
@@ -644,7 +762,7 @@
 <!-- HEADER -->
 <header class="portal-header">
   <div class="header-logo">
-    <img src="logo.png" alt="TJGO" style="width:50px;height:50px;border-radius:50%;object-fit:cover;object-position:center top;" />
+    <img src="logo.png" alt="TJGO" style="width:66px;height:66px;border-radius:50%;object-fit:cover;object-position:center top;" />
   </div>
   <div class="header-text">
     <h1>Portal de Capacitação — PROJUDI</h1>
@@ -655,32 +773,36 @@
   </div>
 </header>
 
-<!-- BARRA DE ACESSIBILIDADE -->
-<div class="a11y-bar" id="a11y-bar" role="region" aria-label="Opções de acessibilidade">
-  <span class="a11y-label">
-    <i class="ti ti-accessible" aria-hidden="true"></i> Acessibilidade
-  </span>
+<!-- ACCESSIBILITY BAR -->
+<div class="a11y-bar" id="a11y-bar">
+  <span class="a11y-label"><i class="ti ti-accessibility" aria-hidden="true"></i> Acessibilidade</span>
   <div class="a11y-group">
-    <span class="a11y-group-label">Texto</span>
-    <button class="a11y-btn" id="fs-sm"  onclick="setFontSize('sm')"  title="Fonte pequena"      aria-label="Fonte pequena">A-</button>
-    <button class="a11y-btn active" id="fs-md" onclick="setFontSize('md')" title="Fonte padrão"  aria-label="Fonte padrão">A</button>
-    <button class="a11y-btn" id="fs-lg"  onclick="setFontSize('lg')"  title="Fonte grande"       aria-label="Fonte grande">A+</button>
-    <button class="a11y-btn" id="fs-xl"  onclick="setFontSize('xl')"  title="Fonte extra grande" aria-label="Fonte extra grande">A++</button>
+    <span class="a11y-group-label">Tamanho do texto</span>
+    <button class="a11y-btn" onclick="setFontScale(0.9)" id="font-sm" title="Fonte pequena" aria-label="Fonte pequena">A-</button>
+    <button class="a11y-btn active" onclick="setFontScale(1)" id="font-md" title="Fonte padrão" aria-label="Fonte padrão">A</button>
+    <button class="a11y-btn" onclick="setFontScale(1.15)" id="font-lg" title="Fonte grande" aria-label="Fonte grande">A+</button>
+    <button class="a11y-btn" onclick="setFontScale(1.3)" id="font-xl" title="Fonte extra grande" aria-label="Fonte extra grande">A++</button>
   </div>
   <div class="a11y-sep"></div>
   <div class="a11y-group">
     <span class="a11y-group-label">Tema</span>
-    <button class="a11y-btn active" id="th-padrao"    onclick="setTheme('padrao')"    aria-label="Tema padrão">☀ Padrão</button>
-    <button class="a11y-btn"        id="th-escuro"    onclick="setTheme('escuro')"    aria-label="Tema escuro">☾ Escuro</button>
-    <button class="a11y-btn"        id="th-contraste" onclick="setTheme('contraste')" aria-label="Alto contraste">◑ Contraste</button>
+    <button class="a11y-btn theme-btn active" onclick="setTheme('padrao')" id="theme-padrao" title="Tema padrão" aria-label="Tema padrão">
+      <i class="ti ti-sun" aria-hidden="true"></i> Padrão
+    </button>
+    <button class="a11y-btn theme-btn" onclick="setTheme('escuro')" id="theme-escuro" title="Tema escuro" aria-label="Tema escuro">
+      <i class="ti ti-moon" aria-hidden="true"></i> Escuro
+    </button>
+    <button class="a11y-btn theme-btn" onclick="setTheme('alto-contraste')" id="theme-alto-contraste" title="Alto contraste" aria-label="Alto contraste">
+      <i class="ti ti-contrast" aria-hidden="true"></i> Contraste
+    </button>
   </div>
 </div>
 
 <!-- SEARCH BAR -->
-<div class="search-bar">
+<div class="search-bar" role="search">
   <div class="search-wrap">
     <i class="ti ti-search search-icon" aria-hidden="true"></i>
-    <input type="text" id="search-input" placeholder="Buscar vídeo ou informativo PDF..." oninput="globalSearch(this.value)" />
+    <input type="text" id="search-input" placeholder="Buscar vídeo ou informativo PDF..." aria-label="Buscar vídeo ou informativo PDF" oninput="globalSearch(this.value)" />
   </div>
   <button onclick="globalSearch(document.getElementById('search-input').value)">
     <i class="ti ti-search" aria-hidden="true"></i> Buscar
@@ -692,7 +814,7 @@
 <div class="layout">
 
   <!-- SIDEBAR -->
-  <nav class="sidebar" aria-label="Navegação principal">
+  <nav class="sidebar" role="navigation" aria-label="Filtros por perfil de acesso" aria-label="Navegação principal">
 
     <!-- ABAS -->
     <div class="sidebar-tabs">
@@ -762,6 +884,11 @@
             style="width:100%;padding:7px 9px 7px 28px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text-primary);font-family:'DM Sans',sans-serif;outline:none;" />
         </div>
       </div>
+      <div class="sidebar-section-label">Categorias</div>
+      <div class="sidebar-item active" id="pdf-todos-item" onclick="showAllPDFs(this)">
+        <i class="ti ti-files" aria-hidden="true"></i> Todos os informativos
+        <span class="count" id="pdf-todos-count">9</span>
+      </div>
       <div id="pdf-list"></div>
     </div>
 
@@ -773,7 +900,7 @@
   </nav>
 
   <!-- CONTENT -->
-  <main class="content" id="main-content">
+  <main class="content" id="main-content" role="main" aria-label="Conteúdo principal">
 
     <!-- BOTÃO VOLTAR MOBILE -->
     <button class="mobile-back-btn" id="mobile-back-btn" onclick="mobileGoBack()" style="display:none;">
@@ -801,7 +928,7 @@
       <span class="profile-pill" id="profile-pill">
         <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
       </span>
-      <span class="result-count" id="result-count"></span>
+      <span class="result-count" id="result-count" aria-live="polite" aria-atomic="true"></span>
     </div>
 
     <!-- PDF VIEWER -->
@@ -847,9 +974,9 @@
   </main>
 </div>
 
-<footer>
-  <strong>Tribunal de Justiça do Estado de Goiás</strong> — Diretoria Judiciária<br>
-  Portal de Capacitação PROJUDI - Divisão de Atendimento aos Usuários de Sistemas
+<footer role="contentinfo">
+  <strong>Tribunal de Justiça do Estado de Goiás</strong> — Secretaria de Governança Judiciária e Tecnológica · Diretoria Judiciária<br>
+  Portal de Capacitação PROJUDI · Divisão de Atendimento aos Usuários de Sistemas
 </footer>
 
 <script>
@@ -1170,6 +1297,7 @@ function render() {
   }
 
   container.innerHTML = html;
+  _renderIcons(container);
   document.getElementById('result-count').textContent =
     totalShown > 0 ? `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} encontrado${totalShown !== 1 ? 's' : ''}` : '';
   document.getElementById('search-info').textContent =
@@ -1210,16 +1338,74 @@ function switchTab(tab) {
     render();
   } else {
     closeVideoPlayer();
+    PDF_CATEGORIES.forEach(c => c.open = false);
     renderPDFList();
-    const container = document.getElementById('videos-container');
-    document.querySelector('.profile-header').style.display = 'none';
+    // Seleciona "Todos os informativos" como padrão
+    const todosItem = document.getElementById('pdf-todos-item');
+    if (todosItem) {
+      document.querySelectorAll('#panel-pdfs .pdf-category-header').forEach(h => h.classList.remove('open'));
+      todosItem.classList.add('active');
+    }
+    showAllPDFsContent();
+    document.querySelector('.profile-header').style.display = '';
     document.getElementById('video-player-panel').style.display = 'none';
-    container.innerHTML = `<div class="empty-state">
-      <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
-      <p>Selecione uma categoria de informativos na barra lateral</p>
-    </div>`;
-    container.style.display = '';
   }
+}
+
+function showAllPDFs(el) {
+  // Destaca item "Todos" e remove destaque das categorias
+  document.querySelectorAll('#panel-pdfs .pdf-category-header').forEach(h => h.classList.remove('open'));
+  document.querySelectorAll('#pdf-list .sidebar-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('pdf-todos-item').classList.add('active');
+  PDF_CATEGORIES.forEach(c => c.open = false);
+  renderPDFList();
+  closePDFViewer();
+  showAllPDFsContent();
+  mobileSelectContent();
+}
+
+function showAllPDFsContent() {
+  const container = document.getElementById('videos-container');
+  document.getElementById('pdf-viewer-panel').style.display = 'none';
+  document.querySelector('.profile-header').style.display = '';
+
+  const pill = document.getElementById('profile-pill');
+  pill.innerHTML = `<i class="ti ti-files" aria-hidden="true"></i> Todos os informativos`;
+
+  let totalItems = 0;
+  PDF_CATEGORIES.forEach(c => totalItems += c.items.length);
+  document.getElementById('result-count').textContent = `${totalItems} informativo${totalItems !== 1 ? 's' : ''} disponíve${totalItems !== 1 ? 'is' : 'l'}`;
+
+  let html = '';
+  PDF_CATEGORIES.forEach((cat, ci) => {
+    if (cat.items.length === 0) return;
+    html += `<div class="profile-group-title">
+      <i class="ti ${cat.icon}" style="font-size:18px;color:var(--tjgo-navy)" aria-hidden="true"></i>
+      <span>${cat.title}</span>
+      <span class="total-badge">${cat.items.length} informativo${cat.items.length !== 1 ? 's' : ''}</span>
+    </div>
+    <div class="section-block">
+      <div class="section-header">
+        <h3>Informativos em PDF</h3>
+        <span class="section-tag">${cat.items.length} arquivo${cat.items.length !== 1 ? 's' : ''}</span>
+      </div>
+      <div class="pdf-cards-grid">`;
+    cat.items.forEach((p, pi) => {
+      const cardId = `pdf-card-${ci}-${pi}`;
+      html += `<div class="pdf-card" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi})">
+        <div class="pdf-card-icon"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
+        <div class="pdf-card-body">
+          <div class="pdf-card-title">${p.name}</div>
+          <div class="pdf-card-meta"><i class="ti ti-eye" style="font-size:11px" aria-hidden="true"></i> Clique para visualizar</div>
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+  _renderIcons(container);
+  container.style.display = '';
 }
 
 function switchProfile(profile, el) {
@@ -1349,6 +1535,7 @@ function globalSearch(val) {
   }
 
   container.innerHTML = html;
+  _renderIcons(container);
   container.style.display = '';
   document.getElementById('search-info').textContent =
     `${videoResults.length + pdfResults.length} resultado${videoResults.length + pdfResults.length !== 1 ? 's' : ''}`;
@@ -1429,10 +1616,15 @@ function toggleCategory(idx) {
   activePDFItem = null;
 
   if (PDF_CATEGORIES[idx].open) {
+    // Remove destaque do "Todos"
+    const todosItem = document.getElementById('pdf-todos-item');
+    if (todosItem) todosItem.classList.remove('active');
     renderPDFCards(idx);
     mobileSelectContent();
   } else {
     closePDFViewer();
+    // Volta ao "Todos" se nenhuma categoria está aberta
+    showAllPDFs(null);
   }
   renderPDFList();
 }
@@ -1475,6 +1667,7 @@ function renderPDFCards(idx) {
 
   html += `</div></div>`;
   container.innerHTML = html;
+  _renderIcons(container);
   container.style.display = '';
 }
 
@@ -1563,6 +1756,7 @@ function filterPDFs(val) {
 
   html += `</div></div>`;
   container.innerHTML = html;
+  _renderIcons(container);
   container.style.display = '';
 }
 
@@ -1600,6 +1794,7 @@ function renderPDFList() {
   }
 
   list.innerHTML = html;
+  _renderIcons(list);
 }
 
 let activePDFItem = null;
@@ -1718,33 +1913,43 @@ function closePDFViewer() {
 }
 
 // ── ACESSIBILIDADE ──
-const FONT_SIZES = {
-  sm: '13px', md: '15px', lg: '17px', xl: '19px'
-};
+let currentFontScale = 1;
+let currentTheme = 'padrao';
 
-function setFontSize(size) {
-  document.documentElement.style.fontSize = FONT_SIZES[size];
-  ['sm','md','lg','xl'].forEach(s => document.getElementById('fs-' + s).classList.toggle('active', s === size));
-  try { localStorage.setItem('a11y-font', size); } catch(e) {}
+function setFontScale(scale) {
+  currentFontScale = scale;
+  document.documentElement.style.setProperty('--font-scale', scale);
+  // Atualiza botões ativos
+  ['font-sm','font-md','font-lg','font-xl'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+  const map = { 0.9: 'font-sm', 1: 'font-md', 1.15: 'font-lg', 1.3: 'font-xl' };
+  const btn = document.getElementById(map[scale]);
+  if (btn) btn.classList.add('active');
+  try { localStorage.setItem('a11y-font', scale); } catch(e) {}
 }
 
 function setTheme(theme) {
-  document.body.className = document.body.className
+  currentTheme = theme;
+  document.documentElement.className = document.documentElement.className
     .replace(/theme-\S+/g, '').trim();
-  if (theme !== 'padrao') document.body.classList.add('theme-' + theme);
-  ['padrao','escuro','contraste'].forEach(t => {
-    document.getElementById('th-' + t).classList.toggle('active', t === theme);
+  if (theme !== 'padrao') {
+    document.documentElement.classList.add('theme-' + theme);
+  }
+  ['theme-padrao','theme-escuro','theme-alto-contraste'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
   });
+  document.getElementById('theme-' + theme).classList.add('active');
   try { localStorage.setItem('a11y-theme', theme); } catch(e) {}
 }
 
-// Restaurar preferências salvas
+// Restaura preferências salvas
 (function() {
   try {
-    const fs = localStorage.getItem('a11y-font');
-    if (fs && FONT_SIZES[fs]) setFontSize(fs);
-    const th = localStorage.getItem('a11y-theme');
-    if (th) setTheme(th);
+    const savedFont = parseFloat(localStorage.getItem('a11y-font'));
+    if (savedFont) setFontScale(savedFont);
+    const savedTheme = localStorage.getItem('a11y-theme');
+    if (savedTheme) setTheme(savedTheme);
   } catch(e) {}
 })();
 
