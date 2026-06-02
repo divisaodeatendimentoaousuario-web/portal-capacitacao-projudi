@@ -889,7 +889,7 @@ window._renderIcons = _renderIcons;
       </div>
 
       <!-- PERFIS DE ACESSO -->
-     <div class="sidebar-section-label">Perfis de acesso</div>
+      <div class="sidebar-section-label">Perfis de acesso</div>
       <div class="sidebar-item active" id="pdf-perfil-todos" onclick="switchPDFPerfil('todos', this)">
         <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
         <span class="count" id="pdf-perfil-todos-count">9</span>
@@ -1381,6 +1381,11 @@ function switchTab(tab) {
   } else {
     closeVideoPlayer();
     PDF_CATEGORIES.forEach(c => c.open = false);
+    // Resetar perfil para "todos" ao entrar na aba
+    currentPDFPerfil = 'todos';
+    document.querySelectorAll('[id^="pdf-perfil-"]').forEach(e => e.classList.remove('active'));
+    const perfilTodos = document.getElementById('pdf-perfil-todos');
+    if (perfilTodos) perfilTodos.classList.add('active');
     renderPDFList();
     // Seleciona "Todos os informativos" como padrão
     const todosItem = document.getElementById('pdf-todos-item');
@@ -1390,7 +1395,6 @@ function switchTab(tab) {
     }
     showAllPDFsContent();
     document.querySelector('.profile-header').style.display = '';
-    document.getElementById('video-player-panel').style.display = 'none';
   }
 }
 
@@ -1425,22 +1429,23 @@ function showAllPDFsContent() {
 
   let html = '';
   PDF_CATEGORIES.forEach((cat, ci) => {
-    if (cat.items.length === 0) return;
+    const filteredItems = getFilteredItems(cat);
+    if (filteredItems.length === 0) return;
     html += `<div class="profile-group-title">
       <i class="ti ${cat.icon}" style="font-size:18px;color:var(--tjgo-navy)" aria-hidden="true"></i>
       <span>${cat.title}</span>
-      <span class="total-badge">${cat.items.length} informativo${cat.items.length !== 1 ? 's' : ''}</span>
+      <span class="total-badge">${filteredItems.length} informativo${filteredItems.length !== 1 ? 's' : ''}</span>
     </div>
     <div class="section-block">
       <div class="section-header">
         <h3>Informativos em PDF</h3>
-        <span class="section-tag">${cat.items.length} arquivo${cat.items.length !== 1 ? 's' : ''}</span>
+        <span class="section-tag">${filteredItems.length} arquivo${filteredItems.length !== 1 ? 's' : ''}</span>
       </div>
       <div class="pdf-cards-grid">`;
-    filteredItems.forEach((p, pi) => {
-    const pi_real = cat.items.indexOf(p);
-      const cardId = `pdf-card-${ci}-${pi}`;
-      html += `<div class="pdf-card" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi})">
+    filteredItems.forEach((p) => {
+      const pi_real = cat.items.indexOf(p);
+      const cardId = `pdf-card-${ci}-${pi_real}`;
+      html += `<div class="pdf-card" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi_real})">
         <div class="pdf-card-icon"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
         <div class="pdf-card-body">
           <div class="pdf-card-title">${p.name}</div>
@@ -1450,6 +1455,10 @@ function showAllPDFsContent() {
     });
     html += `</div></div>`;
   });
+
+  if (!html) {
+    html = `<div class="empty-state"><i class="ti ti-file-type-pdf" style="font-size:48px;opacity:.4" aria-hidden="true"></i><p>Nenhum informativo para este perfil</p></div>`;
+  }
 
   container.innerHTML = html;
   _renderIcons(container);
@@ -1865,7 +1874,7 @@ function renderPDFList() {
       </div>
       <div class="pdf-category-body ${cat.open ? '' : 'collapsed'}">
         ${filtered.map((p, pi) => `
-          <a class="pdf-item" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi})">
+          <a class="pdf-item" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi_real})">
             <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
             <span>${p.name}</span>
           </a>`).join('')}
