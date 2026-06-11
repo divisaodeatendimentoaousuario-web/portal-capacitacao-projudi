@@ -751,8 +751,8 @@
         <i class="ti ti-gavel" aria-hidden="true"></i> Juiz
         <span class="count">6</span>
       </div>
-     <div class="sidebar-item" onclick="switchProfile('juiz', this)" data-profile="todos os usuários">
-        <i class="ti ti-gavel" aria-hidden="true"></i> Todos os usuários
+     <div class="sidebar-item" onclick="switchProfile('juiz', this)" data-profile="todos usuários">
+        <i class="ti ti-gavel" aria-hidden="true"></i> Todos Usuários
         <span class="count">6</span>
       </div>
     </div>
@@ -1080,7 +1080,23 @@ const DATA = {
         { title: 'Gerar relatório de produtividade', duration: '2:30', url: '' },
       ]},
     ]
-  }
+  },
+ todos_usuários: {
+    label: 'Todos Usuários',
+    icon: 'ti-mail-forward',
+    sections: [
+        { title: 'Distribuição e mandados', tag: 'distribuicao', videos: [
+        { title: 'Pré-distribuição do juízo das garantias', duration: '2:54', url: '' },
+        { title: 'Cadastro e distribuição de mandados via SEEU', duration: '2:38', url: '' },
+        { title: 'Intimar Ministério Público', duration: '1:00', url: '' },
+      ]},
+      { title: 'Controle e assinatura', tag: 'cadastro', videos: [
+        { title: 'Juiz autorizar assessor guardar para assinar', duration: '1:25', url: '' },
+        { title: 'Visualizar pauta de julgamentos', duration: '1:50', url: '' },
+        { title: 'Incluir processo em pauta', duration: '2:10', url: '' },
+      ]},
+    ]
+ },
 };
 
 let currentProfile = 'todos';
