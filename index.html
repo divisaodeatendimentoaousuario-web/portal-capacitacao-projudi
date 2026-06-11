@@ -708,7 +708,7 @@
     <div class="sidebar-panel active" id="panel-videos">
       <div class="sidebar-section-label">Perfis de acesso</div>
       <div class="sidebar-item active" onclick="switchProfile('todos', this)" data-profile="todos">
-        <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
+        <i class="ti ti-users" aria-hidden="true"></i> Todos Usuários
         <span class="count">55</span>
       </div>
       <div class="sidebar-item" onclick="switchProfile('advogado', this)" data-profile="advogado">
@@ -751,10 +751,10 @@
         <i class="ti ti-gavel" aria-hidden="true"></i> Juiz
         <span class="count">6</span>
       </div>
-     <div class="sidebar-item" onclick="switchProfile('juiz', this)" data-profile="todos usuários">
+     <!--<div class="sidebar-item" onclick="switchProfile('juiz', this)" data-profile="todos usuários">
         <i class="ti ti-gavel" aria-hidden="true"></i> Todos Usuários
         <span class="count">6</span>
-      </div>
+      </div> -->
     </div>
 
     <!-- PAINEL PDFs -->
@@ -801,7 +801,7 @@
     <!-- DYNAMIC CONTENT -->
     <div class="profile-header">
       <span class="profile-pill" id="profile-pill">
-        <i class="ti ti-users" aria-hidden="true"></i> Todos os perfis
+        <i class="ti ti-users" aria-hidden="true"></i> Todos Usuários
       </span>
       <span class="result-count" id="result-count"></span>
     </div>
@@ -1081,7 +1081,7 @@ const DATA = {
       ]},
     ]
   },
- todos_usuários: {
+ /*todos_usuários: {
     label: 'Todos Usuários',
     icon: 'ti-mail-forward',
     sections: [
@@ -1096,7 +1096,7 @@ const DATA = {
         { title: 'Incluir processo em pauta', duration: '2:10', url: '' },
       ]},
     ]
- },
+ },*/
 };
 
 let currentProfile = 'todos';
@@ -1104,7 +1104,7 @@ let currentTopic = null;
 let searchTerm = '';
 
 const PROFILE_META = {
-  todos: { label: 'Todos os perfis', icon: 'ti-users' },
+  todos: { label: 'Todos Usuários', icon: 'ti-users' },
   advogado: { label: 'Advogado', icon: 'ti-scale' },
   analista: { label: 'Analista judiciário', icon: 'ti-clipboard-check' },
   'analista 2': { label: 'Analista Judiciário 2º Grau', icon: 'ti-clipboard-list' },
