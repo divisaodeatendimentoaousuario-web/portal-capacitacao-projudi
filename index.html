@@ -1065,7 +1065,7 @@ const DATA = {
     ]
   },
   juiz: {
-    label: 'Juiz',
+    label: 'Magistrado',
     icon: 'ti-gavel',
     sections: [
         { title: 'Despachos e decisões', tag: 'processos', videos: [
@@ -1081,7 +1081,7 @@ const DATA = {
       ]},
     ]
   },
- todos_usuários: {
+ 'todos usuários': {
     label: 'Todos Usuários',
     icon: 'ti-users',
     sections: [
@@ -1114,7 +1114,7 @@ const PROFILE_META = {
   desembargador: { label: 'Desembargador', icon: 'ti-building-bank' },
   distribuidor: { label: 'Distribuidor', icon: 'ti-send' },
   distribuidor_gabinete: { label: 'Distribuidor de Gabinete', icon: 'ti-mail-forward' },
-  juiz: { label: 'Juiz', icon: 'ti-gavel' },
+  juiz: { label: 'Magistrado', icon: 'ti-gavel' },
   'todos usuários': { label: 'Todos Usuários', icon: 'ti-users' },
 };
 
@@ -1832,15 +1832,26 @@ function setTheme(theme) {
 
 // Atualiza os counts da sidebar com base nos dados reais
 function updateSidebarCounts() {
-  const total = Object.values(DATA).reduce((acc, p) =>
-    acc + p.sections.reduce((a, s) => a + s.videos.length, 0), 0);
-  const todosEl = document.querySelector('.sidebar-item[data-profile="todos"] .count');
-  if (todosEl) todosEl.textContent = total;
-
+  // Monta mapa: chave do DATA -> contagem
+  const countMap = {};
   Object.keys(DATA).forEach(pid => {
-    const count = DATA[pid].sections.reduce((a, s) => a + s.videos.length, 0);
-    const el = document.querySelector(`.sidebar-item[data-profile="${pid}"] .count`);
-    if (el) el.textContent = count;
+    countMap[pid] = DATA[pid].sections.reduce((a, s) => a + s.videos.length, 0);
+  });
+
+  // Total geral para "Todos os Perfis"
+  const total = Object.values(countMap).reduce((a, v) => a + v, 0);
+
+  // Itera todos os itens da sidebar e atualiza pelo data-profile
+  document.querySelectorAll('.sidebar-item[data-profile]').forEach(item => {
+    const profile = item.getAttribute('data-profile');
+    const countEl = item.querySelector('.count');
+    if (!countEl) return;
+
+    if (profile === 'todos') {
+      countEl.textContent = total;
+    } else if (countMap[profile] !== undefined) {
+      countEl.textContent = countMap[profile];
+    }
   });
 }
 
