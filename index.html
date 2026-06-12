@@ -685,7 +685,7 @@
   <button onclick="globalSearch(document.getElementById('search-input').value)">
     <i class="ti ti-search" aria-hidden="true"></i> Buscar
   </button>
-  <span class="search-info" id="search-info">0 vídeos disponíveis</span>
+  <!-- <span class="search-info" id="search-info">0 vídeos encontrados</span> -->
 </div>
 
 <!-- LAYOUT -->
@@ -1189,8 +1189,8 @@ function render() {
   }
 
   container.innerHTML = html;
-  document.getElementById('result-count').textContent =
-    totalShown > 0 ? `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} encontrado${totalShown !== 1 ? 's' : ''}` : '';
+  //document.getElementById('result-count').textContent =
+    //totalShown > 0 ? `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} encontrado${totalShown !== 1 ? 's' : ''}` : '';
   document.getElementById('search-info').textContent =
     `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} disponíve${totalShown !== 1 ? 'is' : 'l'}`;
   document.getElementById('stat-total-videos').textContent = totalShown;
@@ -1390,7 +1390,7 @@ function resetFilters(el) {
   document.getElementById('search-input').value = '';
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
   document.querySelector('[data-profile="todos"]').classList.add('active');
-  document.getElementById('search-info').textContent = '55 vídeos disponíveis';
+  /*document.getElementById('search-info').textContent = '55 vídeos encontrados';*/
   document.querySelector('.sidebar').classList.remove('mobile-hidden');
   document.getElementById('mobile-back-btn').style.display = 'none';
   switchTab('videos');
