@@ -713,7 +713,7 @@
       </div>
       <div class="sidebar-item" onclick="switchProfile('advogado', this)" data-profile="advogado">
         <i class="ti ti-scale" aria-hidden="true"></i> Advogado
-        <span class="count">12</span>
+        <span class="count">10</span>
       </div>
       <div class="sidebar-item" onclick="switchProfile('analista', this)" data-profile="analista">
         <i class="ti ti-clipboard-check" aria-hidden="true"></i> Analista judiciário
@@ -1830,7 +1830,22 @@ function setTheme(theme) {
   } catch(e) {}
 })();
 
+// Atualiza os counts da sidebar com base nos dados reais
+function updateSidebarCounts() {
+  const total = Object.values(DATA).reduce((acc, p) =>
+    acc + p.sections.reduce((a, s) => a + s.videos.length, 0), 0);
+  const todosEl = document.querySelector('.sidebar-item[data-profile="todos"] .count');
+  if (todosEl) todosEl.textContent = total;
+
+  Object.keys(DATA).forEach(pid => {
+    const count = DATA[pid].sections.reduce((a, s) => a + s.videos.length, 0);
+    const el = document.querySelector(`.sidebar-item[data-profile="${pid}"] .count`);
+    if (el) el.textContent = count;
+  });
+}
+
 renderPDFList();
+updateSidebarCounts();
 render();
 </script>
 </body>
