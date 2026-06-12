@@ -1191,6 +1191,8 @@ function render() {
   container.innerHTML = html;
   //document.getElementById('result-count').textContent =
     //totalShown > 0 ? `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} encontrado${totalShown !== 1 ? 's' : ''}` : '';
+  document.getElementById('search-info').textContent = ...   // ← ativo (barra de busca)
+  document.getElementById('stat-total-videos').textContent = totalShown;  // ← ativo (card)
   document.getElementById('search-info').textContent =
     `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} disponíve${totalShown !== 1 ? 'is' : 'l'}`;
   document.getElementById('stat-total-videos').textContent = totalShown;
