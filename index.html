@@ -685,7 +685,7 @@
   <button onclick="globalSearch(document.getElementById('search-input').value)">
     <i class="ti ti-search" aria-hidden="true"></i> Buscar
   </button>
-  <!-- <span class="search-info" id="search-info">0 vídeos encontrados</span> -->
+  <span class="search-info" id="search-info">0 vídeos disponíveis</span>
 </div>
 
 <!-- LAYOUT -->
@@ -1189,10 +1189,8 @@ function render() {
   }
 
   container.innerHTML = html;
-  //document.getElementById('result-count').textContent =
-    //totalShown > 0 ? `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} encontrado${totalShown !== 1 ? 's' : ''}` : '';
-  document.getElementById('search-info').textContent = ...   // ← ativo (barra de busca)
-  document.getElementById('stat-total-videos').textContent = totalShown;  // ← ativo (card)
+  // document.getElementById('result-count').textContent =
+    // totalShown > 0 ? `${totalShown} vídeo...` : '';
   document.getElementById('search-info').textContent =
     `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} disponíve${totalShown !== 1 ? 'is' : 'l'}`;
   document.getElementById('stat-total-videos').textContent = totalShown;
@@ -1242,7 +1240,7 @@ function switchTab(tab) {
     document.querySelector('.profile-header').style.display = 'flex';
     document.getElementById('profile-pill').innerHTML = `<i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos`;
     const total = PDF_CATEGORIES.reduce((a,c) => a + c.items.length, 0);
-    document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
+    // document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
   }
 }
 
@@ -1306,7 +1304,7 @@ function globalSearch(val) {
   const pill = document.getElementById('profile-pill');
   document.querySelector('.profile-header').style.display = 'flex';
   pill.innerHTML = `<i class="ti ti-search" aria-hidden="true"></i> Busca: "${term}"`;
-  document.getElementById('result-count').textContent =
+  // document.getElementById('result-count').textContent =
     `${videoResults.length + pdfResults.length} resultado${videoResults.length + pdfResults.length !== 1 ? 's' : ''}`;
 
   let html = '';
@@ -1392,7 +1390,7 @@ function resetFilters(el) {
   document.getElementById('search-input').value = '';
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
   document.querySelector('[data-profile="todos"]').classList.add('active');
-  /*document.getElementById('search-info').textContent = '55 vídeos encontrados';*/
+  document.getElementById('search-info').textContent = '55 vídeos disponíveis';
   document.querySelector('.sidebar').classList.remove('mobile-hidden');
   document.getElementById('mobile-back-btn').style.display = 'none';
   switchTab('videos');
@@ -1459,7 +1457,7 @@ function toggleCategory(idx) {
     document.querySelector('.profile-header').style.display = 'flex';
     const cat = PDF_CATEGORIES[idx];
     document.getElementById('profile-pill').innerHTML = `<i class="ti ${cat.icon}" aria-hidden="true"></i> ${cat.title}`;
-    document.getElementById('result-count').textContent = `${cat.items.length} informativo${cat.items.length !== 1 ? 's' : ''}`;
+    // document.getElementById('result-count').textContent = `${cat.items.length} informativo${cat.items.length !== 1 ? 's' : ''}`;
   } else {
     // Voltou a fechar: volta para "Todos"
     const todosEl = document.getElementById('pdf-todos-item');
@@ -1468,7 +1466,7 @@ function toggleCategory(idx) {
     document.querySelector('.profile-header').style.display = 'flex';
     document.getElementById('profile-pill').innerHTML = `<i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos`;
     const total = PDF_CATEGORIES.reduce((a,c) => a + c.items.length, 0);
-    document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
+    // document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
     closePDFViewer();
   }
   renderPDFList();
@@ -1485,7 +1483,7 @@ function switchPDFTodos(el) {
   document.querySelector('.profile-header').style.display = 'flex';
   document.getElementById('profile-pill').innerHTML = `<i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos`;
   const total = PDF_CATEGORIES.reduce((a,c) => a + c.items.length, 0);
-  document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
+  // document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
   mobileSelectContent();
 }
 
