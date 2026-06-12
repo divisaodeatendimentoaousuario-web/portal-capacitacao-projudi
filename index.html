@@ -1193,6 +1193,7 @@ function render() {
     totalShown > 0 ? `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} encontrado${totalShown !== 1 ? 's' : ''}` : '';
   document.getElementById('search-info').textContent =
     `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} disponíve${totalShown !== 1 ? 'is' : 'l'}`;
+  document.getElementById('stat-total-videos').textContent = totalShown;
 }
 
 // ── MOBILE HELPERS ──
