@@ -685,7 +685,7 @@
   <button onclick="globalSearch(document.getElementById('search-input').value)">
     <i class="ti ti-search" aria-hidden="true"></i> Buscar
   </button>
-  <span class="search-info" id="search-info">55 vídeos disponíveis</span>
+  <span class="search-info" id="search-info">0 vídeos disponíveis</span>
 </div>
 
 <!-- LAYOUT -->
@@ -783,13 +783,13 @@
     </button>
 
     <!-- STATS -->
-    <div id="stat-videos" style="margin-bottom:1.75rem;">
-      <div class="stat-card" style="max-width:220px;">
-        <div class="s-label">Total de vídeos</div>
-        <div class="s-value">${videoResults.length}</div>
-        <div class="s-sub">na playlist oficial</div>
-      </div>
-    </div>
+<div id="stat-videos" style="margin-bottom:1.75rem;">
+  <div class="stat-card" style="max-width:220px;">
+    <div class="s-label">Total de vídeos</div>
+    <div class="s-value" id="stat-total-videos">0</div>
+    <div class="s-sub">na playlist oficial</div>
+  </div>
+</div>
     <div id="stat-pdfs" style="margin-bottom:1.75rem;display:none;">
       <div class="stat-card" style="max-width:220px;">
         <div class="s-label">Total de informativos</div>
@@ -1267,7 +1267,7 @@ function globalSearch(val) {
     closePDFViewer();
     renderPDFList();
     render();
-    document.getElementById('search-info').textContent = '55 vídeos disponíveis';
+    
     return;
   }
 
