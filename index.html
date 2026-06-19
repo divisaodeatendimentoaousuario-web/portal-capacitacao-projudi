@@ -1390,7 +1390,11 @@ function resetFilters(el) {
   document.getElementById('search-input').value = '';
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
   document.querySelector('[data-profile="todos"]').classList.add('active');
-  document.getElementById('search-info').textContent = '55 vídeos disponíveis';
+  // DEPOIS - valor calculado dinamicamente:
+const totalGeral = Object.values(DATA).reduce((a, p) => 
+  a + p.sections.reduce((b, s) => b + s.videos.length, 0), 0);
+document.getElementById('search-info').textContent = 
+  `${totalGeral} vídeo${totalGeral !== 1 ? 's' : ''} disponíve${totalGeral !== 1 ? 'is' : 'l'}`;
   document.querySelector('.sidebar').classList.remove('mobile-hidden');
   document.getElementById('mobile-back-btn').style.display = 'none';
   switchTab('videos');
