@@ -1862,14 +1862,17 @@ function updateSidebarCounts() {
   });
 }
 
+// DEPOIS:
 renderPDFList();
 updateSidebarCounts();
 render();
 
-// Força atualização após carregamento completo
-window.addEventListener('load', function() {
-  render();
-});
+// Força atualização do stat card após tudo renderizar
+setTimeout(function() {
+  document.getElementById('stat-total-videos').textContent =
+    Object.values(DATA).reduce((a,p) =>
+      a + p.sections.reduce((b,s) => b + s.videos.length, 0), 0);
+}, 100);
 </script>
 </body>
 </html>
