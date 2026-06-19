@@ -793,7 +793,7 @@
     <div id="stat-pdfs" style="margin-bottom:1.75rem;display:none;">
       <div class="stat-card" style="max-width:220px;">
         <div class="s-label">Total de informativos</div>
-        <div class="s-value">9</div>
+        <div class="s-value">0</div>
         <div class="s-sub">em PDF disponíveis</div>
       </div>
     </div>
@@ -1862,9 +1862,12 @@ function updateSidebarCounts() {
   });
 }
 
-renderPDFList();
-updateSidebarCounts();
-render();
+// SUBSTITUA por:
+document.addEventListener('DOMContentLoaded', function() {
+  renderPDFList();
+  updateSidebarCounts();
+  render();
+});
 </script>
 </body>
 </html>
