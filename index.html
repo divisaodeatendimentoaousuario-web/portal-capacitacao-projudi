@@ -1193,7 +1193,11 @@ function render() {
     // totalShown > 0 ? `${totalShown} vídeo...` : '';
   document.getElementById('search-info').textContent =
     `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} disponíve${totalShown !== 1 ? 'is' : 'l'}`;
-  document.getElementById('stat-total-videos').textContent = totalShown;
+ // DEPOIS:
+const totalReal = currentProfile === 'todos'
+  ? Object.values(DATA).reduce((a, p) => a + p.sections.reduce((b, s) => b + s.videos.length, 0), 0)
+  : (DATA[currentProfile]?.sections.reduce((a, s) => a + s.videos.length, 0) || 0);
+document.getElementById('stat-total-videos').textContent = totalReal;
 }
 
 // ── MOBILE HELPERS ──
