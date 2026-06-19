@@ -1862,10 +1862,12 @@ function updateSidebarCounts() {
   });
 }
 
-// SUBSTITUA por:
-document.addEventListener('DOMContentLoaded', function() {
-  renderPDFList();
-  updateSidebarCounts();
+renderPDFList();
+updateSidebarCounts();
+render();
+
+// Força atualização após carregamento completo
+window.addEventListener('load', function() {
   render();
 });
 </script>
