@@ -792,9 +792,9 @@
 </div>
     <div id="stat-pdfs" style="margin-bottom:1.75rem;display:none;">
       <div class="stat-card" style="max-width:220px;">
-        <div class="s-label">Total de informativos</div>
+        <!-- <div class="s-label">TOTAL DE VÍDEOS</div> -->
         <div class="s-value" id="stat-total-pdfs">0</div>
-        <div class="s-sub">em PDF disponíveis</div>
+        <div class="s-sub">TOTAL DE VÍDEOS</div>
       </div>
     </div>
 
@@ -1672,7 +1672,7 @@ function renderPDFList() {
 
   list.innerHTML = html;
 
-  // Atualiza o card TOTAL DE INFORMATIVOS com o total geral (sempre)
+  // Atualiza o card na playlist oficial com o total geral (sempre)
   const totalGeral = PDF_CATEGORIES.reduce((a, c) => a + c.items.length, 0);
   const statPdfEl = document.getElementById('stat-total-pdfs');
   if (statPdfEl) statPdfEl.textContent = totalGeral;
