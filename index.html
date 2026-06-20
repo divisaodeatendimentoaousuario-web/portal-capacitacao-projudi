@@ -1866,6 +1866,10 @@ renderPDFList();
 updateSidebarCounts();
 render();
 
+ document.getElementById('stat-total-videos').textContent =
+  Object.values(DATA).reduce((a,p) =>
+    a + p.sections.reduce((b,s) => b + s.videos.length, 0), 0);
+
 </script>
 </body>
 </html>
