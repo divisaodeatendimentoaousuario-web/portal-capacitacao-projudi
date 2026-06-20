@@ -709,7 +709,6 @@
       <div class="sidebar-section-label">Perfis de acesso</div>
       <div class="sidebar-item active" onclick="switchProfile('todos', this)" data-profile="todos">
         <i class="ti ti-users" aria-hidden="true"></i> Todos os Perfis
-        <span class="count">0</span>
       </div>
       <div class="sidebar-item" onclick="switchProfile('advogado', this)" data-profile="advogado">
         <i class="ti ti-scale" aria-hidden="true"></i> Advogado
@@ -1867,12 +1866,6 @@ renderPDFList();
 updateSidebarCounts();
 render();
 
-// Força atualização do stat card após tudo renderizar
-setTimeout(function() {
-  document.getElementById('stat-total-videos').textContent =
-    Object.values(DATA).reduce((a,p) =>
-      a + p.sections.reduce((b,s) => b + s.videos.length, 0), 0);
-}, 100);
 </script>
 </body>
 </html>
