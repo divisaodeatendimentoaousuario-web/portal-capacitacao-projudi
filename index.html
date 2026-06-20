@@ -686,6 +686,7 @@
     <i class="ti ti-search" aria-hidden="true"></i> Buscar
   </button>
   <!-- <span class="search-info" id="search-info">0 vídeos disponíveis</span> -->
+  <span class="search-info" id="search-info" style="display:none"></span>
 </div>
 
 <!-- LAYOUT -->
@@ -785,14 +786,14 @@
     <!-- STATS -->
 <div id="stat-videos" style="margin-bottom:1.75rem;">
   <div class="stat-card" style="max-width:220px;">
-    <!-- <div class="s-label">Total de vídeos</div>  -->
+    <!--<div class="s-label">Total de vídeos</div> -->
     <div class="s-value" id="stat-total-videos">0</div>
     <div class="s-sub">TOTAL DE VÍDEOS</div>
   </div>
 </div>
     <div id="stat-pdfs" style="margin-bottom:1.75rem;display:none;">
       <div class="stat-card" style="max-width:220px;">
-        <!-- <div class="s-label">TOTAL DE VÍDEOS</div> -->
+        <!-- <div class="s-label">Total de informativos</div> -->
         <div class="s-value" id="stat-total-pdfs">0</div>
         <div class="s-sub">TOTAL DE INFORMATIVOS</div>
       </div>
@@ -1104,7 +1105,7 @@ let currentTopic = null;
 let searchTerm = '';
 
 const PROFILE_META = {
-  /*todos: { label: 'Todos os Perfis', icon: 'ti-users' },*/
+  todos: { label: 'Todos os Perfis', icon: 'ti-users' },
   advogado: { label: 'Advogado', icon: 'ti-scale' },
   analista: { label: 'Analista judiciário', icon: 'ti-clipboard-check' },
   'analista 2': { label: 'Analista Judiciário 2º Grau', icon: 'ti-clipboard-list' },
@@ -1392,12 +1393,11 @@ function resetFilters(el) {
   activePDFItem = null;
   document.getElementById('search-input').value = '';
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-  document.querySelector('[data-profile="todos"]').classList.add('active');
-  // DEPOIS - valor calculado dinamicamente:
-const totalGeral = Object.values(DATA).reduce((a, p) => 
-  a + p.sections.reduce((b, s) => b + s.videos.length, 0), 0);
-document.getElementById('search-info').textContent = 
-  `${totalGeral} vídeo${totalGeral !== 1 ? 's' : ''} disponíve${totalGeral !== 1 ? 'is' : 'l'}`;
+  // Não marca nenhum item ativo (o item "todos" está oculto)
+  const totalGeral = Object.values(DATA).reduce((a, p) =>
+    a + p.sections.reduce((b, s) => b + s.videos.length, 0), 0);
+  document.getElementById('search-info').textContent =
+    `${totalGeral} vídeo${totalGeral !== 1 ? 's' : ''} disponíve${totalGeral !== 1 ? 'is' : 'l'}`;
   document.querySelector('.sidebar').classList.remove('mobile-hidden');
   document.getElementById('mobile-back-btn').style.display = 'none';
   switchTab('videos');
@@ -1672,7 +1672,7 @@ function renderPDFList() {
 
   list.innerHTML = html;
 
-  // Atualiza o card na playlist oficial com o total geral (sempre)
+  // Atualiza o card TOTAL DE INFORMATIVOS com o total geral (sempre)
   const totalGeral = PDF_CATEGORIES.reduce((a, c) => a + c.items.length, 0);
   const statPdfEl = document.getElementById('stat-total-pdfs');
   if (statPdfEl) statPdfEl.textContent = totalGeral;
