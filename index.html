@@ -707,7 +707,7 @@
     <!-- PAINEL VÍDEOS -->
     <div class="sidebar-panel active" id="panel-videos">
       <div class="sidebar-section-label">Perfis de acesso</div>
-      <div class="sidebar-item active" onclick="switchProfile('todos', this)" data-profile="todos">
+      <div class="sidebar-item" onclick="switchProfile('todos', this)" data-profile="todos" style="display:none">
         <i class="ti ti-users" aria-hidden="true"></i> Todos os Perfis
         <span class="count" id="sidebar-todos-count" style="display:none">0</span>
       </div>
@@ -760,7 +760,7 @@
     <!-- PAINEL PDFs -->
     <div class="sidebar-panel" id="panel-pdfs">
       <div class="sidebar-section-label">Categorias</div>
-      <div class="sidebar-item active" id="pdf-todos-item" onclick="switchPDFTodos(this)" data-pdf-cat="todos">
+      <div class="sidebar-item" id="pdf-todos-item" onclick="switchPDFTodos(this)" data-pdf-cat="todos" style="display:none">
         <i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos
         <span class="count" id="pdf-todos-count">9</span>
       </div>
@@ -793,7 +793,7 @@
     <div id="stat-pdfs" style="margin-bottom:1.75rem;display:none;">
       <div class="stat-card" style="max-width:220px;">
         <div class="s-label">Total de informativos</div>
-        <div class="s-value">0</div>
+        <div class="s-value" id="stat-total-pdfs">0</div>
         <div class="s-sub">em PDF disponíveis</div>
       </div>
     </div>
@@ -1450,33 +1450,25 @@ const PDF_CATEGORIES = [
 let pdfSearchTerm = '';
 
 function toggleCategory(idx) {
-  const wasOpen = PDF_CATEGORIES[idx].open;
-  PDF_CATEGORIES.forEach(c => c.open = false);
-  PDF_CATEGORIES[idx].open = !wasOpen;
   activePDFItem = null;
 
-  // Sincroniza destaque: remove active de todos os itens pdf
-  document.querySelectorAll('[data-pdf-cat]').forEach(i => i.classList.remove('active'));
+  // Destaca o item clicado na sidebar
+  document.querySelectorAll('#pdf-list .sidebar-item').forEach(i => i.classList.remove('active'));
+  const items = document.querySelectorAll('#pdf-list .sidebar-item');
+  // Encontra o item pelo índice de renderização
+  let rendered = 0;
+  document.querySelectorAll('#pdf-list .sidebar-item').forEach(item => {
+    if (parseInt(item.getAttribute('onclick').match(/\d+/)[0]) === idx) {
+      item.classList.add('active');
+    }
+  });
 
-  if (PDF_CATEGORIES[idx].open) {
-    renderPDFCards(idx);
-    mobileSelectContent();
-    document.querySelector('.profile-header').style.display = 'flex';
-    const cat = PDF_CATEGORIES[idx];
-    document.getElementById('profile-pill').innerHTML = `<i class="ti ${cat.icon}" aria-hidden="true"></i> ${cat.title}`;
-    // document.getElementById('result-count').textContent = `${cat.items.length} informativo${cat.items.length !== 1 ? 's' : ''}`;
-  } else {
-    // Voltou a fechar: volta para "Todos"
-    const todosEl = document.getElementById('pdf-todos-item');
-    if (todosEl) todosEl.classList.add('active');
-    renderPDFCardsTodos();
-    document.querySelector('.profile-header').style.display = 'flex';
-    document.getElementById('profile-pill').innerHTML = `<i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos`;
-    const total = PDF_CATEGORIES.reduce((a,c) => a + c.items.length, 0);
-    // document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
-    closePDFViewer();
-  }
-  renderPDFList();
+  // Abre os cards da categoria na área principal
+  renderPDFCards(idx);
+  mobileSelectContent();
+  document.querySelector('.profile-header').style.display = 'flex';
+  const cat = PDF_CATEGORIES[idx];
+  document.getElementById('profile-pill').innerHTML = `<i class="ti ${cat.icon}" aria-hidden="true"></i> ${cat.title}`;
 }
 
 function switchPDFTodos(el) {
@@ -1667,21 +1659,11 @@ function renderPDFList() {
     if (filtered.length === 0) return;
     totalShown += filtered.length;
 
-    html += `<div>
-      <div class="pdf-category-header ${cat.open ? 'open' : ''}" onclick="toggleCategory(${ci})">
+    html += `<div class="sidebar-item" onclick="toggleCategory(${ci})" data-pdf-cat="${ci}">
         <i class="ti ${cat.icon}" style="font-size:13px" aria-hidden="true"></i>
         ${cat.title}
-        <span style="margin-left:4px;font-size:10px;background:#c5dcf0;color:var(--tjgo-navy);padding:1px 6px;border-radius:8px;font-weight:500;">${filtered.length}</span>
-        <i class="ti ti-chevron-down cat-arrow" aria-hidden="true"></i>
-      </div>
-      <div class="pdf-category-body ${cat.open ? '' : 'collapsed'}">
-        ${filtered.map((p, pi) => `
-          <a class="pdf-item" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi})">
-            <i class="ti ti-file-type-pdf" aria-hidden="true"></i>
-            <span>${p.name}</span>
-          </a>`).join('')}
-      </div>
-    </div>`;
+        <span class="count">${filtered.length}</span>
+      </div>`;
   });
 
   if (totalShown === 0) {
@@ -1689,6 +1671,11 @@ function renderPDFList() {
   }
 
   list.innerHTML = html;
+
+  // Atualiza o card TOTAL DE INFORMATIVOS com o total geral (sempre)
+  const totalGeral = PDF_CATEGORIES.reduce((a, c) => a + c.items.length, 0);
+  const statPdfEl = document.getElementById('stat-total-pdfs');
+  if (statPdfEl) statPdfEl.textContent = totalGeral;
 }
 
 let activePDFItem = null;
