@@ -707,9 +707,10 @@
     <!-- PAINEL VÍDEOS -->
     <div class="sidebar-panel active" id="panel-videos">
       <div class="sidebar-section-label">Perfis de acesso</div>
-      <div class="sidebar-item active" onclick="switchProfile('todos', this)" data-profile="todos">
+      <!--<div class="sidebar-item active" onclick="switchProfile('todos', this)" data-profile="todos">
         <i class="ti ti-users" aria-hidden="true"></i> Todos os Perfis
-      </div>
+        <span class="count" id="sidebar-todos-count" style="display:none">0</span>
+      </div> -->
       <div class="sidebar-item" onclick="switchProfile('advogado', this)" data-profile="advogado">
         <i class="ti ti-scale" aria-hidden="true"></i> Advogado
         <span class="count">0</span>
@@ -1103,7 +1104,7 @@ let currentTopic = null;
 let searchTerm = '';
 
 const PROFILE_META = {
-  todos: { label: 'Todos os Perfis', icon: 'ti-users' },
+  /*todos: { label: 'Todos os Perfis', icon: 'ti-users' },*/
   advogado: { label: 'Advogado', icon: 'ti-scale' },
   analista: { label: 'Analista judiciário', icon: 'ti-clipboard-check' },
   'analista 2': { label: 'Analista Judiciário 2º Grau', icon: 'ti-clipboard-list' },
@@ -1844,8 +1845,12 @@ function updateSidebarCounts() {
     countMap[pid] = DATA[pid].sections.reduce((a, s) => a + s.videos.length, 0);
   });
 
-  // Total geral para "Todos os Perfis"
+  // Total geral (soma de todos os perfis)
   const total = Object.values(countMap).reduce((a, v) => a + v, 0);
+
+  // Atualiza o card TOTAL DE VÍDEOS com o total geral (sempre)
+  const statEl = document.getElementById('stat-total-videos');
+  if (statEl) statEl.textContent = total;
 
   // Itera todos os itens da sidebar e atualiza pelo data-profile
   document.querySelectorAll('.sidebar-item[data-profile]').forEach(item => {
@@ -1854,6 +1859,7 @@ function updateSidebarCounts() {
     if (!countEl) return;
 
     if (profile === 'todos') {
+      // span oculto; total vai para o card de stats
       countEl.textContent = total;
     } else if (countMap[profile] !== undefined) {
       countEl.textContent = countMap[profile];
@@ -1865,10 +1871,6 @@ function updateSidebarCounts() {
 renderPDFList();
 updateSidebarCounts();
 render();
-
- document.getElementById('stat-total-videos').textContent =
-  Object.values(DATA).reduce((a,p) =>
-    a + p.sections.reduce((b,s) => b + s.videos.length, 0), 0);
 
 </script>
 </body>
