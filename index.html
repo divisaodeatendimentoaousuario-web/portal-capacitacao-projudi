@@ -2134,16 +2134,18 @@ function markAllRead() {
 }
 
 // Atualiza badge e classes do sininho
+// Badge conta: vídeos das últimas 24h + vídeos não lidos
 function refreshBell() {
-  const read = getReadIds();
-  const unread = _notifVideos.filter(v => !read.includes(v.id));
+  const read   = getReadIds();
+  // Não lidos = não lido OU publicado nas últimas 24h (nunca some no dia)
+  const alertVideos = _notifVideos.filter(v => !read.includes(v.id) || isRecent(v));
   const badge  = document.getElementById('notif-badge');
   const btn    = document.getElementById('notif-bell-btn');
   const icon   = document.getElementById('notif-bell-icon');
 
-  if (unread.length > 0) {
+  if (alertVideos.length > 0) {
     badge.style.display = 'flex';
-    badge.textContent   = unread.length > 9 ? '9+' : unread.length;
+    badge.textContent   = alertVideos.length > 9 ? '9+' : alertVideos.length;
     btn.classList.add('has-new');
     icon.className = 'ti ti-bell-ringing';
   } else {
@@ -2154,6 +2156,10 @@ function refreshBell() {
 }
 
 // Renderiza a lista de notificações no dropdown
+function isRecent(v) {
+  return v.publishedTs && (Date.now() - v.publishedTs) < 24 * 60 * 60 * 1000;
+}
+
 function renderNotifList() {
   const list = document.getElementById('notif-list');
   const read = getReadIds();
@@ -2168,27 +2174,35 @@ function renderNotifList() {
 
   let html = '';
   _notifVideos.forEach(v => {
-    const isUnread = !read.includes(v.id);
-    const thumbUrl = v.thumb || '';
-    html += `<div class="notif-item${isUnread ? ' unread' : ''}" onclick="handleNotifClick('${v.id}','${v.url.replace(/'/g,"\'")}','${v.title.replace(/'/g,"\'")}')">
-      <div class="notif-dot"></div>
-      <div class="notif-thumb">
-        ${thumbUrl ? `<img src="${thumbUrl}" alt="" loading="lazy">` : '<i class="ti ti-video" style="color:white;font-size:16px"></i>'}
-        <div class="notif-play"><i class="ti ti-player-play-filled"></i></div>
-      </div>
-      <div class="notif-body">
-        <div class="notif-vtitle">${v.title}</div>
-        <div class="notif-meta">
-          <i class="ti ti-calendar" style="font-size:10px"></i>
-          ${v.published}
-          ${isUnread ? '<span style="color:#0d5c9e;font-weight:600;margin-left:4px">• Novo</span>' : ''}
-        </div>
-      </div>
-    </div>`;
+    const isUnread  = !read.includes(v.id);
+    const isNew24h  = isRecent(v);
+    const thumbUrl  = v.thumb || '';
+    const safeId    = v.id;
+    const safeUrl   = v.url.replace(/'/g, "APOS");
+    const safeTitle = v.title.replace(/'/g, "APOS");
+    html += '<div class="notif-item' + (isUnread ? ' unread' : '') + '"'
+      + ' onclick="handleNotifClick('' + safeId + '','' + safeUrl + '','' + safeTitle + '')">'
+      + '<div class="notif-dot"></div>'
+      + '<div class="notif-thumb">'
+      + (thumbUrl ? '<img src="' + thumbUrl + '" alt="" loading="lazy">' : '<i class="ti ti-video" style="color:white;font-size:16px"></i>')
+      + '<div class="notif-play"><i class="ti ti-player-play-filled"></i></div>'
+      + '</div>'
+      + '<div class="notif-body">'
+      + '<div class="notif-vtitle">' + v.title + '</div>'
+      + '<div class="notif-meta">'
+      + '<i class="ti ti-calendar" style="font-size:10px"></i> '
+      + v.published
+      + (isNew24h
+          ? ' <span style="background:#e8b012;color:#1a1a1a;font-weight:700;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:5px">NOVO</span>'
+          : (isUnread ? ' <span style="color:#0d5c9e;font-weight:600;margin-left:4px">• Não lido</span>' : ''))
+      + '</div>'
+      + '</div>'
+      + '</div>';
   });
 
   list.innerHTML = html;
 }
+
 
 function handleNotifClick(videoId, url, title) {
   markAsRead(videoId);
@@ -2211,29 +2225,45 @@ function formatDate(isoStr) {
 async function fetchPlaylistRSS() {
   const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`;
 
-  // Lista de proxies CORS com fallback automático
+  // Proxies testados — ordem de prioridade
+  // corsproxy.io  : devolve texto puro
+  // allorigins /get: devolve JSON { contents: "..." }
+  // allorigins /raw: devolve texto puro
   const proxies = [
-    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-    url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-    url => `https://cors-anywhere.herokuapp.com/${url}`,
+    {
+      build: url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+      parse: async r => await r.text()
+    },
+    {
+      build: url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      parse: async r => await r.text()
+    },
+    {
+      build: url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+      parse: async r => { const j = await r.json(); return j.contents || ''; }
+    },
+    {
+      build: url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+      parse: async r => await r.text()
+    },
   ];
 
   let lastErr;
-  for (const buildProxy of proxies) {
+  for (const proxy of proxies) {
     try {
-      const proxyUrl = buildProxy(rssUrl);
-      const resp = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+      const proxyUrl = proxy.build(rssUrl);
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 9000);
+      const resp = await fetch(proxyUrl, { signal: controller.signal });
+      clearTimeout(timer);
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      // corsproxy.io devolve texto direto; allorigins devolve JSON {contents}
-      const ct = resp.headers.get('content-type') || '';
-      if (ct.includes('json')) {
-        const json = await resp.json();
-        return json.contents || json.body || '';
-      }
-      return await resp.text();
+      const text = await proxy.parse(resp);
+      if (!text || !text.includes('<entry>')) throw new Error('RSS vazio ou inválido');
+      console.log('Notif: proxy funcionou ->', proxyUrl.slice(0, 60));
+      return text;
     } catch(e) {
       lastErr = e;
-      console.warn('Proxy falhou, tentando próximo…', e.message);
+      console.warn('Notif: proxy falhou ->', e.message);
     }
   }
   throw lastErr || new Error('Todos os proxies falharam');
@@ -2245,12 +2275,14 @@ function parseRSSXML(xmlStr) {
   const doc    = parser.parseFromString(xmlStr, 'application/xml');
   const entries = Array.from(doc.querySelectorAll('entry'));
   return entries.map(entry => {
-    const videoId = (entry.querySelector('videoId')?.textContent || '').trim();
-    const title   = (entry.querySelector('title')?.textContent   || 'Sem título').trim();
-    const published = formatDate(entry.querySelector('published')?.textContent || '');
-    const url     = videoId ? `https://www.youtube.com/watch?v=${videoId}` : '';
-    const thumb   = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '';
-    return { id: videoId, title, published, url, thumb };
+    const videoId     = (entry.querySelector('videoId')?.textContent || '').trim();
+    const title       = (entry.querySelector('title')?.textContent   || 'Sem título').trim();
+    const pubRaw      = entry.querySelector('published')?.textContent || '';
+    const publishedTs = pubRaw ? new Date(pubRaw).getTime() : 0;
+    const published   = formatDate(pubRaw);
+    const url         = videoId ? `https://www.youtube.com/watch?v=${videoId}` : '';
+    const thumb       = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '';
+    return { id: videoId, title, published, publishedTs, url, thumb };
   }).filter(v => v.id);
 }
 
@@ -2278,35 +2310,17 @@ async function checkPlaylist(force = false, customInterval = null) {
 
     // IDs que o usuário nunca viu antes
     const seenIds = getSeenIds();
-    const newIds  = videos.map(v => v.id).filter(id => !seenIds.includes(id));
-
-    // Salva todos como "vistos" (para futuras comparações)
+    // Salva todos como "vistos"
     const allIds = videos.map(v => v.id);
     saveSeenIds(allIds);
 
-    // Se é a PRIMEIRA vez (seenIds vazio), marca como lidos apenas
-    // vídeos publicados HÁ MAIS DE 1 DIA — vídeos de hoje permanecem
-    // como "novos" para o usuário ver imediatamente.
+    // Na primeira visita: marca como lidos apenas vídeos com mais de 24h
     if (seenIds.length === 0) {
-      const ontem = Date.now() - 24 * 60 * 60 * 1000;
-      // Pega as datas de publicação do XML para filtrar
-      const parser2 = new DOMParser();
-      try {
-        const xmlStr2 = await fetchPlaylistRSS();
-        const doc2 = parser2.parseFromString(xmlStr2, 'application/xml');
-        const entries2 = Array.from(doc2.querySelectorAll('entry'));
-        const oldIds = entries2
-          .filter(e => {
-            const pub = e.querySelector('published')?.textContent || '';
-            return pub && new Date(pub).getTime() < ontem;
-          })
-          .map(e => (e.querySelector('videoId')?.textContent || '').trim())
-          .filter(Boolean);
-        saveReadIds(oldIds);
-      } catch(e) {
-        // Se falhar, marca tudo como lido (comportamento seguro)
-        saveReadIds(allIds);
-      }
+      const limite = Date.now() - 24 * 60 * 60 * 1000;
+      const oldIds = videos
+        .filter(v => v.publishedTs && v.publishedTs < limite)
+        .map(v => v.id);
+      saveReadIds(oldIds);
     }
 
     _notifVideos = videos;
