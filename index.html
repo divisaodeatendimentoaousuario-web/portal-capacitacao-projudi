@@ -843,7 +843,12 @@
           <span class="notif-header-title">
             <i class="ti ti-bell-ringing"></i> Novos vídeos na playlist
           </span>
-          <button class="notif-mark-all" onclick="markAllRead()">Marcar todos como lidos</button>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="notif-mark-all" onclick="checkPlaylist(true)" title="Verificar agora">
+              <i class="ti ti-refresh" style="font-size:11px"></i>
+            </button>
+            <button class="notif-mark-all" onclick="markAllRead()">Marcar todos como lidos</button>
+          </div>
         </div>
         <div class="notif-list" id="notif-list">
           <div class="notif-loading">
@@ -2100,6 +2105,8 @@ function toggleNotifDropdown(e) {
 function openNotifDropdown() {
   _notifOpen = true;
   document.getElementById('notif-dropdown').classList.add('open');
+  // Sempre re-verifica ao abrir o dropdown (força busca se passou >1 min)
+  checkPlaylist(false, 60 * 1000);
 }
 
 function closeNotifDropdown() {
@@ -2203,11 +2210,33 @@ function formatDate(isoStr) {
 // Busca RSS da playlist via proxy CORS
 async function fetchPlaylistRSS() {
   const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`;
-  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
-  const resp = await fetch(proxyUrl);
-  if (!resp.ok) throw new Error('Erro ao buscar RSS: ' + resp.status);
-  const json = await resp.json();
-  return json.contents;
+
+  // Lista de proxies CORS com fallback automático
+  const proxies = [
+    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+    url => `https://cors-anywhere.herokuapp.com/${url}`,
+  ];
+
+  let lastErr;
+  for (const buildProxy of proxies) {
+    try {
+      const proxyUrl = buildProxy(rssUrl);
+      const resp = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      // corsproxy.io devolve texto direto; allorigins devolve JSON {contents}
+      const ct = resp.headers.get('content-type') || '';
+      if (ct.includes('json')) {
+        const json = await resp.json();
+        return json.contents || json.body || '';
+      }
+      return await resp.text();
+    } catch(e) {
+      lastErr = e;
+      console.warn('Proxy falhou, tentando próximo…', e.message);
+    }
+  }
+  throw lastErr || new Error('Todos os proxies falharam');
 }
 
 // Parseia o XML do feed e retorna array de vídeos
@@ -2226,13 +2255,14 @@ function parseRSSXML(xmlStr) {
 }
 
 // Verifica playlist e atualiza estado
-async function checkPlaylist(force = false) {
+async function checkPlaylist(force = false, customInterval = null) {
   const list = document.getElementById('notif-list');
 
-  // Throttle: só busca de novo depois de CHECK_INTERVAL_MS ou se forçado
+  // Throttle: só busca de novo depois do intervalo ou se forçado
+  const interval = customInterval !== null ? customInterval : CHECK_INTERVAL_MS;
   try {
     const lastCheck = parseInt(localStorage.getItem(STORAGE_KEY_TS) || '0');
-    if (!force && Date.now() - lastCheck < CHECK_INTERVAL_MS && _notifVideos.length > 0) {
+    if (!force && Date.now() - lastCheck < interval && _notifVideos.length > 0) {
       renderNotifList();
       refreshBell();
       return;
@@ -2254,12 +2284,29 @@ async function checkPlaylist(force = false) {
     const allIds = videos.map(v => v.id);
     saveSeenIds(allIds);
 
-    // Se é a PRIMEIRA vez (seenIds vazio), não marca nada como "novo" —
-    // apenas registra o estado atual. O usuário só receberá alertas de
-    // vídeos publicados APÓS a primeira visita.
+    // Se é a PRIMEIRA vez (seenIds vazio), marca como lidos apenas
+    // vídeos publicados HÁ MAIS DE 1 DIA — vídeos de hoje permanecem
+    // como "novos" para o usuário ver imediatamente.
     if (seenIds.length === 0) {
-      // Primeira visita: marca tudo como lido silenciosamente
-      saveReadIds(allIds);
+      const ontem = Date.now() - 24 * 60 * 60 * 1000;
+      // Pega as datas de publicação do XML para filtrar
+      const parser2 = new DOMParser();
+      try {
+        const xmlStr2 = await fetchPlaylistRSS();
+        const doc2 = parser2.parseFromString(xmlStr2, 'application/xml');
+        const entries2 = Array.from(doc2.querySelectorAll('entry'));
+        const oldIds = entries2
+          .filter(e => {
+            const pub = e.querySelector('published')?.textContent || '';
+            return pub && new Date(pub).getTime() < ontem;
+          })
+          .map(e => (e.querySelector('videoId')?.textContent || '').trim())
+          .filter(Boolean);
+        saveReadIds(oldIds);
+      } catch(e) {
+        // Se falhar, marca tudo como lido (comportamento seguro)
+        saveReadIds(allIds);
+      }
     }
 
     _notifVideos = videos;
