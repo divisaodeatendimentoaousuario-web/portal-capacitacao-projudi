@@ -898,7 +898,7 @@ const DATA = {
         { title: 'Processos e dados', tag: 'processos', videos: [
         { title: 'Assinatura de documentos - PDF', duration: '0:56', url: 'https://youtu.be/dT_Fdpagwwk' },
         { title: 'Assinatura documento editor online', duration: '0:53', url: 'https://youtu.be/FFY7cCy3ZOQ' },
-        { title: 'Cadastrar classificador', duration: '1:22', url: 'https://youtu.be/2q4GArA0MX8'},
+        { title: 'Cadastrar classificador', duration: '1:22', url: 'https://youtu.be/2q4GArA0MX8', isNew: true, newSince: '2026-06-23' },
         { title: 'Analisar prevenção', duration: '1:40', url: '' },
         { title: 'Apensar / desapensar processo dependente', duration: '2:30', url: '' },
         { title: 'Bloquear movimentação / arquivo', duration: '1:20', url: '' },
@@ -1344,9 +1344,9 @@ function globalSearch(val) {
 
     videoResults.forEach((v, vi) => {
       const bg = ['#0a3d6b','#0d5c9e','#083c6a','#0b4a80'][vi % 4];
-      const tag = v.url ? `<a class="video-card" href="${v.url}" target="_blank" rel="noopener">` : `<div class="video-card">`;
-      const endTag = v.url ? '</a>' : '</div>';
-      html += `${tag}
+      const cardId = `search-video-${vi}`;
+      const clickAttr = v.url ? `onclick="openVideoPlayer('${v.url.replace(/'/g,"\\'")}','${v.title.replace(/'/g,"\\'")}','${cardId}')"` : '';
+      html += `<div class="video-card" id="${cardId}" ${clickAttr}>
         <div class="video-thumb" style="background:${bg}">
           <span class="thumb-badge">PROJUDI</span>
           ${isVideoNew(v) ? '<span class="new-badge">NOVO</span>' : ''}
@@ -1357,7 +1357,7 @@ function globalSearch(val) {
           <div class="v-title">${v.title}</div>
           <div class="v-meta"><i class="ti ti-user" style="font-size:11px" aria-hidden="true"></i> ${v.profile}</div>
         </div>
-      ${endTag}`;
+      </div>`;
     });
     html += `</div></div>`;
   }
