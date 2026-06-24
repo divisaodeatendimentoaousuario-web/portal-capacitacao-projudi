@@ -2078,23 +2078,19 @@ updateSidebarCounts();
 render();
 
 // ── SISTEMA DE NOTIFICAÇÕES ──
-// Usa o RSS público da playlist do YouTube via proxy CORS (allorigins)
-// para detectar vídeos publicados após a última visita do usuário.
+// Baseado nos vídeos marcados com isNew:true / newSince:'YYYY-MM-DD' no DATA.
+// Não faz requisições externas — funciona em qualquer rede.
 
-const PLAYLIST_ID = 'PLUVnM63H4XbX2FEU8kw2i4z0v3_kPuLdu';
-const STORAGE_KEY_SEEN   = 'notif_seen_ids';
-const STORAGE_KEY_READ   = 'notif_read_ids';
-const STORAGE_KEY_TS     = 'notif_last_check';
-const CHECK_INTERVAL_MS  = 15 * 60 * 1000; // 15 minutos
+const STORAGE_KEY_READ = 'notif_read_ids';
+const NEW_WINDOW_DAYS  = 3; // vídeo é "novo" por quantos dias após newSince
 
-let _notifVideos = [];   // todos os vídeos da playlist
+let _notifVideos = [];
 let _notifOpen   = false;
 
 // Fecha dropdown ao clicar fora
 document.addEventListener('click', function(e) {
-  if (_notifOpen && !document.getElementById('notif-wrap').contains(e.target)) {
-    closeNotifDropdown();
-  }
+  var wrap = document.getElementById('notif-wrap');
+  if (_notifOpen && wrap && !wrap.contains(e.target)) closeNotifDropdown();
 });
 
 function toggleNotifDropdown(e) {
@@ -2105,8 +2101,6 @@ function toggleNotifDropdown(e) {
 function openNotifDropdown() {
   _notifOpen = true;
   document.getElementById('notif-dropdown').classList.add('open');
-  // Sempre re-verifica ao abrir o dropdown (força busca se passou >1 min)
-  checkPlaylist(false, 60 * 1000);
 }
 
 function closeNotifDropdown() {
@@ -2114,38 +2108,49 @@ function closeNotifDropdown() {
   document.getElementById('notif-dropdown').classList.remove('open');
 }
 
-// Carrega IDs já vistos e lidos do localStorage
-function getSeenIds()  { try { return JSON.parse(localStorage.getItem(STORAGE_KEY_SEEN) || '[]'); } catch(e) { return []; } }
-function getReadIds()  { try { return JSON.parse(localStorage.getItem(STORAGE_KEY_READ) || '[]'); } catch(e) { return []; } }
-function saveSeenIds(arr) { try { localStorage.setItem(STORAGE_KEY_SEEN, JSON.stringify(arr)); } catch(e){} }
-function saveReadIds(arr) { try { localStorage.setItem(STORAGE_KEY_READ, JSON.stringify(arr)); } catch(e){} }
-
-function markAsRead(videoId) {
-  const read = getReadIds();
-  if (!read.includes(videoId)) { read.push(videoId); saveReadIds(read); }
-  refreshBell();
+function getReadIds() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY_READ) || '[]'); } catch(e) { return []; }
+}
+function saveReadIds(arr) {
+  try { localStorage.setItem(STORAGE_KEY_READ, JSON.stringify(arr)); } catch(e) {}
 }
 
 function markAllRead() {
-  const allIds = _notifVideos.map(v => v.id);
+  var allIds = _notifVideos.map(function(v) { return v.id; });
   saveReadIds(allIds);
   refreshBell();
   renderNotifList();
 }
 
-// Atualiza badge e classes do sininho
-// Badge conta: vídeos das últimas 24h + vídeos não lidos
-function refreshBell() {
-  const read   = getReadIds();
-  // Não lidos = não lido OU publicado nas últimas 24h (nunca some no dia)
-  const alertVideos = _notifVideos.filter(v => !read.includes(v.id) || isRecent(v));
-  const badge  = document.getElementById('notif-badge');
-  const btn    = document.getElementById('notif-bell-btn');
-  const icon   = document.getElementById('notif-bell-icon');
+// Verifica se vídeo ainda está dentro da janela de "novo"
+function isStillNew(v) {
+  if (!v.newSince) return false;
+  var since = new Date(v.newSince).getTime();
+  var expiry = since + (NEW_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+  return Date.now() < expiry;
+}
 
-  if (alertVideos.length > 0) {
+// Formata data
+function formatNewSince(dateStr) {
+  try {
+    return new Date(dateStr).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+  } catch(e) { return dateStr; }
+}
+
+// Atualiza badge e sininho
+function refreshBell() {
+  var read     = getReadIds();
+  var alertVids = _notifVideos.filter(function(v) {
+    return isStillNew(v) && !read.includes(v.id);
+  });
+  var badge = document.getElementById('notif-badge');
+  var btn   = document.getElementById('notif-bell-btn');
+  var icon  = document.getElementById('notif-bell-icon');
+  if (!badge || !btn || !icon) return;
+
+  if (alertVids.length > 0) {
     badge.style.display = 'flex';
-    badge.textContent   = alertVideos.length > 9 ? '9+' : alertVideos.length;
+    badge.textContent   = alertVids.length > 9 ? '9+' : alertVids.length;
     btn.classList.add('has-new');
     icon.className = 'ti ti-bell-ringing';
   } else {
@@ -2155,189 +2160,122 @@ function refreshBell() {
   }
 }
 
-// Renderiza a lista de notificações no dropdown
-function isRecent(v) {
-  return v.publishedTs && (Date.now() - v.publishedTs) < 24 * 60 * 60 * 1000;
-}
-
+// Renderiza lista no dropdown
 function renderNotifList() {
   var list = document.getElementById('notif-list');
+  if (!list) return;
   var read = getReadIds();
 
   if (_notifVideos.length === 0) {
-    list.innerHTML = '<div class="notif-empty"><i class="ti ti-video-off"></i> Nenhum vídeo encontrado na playlist.</div>';
+    list.innerHTML = '<div class="notif-empty"><i class="ti ti-check"></i><br>Nenhum vídeo novo no momento.</div>';
     return;
   }
 
-  var html = '';
+  list.innerHTML = '';
   _notifVideos.forEach(function(v) {
-    var isUnread = !read.includes(v.id);
-    var isNew24h = isRecent(v);
-    var thumb    = v.thumb ? '<img src="' + v.thumb + '" alt="" loading="lazy">' : '<i class="ti ti-video" style="color:white;font-size:16px"></i>';
-    var badge    = '';
-    if (isNew24h) {
+    var isUnread  = !read.includes(v.id);
+    var stillNew  = isStillNew(v);
+    var thumb     = v.thumb
+      ? '<img src="' + v.thumb + '" alt="" loading="lazy">'
+      : '<i class="ti ti-video" style="color:white;font-size:16px"></i>';
+    var badge = '';
+    if (stillNew && isUnread) {
       badge = ' <span style="background:#e8b012;color:#1a1a1a;font-weight:700;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:5px">NOVO</span>';
-    } else if (isUnread) {
-      badge = ' <span style="color:#0d5c9e;font-weight:600;margin-left:4px">\u2022 N\u00e3o lido</span>';
+    } else if (stillNew) {
+      badge = ' <span style="color:#888;font-size:10px;margin-left:4px">• visto</span>';
     }
-    var cls = 'notif-item' + (isUnread ? ' unread' : '');
-    // Escapa aspas simples nos atributos inline com &apos; para evitar quebra de HTML
-    var eId    = v.id.replace(/'/g, "\\'");
-    var eUrl   = v.url.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    var eTitle = v.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    html += '<div class="' + cls + '" onclick="handleNotifClick(\'' + eId + '\',\'' + eUrl + '\',\'' + eTitle + '\')">'
-          +   '<div class="notif-dot"></div>'
-          +   '<div class="notif-thumb">' + thumb + '<div class="notif-play"><i class="ti ti-player-play-filled"></i></div></div>'
-          +   '<div class="notif-body">'
-          +     '<div class="notif-vtitle">' + v.title + '</div>'
-          +     '<div class="notif-meta"><i class="ti ti-calendar" style="font-size:10px"></i> ' + v.published + badge + '</div>'
-          +   '</div>'
-          + '</div>';
+    var cls    = 'notif-item' + (isUnread && stillNew ? ' unread' : '');
+    var eId    = v.id.replace(/'/g, "&#39;");
+    var eUrl   = (v.url || '').replace(/'/g, "&#39;");
+    var eTitle = v.title.replace(/'/g, "&#39;");
+    var el = document.createElement('div');
+    el.className = cls;
+    el.style.cursor = 'pointer';
+    el.dataset.vid   = v.id;
+    el.dataset.url   = v.url || '';
+    el.dataset.title = v.title;
+    el.innerHTML =
+        "<div class=\"notif-dot\"></div>"
+      + "<div class=\"notif-thumb\">" + thumb
+      +   "<div class=\"notif-play\"><i class=\"ti ti-player-play-filled\"></i></div>"
+      + "</div>"
+      + "<div class=\"notif-body\">"
+      +   "<div class=\"notif-vtitle\">" + v.title + "</div>"
+      +   "<div class=\"notif-meta\">"
+      +     "<i class=\"ti ti-calendar\" style=\"font-size:10px\"></i> "
+      +     formatNewSince(v.newSince) + badge
+      +   "</div>"
+      + "</div>";
+    el.addEventListener('click', function() {
+      handleNotifClick(this.dataset.vid, this.dataset.url, this.dataset.title);
+    });
+    list.appendChild(el);
   });
 
-  list.innerHTML = html;
+    list.innerHTML = html;
 }
-
 
 function handleNotifClick(videoId, url, title) {
-  markAsRead(videoId);
+  // Marca como lido
+  var read = getReadIds();
+  if (!read.includes(videoId)) { read.push(videoId); saveReadIds(read); }
+  refreshBell();
   renderNotifList();
   closeNotifDropdown();
-  // Tenta abrir no player embutido; gera ID único
-  const cardId = 'notif-vc-' + videoId;
-  openVideoPlayer(url, title, cardId);
-}
-
-// Formata data do RSS (ISO 8601)
-function formatDate(isoStr) {
-  try {
-    const d = new Date(isoStr);
-    return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
-  } catch(e) { return isoStr; }
-}
-
-// Busca RSS da playlist via proxy CORS
-async function fetchPlaylistRSS() {
-  const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`;
-
-  // Proxies testados — ordem de prioridade
-  // corsproxy.io  : devolve texto puro
-  // allorigins /get: devolve JSON { contents: "..." }
-  // allorigins /raw: devolve texto puro
-  const proxies = [
-    {
-      build: url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-      parse: async r => await r.text()
-    },
-    {
-      build: url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-      parse: async r => await r.text()
-    },
-    {
-      build: url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-      parse: async r => { const j = await r.json(); return j.contents || ''; }
-    },
-    {
-      build: url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-      parse: async r => await r.text()
-    },
-  ];
-
-  let lastErr;
-  for (const proxy of proxies) {
-    try {
-      const proxyUrl = proxy.build(rssUrl);
-      // Timeout manual via Promise.race (compatível com todos os ambientes)
-      const fetchPromise = fetch(proxyUrl);
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 9000)
-      );
-      const resp = await Promise.race([fetchPromise, timeoutPromise]);
-      if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      const text = await proxy.parse(resp);
-      if (!text || !text.includes('<entry>')) throw new Error('RSS vazio ou inválido');
-      console.log('Notif: proxy funcionou ->', proxyUrl.slice(0, 60));
-      return text;
-    } catch(e) {
-      lastErr = e;
-      console.warn('Notif: proxy falhou ->', e.message);
-    }
-  }
-  throw lastErr || new Error('Todos os proxies falharam');
-}
-
-// Parseia o XML do feed e retorna array de vídeos
-function parseRSSXML(xmlStr) {
-  const parser = new DOMParser();
-  const doc    = parser.parseFromString(xmlStr, 'application/xml');
-  const entries = Array.from(doc.querySelectorAll('entry'));
-  return entries.map(entry => {
-    const videoId     = (entry.querySelector('videoId')?.textContent || '').trim();
-    const title       = (entry.querySelector('title')?.textContent   || 'Sem título').trim();
-    const pubRaw      = entry.querySelector('published')?.textContent || '';
-    const publishedTs = pubRaw ? new Date(pubRaw).getTime() : 0;
-    const published   = formatDate(pubRaw);
-    const url         = videoId ? `https://www.youtube.com/watch?v=${videoId}` : '';
-    const thumb       = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '';
-    return { id: videoId, title, published, publishedTs, url, thumb };
-  }).filter(v => v.id);
-}
-
-// Verifica playlist e atualiza estado
-async function checkPlaylist(force = false, customInterval = null) {
-  const list = document.getElementById('notif-list');
-
-  // Throttle: só busca de novo depois do intervalo ou se forçado
-  const interval = customInterval !== null ? customInterval : CHECK_INTERVAL_MS;
-  try {
-    const lastCheck = parseInt(localStorage.getItem(STORAGE_KEY_TS) || '0');
-    if (!force && Date.now() - lastCheck < interval && _notifVideos.length > 0) {
-      renderNotifList();
-      refreshBell();
-      return;
-    }
-  } catch(e) {}
-
-  list.innerHTML = `<div class="notif-loading"><i class="ti ti-loader-2"></i> Verificando novidades…</div>`;
-
-  try {
-    const xml = await fetchPlaylistRSS();
-    const videos = parseRSSXML(xml);
-    try { localStorage.setItem(STORAGE_KEY_TS, Date.now()); } catch(e) {}
-
-    // IDs que o usuário nunca viu antes
-    const seenIds = getSeenIds();
-    // Salva todos como "vistos"
-    const allIds = videos.map(v => v.id);
-    saveSeenIds(allIds);
-
-    // Na primeira visita: marca como lidos apenas vídeos com mais de 24h
-    if (seenIds.length === 0) {
-      const limite = Date.now() - 24 * 60 * 60 * 1000;
-      const oldIds = videos
-        .filter(v => v.publishedTs && v.publishedTs < limite)
-        .map(v => v.id);
-      saveReadIds(oldIds);
-    }
-
-    _notifVideos = videos;
-    renderNotifList();
-    refreshBell();
-  } catch(err) {
-    list.innerHTML = `<div class="notif-empty">
-      <i class="ti ti-wifi-off"></i>
-      Não foi possível verificar a playlist. Tente novamente mais tarde.
-    </div>`;
-    console.warn('Notif:', err);
+  if (url) {
+    var cardId = 'notif-vc-' + videoId;
+    openVideoPlayer(url, title, cardId);
   }
 }
 
-// Inicia verificação ao carregar a página
-checkPlaylist();
+// Coleta vídeos marcados como isNew:true do DATA
+function loadNewVideosFromData() {
+  _notifVideos = [];
+  if (typeof DATA === 'undefined') return;
 
-// Verifica periodicamente em background
-setInterval(() => checkPlaylist(), CHECK_INTERVAL_MS);
+  DATA.forEach(function(profile) {
+    if (!profile.categories) return;
+    profile.categories.forEach(function(cat) {
+      if (!cat.videos) return;
+      cat.videos.forEach(function(v) {
+        if (v.isNew && v.newSince) {
+          // Só inclui se ainda dentro da janela de dias
+          if (isStillNew(v)) {
+            // Usa URL como ID único (ou título se não tiver URL)
+            var vid = {
+              id:       v.url || v.title,
+              title:    v.title,
+              url:      v.url || '',
+              newSince: v.newSince,
+              thumb:    v.url ? 'https://img.youtube.com/vi/' + extractYTId(v.url) + '/mqdefault.jpg' : ''
+            };
+            // Evita duplicatas
+            if (!_notifVideos.find(function(x) { return x.id === vid.id; })) {
+              _notifVideos.push(vid);
+            }
+          }
+        }
+      });
+    });
+  });
 
+  // Ordena do mais recente para o mais antigo
+  _notifVideos.sort(function(a, b) {
+    return new Date(b.newSince) - new Date(a.newSince);
+  });
+
+  renderNotifList();
+  refreshBell();
+}
+
+function extractYTId(url) {
+  if (!url) return '';
+  var m = url.match(/(?:youtu\.be\/|v=|\/v\/|embed\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : '';
+}
+
+// Inicia ao carregar
+loadNewVideosFromData();
 
 </script>
 </body>
