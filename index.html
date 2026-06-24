@@ -2161,43 +2161,38 @@ function isRecent(v) {
 }
 
 function renderNotifList() {
-  const list = document.getElementById('notif-list');
-  const read = getReadIds();
+  var list = document.getElementById('notif-list');
+  var read = getReadIds();
 
   if (_notifVideos.length === 0) {
-    list.innerHTML = `<div class="notif-empty">
-      <i class="ti ti-video-off"></i>
-      Nenhum vídeo encontrado na playlist.
-    </div>`;
+    list.innerHTML = '<div class="notif-empty"><i class="ti ti-video-off"></i> Nenhum vídeo encontrado na playlist.</div>';
     return;
   }
 
-  let html = '';
-  _notifVideos.forEach(v => {
-    const isUnread  = !read.includes(v.id);
-    const isNew24h  = isRecent(v);
-    const thumbUrl  = v.thumb || '';
-    const safeId    = v.id;
-    const safeUrl   = v.url.replace(/'/g, "APOS");
-    const safeTitle = v.title.replace(/'/g, "APOS");
-    html += '<div class="notif-item' + (isUnread ? ' unread' : '') + '"'
-      + ' onclick="handleNotifClick('' + safeId + '','' + safeUrl + '','' + safeTitle + '')">'
-      + '<div class="notif-dot"></div>'
-      + '<div class="notif-thumb">'
-      + (thumbUrl ? '<img src="' + thumbUrl + '" alt="" loading="lazy">' : '<i class="ti ti-video" style="color:white;font-size:16px"></i>')
-      + '<div class="notif-play"><i class="ti ti-player-play-filled"></i></div>'
-      + '</div>'
-      + '<div class="notif-body">'
-      + '<div class="notif-vtitle">' + v.title + '</div>'
-      + '<div class="notif-meta">'
-      + '<i class="ti ti-calendar" style="font-size:10px"></i> '
-      + v.published
-      + (isNew24h
-          ? ' <span style="background:#e8b012;color:#1a1a1a;font-weight:700;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:5px">NOVO</span>'
-          : (isUnread ? ' <span style="color:#0d5c9e;font-weight:600;margin-left:4px">• Não lido</span>' : ''))
-      + '</div>'
-      + '</div>'
-      + '</div>';
+  var html = '';
+  _notifVideos.forEach(function(v) {
+    var isUnread = !read.includes(v.id);
+    var isNew24h = isRecent(v);
+    var thumb    = v.thumb ? '<img src="' + v.thumb + '" alt="" loading="lazy">' : '<i class="ti ti-video" style="color:white;font-size:16px"></i>';
+    var badge    = '';
+    if (isNew24h) {
+      badge = ' <span style="background:#e8b012;color:#1a1a1a;font-weight:700;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:5px">NOVO</span>';
+    } else if (isUnread) {
+      badge = ' <span style="color:#0d5c9e;font-weight:600;margin-left:4px">\u2022 N\u00e3o lido</span>';
+    }
+    var cls = 'notif-item' + (isUnread ? ' unread' : '');
+    // Escapa aspas simples nos atributos inline com &apos; para evitar quebra de HTML
+    var eId    = v.id.replace(/'/g, "\\'");
+    var eUrl   = v.url.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    var eTitle = v.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    html += '<div class="' + cls + '" onclick="handleNotifClick(\'' + eId + '\',\'' + eUrl + '\',\'' + eTitle + '\')">'
+          +   '<div class="notif-dot"></div>'
+          +   '<div class="notif-thumb">' + thumb + '<div class="notif-play"><i class="ti ti-player-play-filled"></i></div></div>'
+          +   '<div class="notif-body">'
+          +     '<div class="notif-vtitle">' + v.title + '</div>'
+          +     '<div class="notif-meta"><i class="ti ti-calendar" style="font-size:10px"></i> ' + v.published + badge + '</div>'
+          +   '</div>'
+          + '</div>';
   });
 
   list.innerHTML = html;
@@ -2252,10 +2247,12 @@ async function fetchPlaylistRSS() {
   for (const proxy of proxies) {
     try {
       const proxyUrl = proxy.build(rssUrl);
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 9000);
-      const resp = await fetch(proxyUrl, { signal: controller.signal });
-      clearTimeout(timer);
+      // Timeout manual via Promise.race (compatível com todos os ambientes)
+      const fetchPromise = fetch(proxyUrl);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), 9000)
+      );
+      const resp = await Promise.race([fetchPromise, timeoutPromise]);
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const text = await proxy.parse(resp);
       if (!text || !text.includes('<entry>')) throw new Error('RSS vazio ou inválido');
