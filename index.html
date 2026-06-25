@@ -2077,17 +2077,23 @@ renderPDFList();
 updateSidebarCounts();
 render();
 
-// ── SISTEMA DE NOTIFICAÇÕES ──
-// Baseado nos vídeos marcados com isNew:true / newSince:'YYYY-MM-DD' no DATA.
-// Não faz requisições externas — funciona em qualquer rede.
+// ── SISTEMA DE NOTIFICAÇÕES — YouTube Data API v3 ──
+// Busca automaticamente vídeos publicados na playlist nas últimas NEW_WINDOW_DAYS.
+// IDs lidos são persistidos em localStorage para controle de "não lido".
 
-const STORAGE_KEY_READ = 'notif_read_ids';
-const NEW_WINDOW_DAYS  = 3; // vídeo é "novo" por quantos dias após newSince
+const STORAGE_KEY_READ  = 'notif_read_ids';
+const STORAGE_KEY_CACHE = 'notif_yt_cache';   // cache dos vídeos buscados
+const CACHE_TTL_MS      = 30 * 60 * 1000;     // reusa cache por 30 minutos
+const NEW_WINDOW_DAYS   = 3;                   // vídeo é "novo" por N dias após publicação
+const YT_API_KEY        = 'AIzaSyBZhDyyrxdJuZHKPwNj5OknBeg0iavzO1s';
+const YT_PLAYLIST_ID    = 'PLUVnM63H4XbX2FEU8kw2i4z0v3_kPuLdu';
+const YT_MAX_RESULTS    = 50; // máximo de vídeos por página da API
 
 let _notifVideos = [];
 let _notifOpen   = false;
+let _notifLoading = false;
 
-// Fecha dropdown ao clicar fora
+// ── Dropdown ──
 document.addEventListener('click', function(e) {
   var wrap = document.getElementById('notif-wrap');
   if (_notifOpen && wrap && !wrap.contains(e.target)) closeNotifDropdown();
@@ -2108,11 +2114,22 @@ function closeNotifDropdown() {
   document.getElementById('notif-dropdown').classList.remove('open');
 }
 
+// ── localStorage ──
 function getReadIds() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY_READ) || '[]'); } catch(e) { return []; }
 }
 function saveReadIds(arr) {
   try { localStorage.setItem(STORAGE_KEY_READ, JSON.stringify(arr)); } catch(e) {}
+}
+function getCache() {
+  try {
+    var c = JSON.parse(localStorage.getItem(STORAGE_KEY_CACHE) || 'null');
+    if (c && c.ts && (Date.now() - c.ts) < CACHE_TTL_MS) return c.videos;
+  } catch(e) {}
+  return null;
+}
+function saveCache(videos) {
+  try { localStorage.setItem(STORAGE_KEY_CACHE, JSON.stringify({ ts: Date.now(), videos: videos })); } catch(e) {}
 }
 
 function markAllRead() {
@@ -2122,7 +2139,7 @@ function markAllRead() {
   renderNotifList();
 }
 
-// Verifica se vídeo ainda está dentro da janela de "novo"
+// ── Helpers de data ──
 function isStillNew(v) {
   if (!v.newSince) return false;
   var since = new Date(v.newSince).getTime();
@@ -2130,16 +2147,21 @@ function isStillNew(v) {
   return Date.now() < expiry;
 }
 
-// Formata data
 function formatNewSince(dateStr) {
   try {
     return new Date(dateStr).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
   } catch(e) { return dateStr; }
 }
 
-// Atualiza badge e sininho
+function extractYTId(url) {
+  if (!url) return '';
+  var m = url.match(/(?:youtu\.be\/|v=|\/v\/|embed\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : '';
+}
+
+// ── Badge / sininho ──
 function refreshBell() {
-  var read     = getReadIds();
+  var read      = getReadIds();
   var alertVids = _notifVideos.filter(function(v) {
     return isStillNew(v) && !read.includes(v.id);
   });
@@ -2160,63 +2182,65 @@ function refreshBell() {
   }
 }
 
-// Renderiza lista no dropdown
+// ── Renderiza lista no dropdown (BUG #1 CORRIGIDO: removida linha list.innerHTML = html) ──
 function renderNotifList() {
   var list = document.getElementById('notif-list');
   if (!list) return;
+
+  if (_notifLoading) {
+    list.innerHTML = '<div class="notif-loading"><i class="ti ti-loader-2"></i> Buscando novidades no YouTube…</div>';
+    return;
+  }
+
   var read = getReadIds();
 
-  if (_notifVideos.length === 0) {
-    list.innerHTML = '<div class="notif-empty"><i class="ti ti-check"></i><br>Nenhum vídeo novo no momento.</div>';
+  // Filtra apenas os que ainda estão dentro da janela de "novo"
+  var newVids = _notifVideos.filter(function(v) { return isStillNew(v); });
+
+  if (newVids.length === 0) {
+    list.innerHTML = '<div class="notif-empty"><i class="ti ti-check"></i><br>Nenhum vídeo novo nos últimos ' + NEW_WINDOW_DAYS + ' dias.</div>';
     return;
   }
 
   list.innerHTML = '';
-  _notifVideos.forEach(function(v) {
-    var isUnread  = !read.includes(v.id);
-    var stillNew  = isStillNew(v);
-    var thumb     = v.thumb
+  newVids.forEach(function(v) {
+    var isUnread = !read.includes(v.id);
+    var thumb    = v.thumb
       ? '<img src="' + v.thumb + '" alt="" loading="lazy">'
       : '<i class="ti ti-video" style="color:white;font-size:16px"></i>';
-    var badge = '';
-    if (stillNew && isUnread) {
-      badge = ' <span style="background:#e8b012;color:#1a1a1a;font-weight:700;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:5px">NOVO</span>';
-    } else if (stillNew) {
-      badge = ' <span style="color:#888;font-size:10px;margin-left:4px">• visto</span>';
+    var badgeHtml = '';
+    if (isUnread) {
+      badgeHtml = ' <span style="background:#e8b012;color:#1a1a1a;font-weight:700;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:5px">NOVO</span>';
+    } else {
+      badgeHtml = ' <span style="color:#888;font-size:10px;margin-left:4px">• visto</span>';
     }
-    var cls    = 'notif-item' + (isUnread && stillNew ? ' unread' : '');
-    var eId    = v.id.replace(/'/g, "&#39;");
-    var eUrl   = (v.url || '').replace(/'/g, "&#39;");
-    var eTitle = v.title.replace(/'/g, "&#39;");
-    var el = document.createElement('div');
-    el.className = cls;
+    var cls = 'notif-item' + (isUnread ? ' unread' : '');
+    var el  = document.createElement('div');
+    el.className    = cls;
     el.style.cursor = 'pointer';
     el.dataset.vid   = v.id;
     el.dataset.url   = v.url || '';
     el.dataset.title = v.title;
     el.innerHTML =
-        "<div class=\"notif-dot\"></div>"
-      + "<div class=\"notif-thumb\">" + thumb
-      +   "<div class=\"notif-play\"><i class=\"ti ti-player-play-filled\"></i></div>"
-      + "</div>"
-      + "<div class=\"notif-body\">"
-      +   "<div class=\"notif-vtitle\">" + v.title + "</div>"
-      +   "<div class=\"notif-meta\">"
-      +     "<i class=\"ti ti-calendar\" style=\"font-size:10px\"></i> "
-      +     formatNewSince(v.newSince) + badge
-      +   "</div>"
-      + "</div>";
+        '<div class="notif-dot"></div>'
+      + '<div class="notif-thumb">' + thumb
+      +   '<div class="notif-play"><i class="ti ti-player-play-filled"></i></div>'
+      + '</div>'
+      + '<div class="notif-body">'
+      +   '<div class="notif-vtitle">' + v.title + '</div>'
+      +   '<div class="notif-meta">'
+      +     '<i class="ti ti-calendar" style="font-size:10px"></i> '
+      +     formatNewSince(v.newSince) + badgeHtml
+      +   '</div>'
+      + '</div>';
     el.addEventListener('click', function() {
       handleNotifClick(this.dataset.vid, this.dataset.url, this.dataset.title);
     });
     list.appendChild(el);
   });
-
-    list.innerHTML = html;
 }
 
 function handleNotifClick(videoId, url, title) {
-  // Marca como lido
   var read = getReadIds();
   if (!read.includes(videoId)) { read.push(videoId); saveReadIds(read); }
   refreshBell();
@@ -2228,54 +2252,92 @@ function handleNotifClick(videoId, url, title) {
   }
 }
 
-// Coleta vídeos marcados como isNew:true do DATA
-function loadNewVideosFromData() {
-  _notifVideos = [];
-  if (typeof DATA === 'undefined') return;
+// ── YouTube Data API v3 — busca vídeos da playlist ──
+// checkPlaylist(forceRefresh): false = usa cache se válido; true = força nova requisição
+function checkPlaylist(forceRefresh) {
+  if (_notifLoading) return;
 
-  DATA.forEach(function(profile) {
-    if (!profile.categories) return;
-    profile.categories.forEach(function(cat) {
-      if (!cat.videos) return;
-      cat.videos.forEach(function(v) {
-        if (v.isNew && v.newSince) {
-          // Só inclui se ainda dentro da janela de dias
-          if (isStillNew(v)) {
-            // Usa URL como ID único (ou título se não tiver URL)
-            var vid = {
-              id:       v.url || v.title,
-              title:    v.title,
-              url:      v.url || '',
-              newSince: v.newSince,
-              thumb:    v.url ? 'https://img.youtube.com/vi/' + extractYTId(v.url) + '/mqdefault.jpg' : ''
-            };
-            // Evita duplicatas
-            if (!_notifVideos.find(function(x) { return x.id === vid.id; })) {
-              _notifVideos.push(vid);
-            }
-          }
-        }
+  // Tenta usar cache (evita gastar cota da API desnecessariamente)
+  if (!forceRefresh) {
+    var cached = getCache();
+    if (cached) {
+      _notifVideos = cached;
+      renderNotifList();
+      refreshBell();
+      return;
+    }
+  }
+
+  _notifLoading = true;
+  renderNotifList(); // exibe spinner
+
+  // Data de corte: só vídeos publicados nos últimos NEW_WINDOW_DAYS
+  var cutoff = new Date(Date.now() - NEW_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+  var publishedAfter = cutoff.toISOString();
+
+  var url = 'https://www.googleapis.com/youtube/v3/playlistItems'
+    + '?part=snippet'
+    + '&maxResults=' + YT_MAX_RESULTS
+    + '&playlistId=' + encodeURIComponent(YT_PLAYLIST_ID)
+    + '&key=' + YT_API_KEY;
+
+  fetch(url)
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      var items = (data.items || []);
+      var cutoffTime = cutoff.getTime();
+      var videos = [];
+
+      items.forEach(function(item) {
+        var snippet   = item.snippet || {};
+        var videoId   = (snippet.resourceId || {}).videoId || '';
+        var title     = snippet.title || '';
+        var published = snippet.publishedAt || '';
+        var pubTime   = published ? new Date(published).getTime() : 0;
+
+        // Ignora vídeos fora da janela de novidade ou sem ID
+        if (!videoId || pubTime < cutoffTime) return;
+
+        videos.push({
+          id:       videoId,
+          title:    title,
+          url:      'https://www.youtube.com/watch?v=' + videoId,
+          newSince: published,
+          thumb:    'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg'
+        });
       });
+
+      // Ordena do mais recente para o mais antigo
+      videos.sort(function(a, b) {
+        return new Date(b.newSince) - new Date(a.newSince);
+      });
+
+      _notifVideos  = videos;
+      _notifLoading = false;
+      saveCache(videos);
+      renderNotifList();
+      refreshBell();
+    })
+    .catch(function(err) {
+      console.error('Erro ao buscar playlist YouTube:', err);
+      _notifLoading = false;
+      var list = document.getElementById('notif-list');
+      if (list) {
+        list.innerHTML = '<div class="notif-empty" style="color:#c0392b;">'
+          + '<i class="ti ti-wifi-off" style="font-size:28px;display:block;margin-bottom:8px"></i>'
+          + 'Não foi possível verificar novidades.<br>'
+          + '<span style="font-size:11px">Verifique sua conexão e tente novamente.</span>'
+          + '</div>';
+      }
+      refreshBell();
     });
-  });
-
-  // Ordena do mais recente para o mais antigo
-  _notifVideos.sort(function(a, b) {
-    return new Date(b.newSince) - new Date(a.newSince);
-  });
-
-  renderNotifList();
-  refreshBell();
 }
 
-function extractYTId(url) {
-  if (!url) return '';
-  var m = url.match(/(?:youtu\.be\/|v=|\/v\/|embed\/)([A-Za-z0-9_-]{11})/);
-  return m ? m[1] : '';
-}
-
-// Inicia ao carregar
-loadNewVideosFromData();
+// Inicia ao carregar — usa cache se disponível, senão busca na API
+checkPlaylist(false);
 
 </script>
 </body>
