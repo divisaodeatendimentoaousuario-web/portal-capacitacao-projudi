@@ -747,6 +747,7 @@
     border-bottom: 1px solid var(--border);
     cursor: pointer;
     transition: background 0.12s;
+    position: relative;
   }
   .notif-item:last-child { border-bottom: none; }
   .notif-item:hover { background: var(--tjgo-light); }
@@ -789,6 +790,32 @@
     color: var(--text-muted); font-size: 13px;
   }
   .notif-empty i { font-size: 30px; display: block; margin-bottom: 8px; }
+  .notif-unread-btn {
+    flex-shrink: 0;
+    align-self: center;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 13px;
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+    margin-left: 6px;
+  }
+  .notif-unread-btn:hover {
+    background: var(--tjgo-light);
+    color: var(--tjgo-navy);
+    border-color: var(--tjgo-navy);
+  }
+  body.theme-escuro .notif-unread-btn {
+    border-color: rgba(255,255,255,0.15);
+    color: #94a3b8;
+  }
+  body.theme-escuro .notif-unread-btn:hover {
+    background: #1e3a5f; color: #93c5fd; border-color: #3b82f6;
+  }
   .notif-footer {
     padding: 9px 14px;
     border-top: 1px solid var(--border);
@@ -2139,6 +2166,21 @@ function markAllRead() {
   renderNotifList();
 }
 
+// Remove do localStorage IDs que não correspondem a nenhum vídeo ainda na janela
+// (evita que vídeos antigos "contaminem" o estado de leitura de novos vídeos)
+function purgeStaleReadIds(activeVideos) {
+  var activeIds = activeVideos.map(function(v) { return v.id; });
+  var read = getReadIds().filter(function(id) { return activeIds.includes(id); });
+  saveReadIds(read);
+}
+
+function markOneUnread(videoId) {
+  var read = getReadIds().filter(function(id) { return id !== videoId; });
+  saveReadIds(read);
+  refreshBell();
+  renderNotifList();
+}
+
 // ── Helpers de data ──
 function isStillNew(v) {
   if (!v.newSince) return false;
@@ -2208,12 +2250,15 @@ function renderNotifList() {
     var thumb    = v.thumb
       ? '<img src="' + v.thumb + '" alt="" loading="lazy">'
       : '<i class="ti ti-video" style="color:white;font-size:16px"></i>';
-    var badgeHtml = '';
-    if (isUnread) {
-      badgeHtml = ' <span style="background:#e8b012;color:#1a1a1a;font-weight:700;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:5px">NOVO</span>';
-    } else {
-      badgeHtml = ' <span style="color:#888;font-size:10px;margin-left:4px">• visto</span>';
-    }
+    var badgeHtml = isUnread
+      ? ' <span style="background:#e8b012;color:#1a1a1a;font-weight:700;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:5px">NOVO</span>'
+      : '';
+    // Botão de alternar leitura (ícone à direita do corpo)
+    var toggleBtn = isUnread
+      ? '' // não lido: sem botão extra; clicar no card já marca como lido
+      : '<button class="notif-unread-btn" title="Marcar como não lido" data-vid="' + v.id.replace(/"/g,'&quot;') + '">'
+        + '<i class="ti ti-mail"></i>'
+        + '</button>';
     var cls = 'notif-item' + (isUnread ? ' unread' : '');
     var el  = document.createElement('div');
     el.className    = cls;
@@ -2232,10 +2277,22 @@ function renderNotifList() {
       +     '<i class="ti ti-calendar" style="font-size:10px"></i> '
       +     formatNewSince(v.newSince) + badgeHtml
       +   '</div>'
-      + '</div>';
-    el.addEventListener('click', function() {
+      + '</div>'
+      + toggleBtn;
+    // Clique no card → abre vídeo e marca lido
+    el.addEventListener('click', function(e) {
+      // Impede que clique no botão "não lido" propague para o card
+      if (e.target.closest('.notif-unread-btn')) return;
       handleNotifClick(this.dataset.vid, this.dataset.url, this.dataset.title);
     });
+    // Botão marcar como não lido
+    var btn = el.querySelector('.notif-unread-btn');
+    if (btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        markOneUnread(this.dataset.vid);
+      });
+    }
     list.appendChild(el);
   });
 }
@@ -2318,6 +2375,7 @@ function checkPlaylist(forceRefresh) {
       _notifVideos  = videos;
       _notifLoading = false;
       saveCache(videos);
+      purgeStaleReadIds(videos); // limpa IDs lidos de vídeos que saíram da janela
       renderNotifList();
       refreshBell();
     })
