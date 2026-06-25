@@ -310,7 +310,7 @@
     transition: background 0.12s;
   }
   .pdf-viewer-toolbar .close-btn:hover { background: rgba(255,255,255,0.28); }
-  .pdf-viewer-frame { width: 100%; height: 600px; border: none; display: block; }
+  .pdf-viewer-frame { width: 100%; height: 82vh; min-height: 500px; border: none; display: block; }
   .pdf-viewer-panel.maximized { position: fixed; inset: 0; z-index: 1000; border-radius: 0; }
   .pdf-viewer-panel.maximized .pdf-viewer-frame { height: calc(100vh - 48px); }
 
@@ -354,6 +354,10 @@
     flex: 1; padding: 1.75rem 2rem;
     overflow-y: auto;
     max-width: 1100px;
+    transition: max-width 0.2s ease;
+  }
+  .content.pdf-expanded {
+    max-width: 100%;
   }
 
   /* ── STATS ── */
@@ -773,7 +777,7 @@
     font-size: 12px; font-weight: 500;
     color: var(--text-primary);
     line-height: 1.4; margin-bottom: 3px;
-    display: -webkit-box; -webkit-line-clamp: 2;
+    display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2;
     -webkit-box-orient: vertical; overflow: hidden;
   }
   .notif-meta {
@@ -1658,7 +1662,7 @@ const PDF_CATEGORIES = [
     icon: 'ti-database',
     open: false,
     items: [
-      { name: 'Informativo nº 01 — Disponibilização do campo comunidade quando for informada a etnia indígena e quilombola', file: 'Informativo nº 01 - Informa sobre a disponibilização do campo comunidade quando for informada a etnia indígena e quilombola.pdf' },
+      { name: 'Informativo nº 01 — Disponibilização do campo comunidade quando for informada a etnia indígena e quilombola', file: 'https://tjdocs.tjgo.jus.br/documentos/876535' },
       { name: 'Informativo nº 03 — Cadastro de polo passivo de processo cível sem CPF ou CNPJ com justificativa obrigatória', file: 'Informativo nº 03 - Cadastro de polo passivo de processo cível sem CPF ou CNPJ por meio da inclusão obrigatória de justificativa no sistema PROJUDI.pdf' },
       { name: 'Informativo nº 07 — Cadastro de Precatório para o DEPRE no sistema PROJUDI', file: 'Informativo nº 07 - Cadastro de Precatório para o DEPRE no sistema PROJUDI.pdf' },
     ]
@@ -1937,15 +1941,36 @@ function openPDFViewer(file, name, ci, pi) {
   const el = document.getElementById(cardId);
   if (el) el.classList.add('active');
 
-  // Mostra viewer com toolbar
-  const url = 'pdfs/' + encodeURIComponent(file);
+  // Suporta URL externa (TJDOCS, etc.) ou arquivo local na pasta /pdfs
+  const isExternal = /^https?:\/\//i.test(file);
+  const url = isExternal ? file : 'pdfs/' + encodeURIComponent(file);
+
   const toolbar = document.getElementById('pdf-viewer-panel').querySelector('.pdf-viewer-toolbar');
   toolbar.style.display = '';
-  document.getElementById('pdf-viewer-title').textContent = name;
+
+  // TJDOCS já exibe título e toolbar próprios — ocultamos o título duplicado
+  const isTJDocs = /tjdocs\.tjgo\.jus\.br/i.test(file);
+  const titleEl = document.getElementById('pdf-viewer-title');
+  const iconEl  = toolbar.querySelector('.ti-file-type-pdf');
+  titleEl.textContent = isTJDocs ? '' : name;
+  titleEl.style.display = isTJDocs ? 'none' : '';
+  if (iconEl) iconEl.style.display = isTJDocs ? 'none' : '';
+
   document.getElementById('pdf-viewer-frame').src = url;
-  document.getElementById('pdf-download-btn').href = url;
-  document.getElementById('pdf-download-btn').download = file;
+
+  const dlBtn = document.getElementById('pdf-download-btn');
+  dlBtn.href = url;
+  // Para TJDOCS, o botão "Baixar PDF" abre o documento no TJDOCS em nova aba
+  if (!isExternal) {
+    dlBtn.download = file;
+    dlBtn.removeAttribute('target');
+  } else {
+    dlBtn.removeAttribute('download');
+    dlBtn.target = '_blank';
+  }
+
   document.getElementById('pdf-viewer-panel').style.display = 'block';
+  document.getElementById('main-content').classList.add('pdf-expanded');
   document.getElementById('pdf-viewer-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -2022,6 +2047,7 @@ function toggleMaximize() {
 }
 
 function closePDFViewer() {
+  document.getElementById('main-content').classList.remove('pdf-expanded');
   const panel = document.getElementById('pdf-viewer-panel');
   panel.classList.remove('maximized');
   document.body.style.overflow = '';
