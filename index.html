@@ -892,9 +892,9 @@
           </a>
         </div>
       </div>
-     <!--</div>
-   <span class="header-badge">TJGO</span>
-  </div> -->
+    </div>
+    <span class="header-badge">Notificação</span>
+  </div>
 </header>
 
 <!-- BARRA DE ACESSIBILIDADE -->
@@ -949,65 +949,25 @@
 
     <!-- PAINEL VÍDEOS -->
     <div class="sidebar-panel active" id="panel-videos">
-      <div class="sidebar-section-label">Perfis de acesso</div>
-      <div class="sidebar-item" onclick="switchProfile('todos', this)" data-profile="todos" style="display:none">
-        <i class="ti ti-users" aria-hidden="true"></i> Todos os Perfis
-        <span class="count" id="sidebar-todos-count" style="display:none">0</span>
+      <div class="sidebar-section-label">Categorias</div>
+      <div class="sidebar-item" onclick="switchProfile('todos', this)" data-profile="todos">
+        <i class="ti ti-layout-grid" aria-hidden="true"></i> Todas as Categorias
+        <span class="count" id="sidebar-todos-count">0</span>
       </div>
-      <div class="sidebar-item" onclick="switchProfile('advogado', this)" data-profile="advogado">
-        <i class="ti ti-scale" aria-hidden="true"></i> Advogado
-        <span class="count">0</span>
-      </div>
-      <div class="sidebar-item" onclick="switchProfile('analista', this)" data-profile="analista">
-        <i class="ti ti-clipboard-check" aria-hidden="true"></i> Analista judiciário
-        <span class="count">0</span>
-      </div>
-     <div class="sidebar-item" onclick="switchProfile('analista 2', this)" data-profile="analista 2">
-        <i class="ti ti-clipboard-list" aria-hidden="true"></i> Analista Judiciário 2º Grau
-        <span class="count">0</span>
-      </div>
-     <div class="sidebar-item" onclick="switchProfile('assistente', this)" data-profile="assistente">
-        <i class="ti ti-home-2" aria-hidden="true"></i> Assistente de Gabinete
-        <span class="count">0</span>
-      </div>
-     <div class="sidebar-item" onclick="switchProfile('autoridade', this)" data-profile="autoridade">
-        <i class="ti ti-shield-lock" aria-hidden="true"></i> Autoridade Policial
-        <span class="count">0</span>
-      </div>
-     <div class="sidebar-item" onclick="switchProfile('conciliador', this)" data-profile="conciliador">
-        <i class="ti ti-heart-handshake" aria-hidden="true"></i> Conciliador
-        <span class="count">0</span>
-      </div>
-      <div class="sidebar-item" onclick="switchProfile('desembargador', this)" data-profile="desembargador">
-        <i class="ti ti-building-bank" aria-hidden="true"></i> Desembargador
-        <span class="count">0</span>
-      </div>
-      <div class="sidebar-item" onclick="switchProfile('distribuidor', this)" data-profile="distribuidor">
-        <i class="ti ti-send" aria-hidden="true"></i> Distribuidor
-        <span class="count">0</span>
-      </div>
-     <div class="sidebar-item" onclick="switchProfile('distribuidor_gabinete', this)" data-profile="distribuidor_gabinete">
-        <i class="ti ti-mail-forward" aria-hidden="true"></i> Distribuidor de Gabinete
-        <span class="count">0</span>
-      </div>
-      <div class="sidebar-item" onclick="switchProfile('juiz', this)" data-profile="juiz">
-        <i class="ti ti-gavel" aria-hidden="true"></i> Juiz
-        <span class="count">0</span>
-      </div>
-     <div class="sidebar-item" onclick="switchProfile('todos usuários', this)" data-profile="todos usuários">
-        <i class="ti ti-users" aria-hidden="true"></i> Todos Usuários
-        <span class="count">0</span>
-      </div>
+      <div id="video-cat-list"></div>
     </div>
 
     <!-- PAINEL PDFs -->
     <div class="sidebar-panel" id="panel-pdfs">
       <div class="sidebar-section-label">Categorias</div>
-      <div class="sidebar-item" id="pdf-todos-item" onclick="switchPDFTodos(this)" data-pdf-cat="todos" style="display:none">
+      <div class="sidebar-item" id="pdf-todos-item" onclick="switchPDFTodos(this)" data-pdf-cat="todos">
         <i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos
-        <span class="count" id="pdf-todos-count">9</span>
+        <span class="count" id="pdf-todos-count">0</span>
       </div>
       <div id="pdf-list"></div>
+
+      <div class="sidebar-section-label" style="margin-top:10px">Ano</div>
+      <div id="pdf-year-list"></div>
     </div>
 
     <div class="sidebar-divider"></div>
@@ -1083,6 +1043,12 @@
       <iframe id="video-player-frame" class="video-player-frame" allowfullscreen
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         title="Player de vídeo"></iframe>
+      <div id="video-player-hint" style="display:none;font-size:12px;color:var(--text-muted);padding:8px 14px;background:var(--bg);border-top:1px solid var(--border);">
+        <i class="ti ti-info-circle" aria-hidden="true"></i>
+        Você abriu o Portal como arquivo local (file://). Nesse modo o YouTube pode bloquear o player (Erro 153).
+        Use o atalho <b>"Abrir Portal (servidor local).bat"</b> que está na mesma pasta deste arquivo — aí o player
+        funciona normalmente. Enquanto isso, use o botão "Abrir no YouTube" acima.
+      </div>
     </div>
 
     <div id="videos-container"></div>
@@ -1098,266 +1064,38 @@
 <script>
 const COLORS = ['#0a3d6b','#0d5c9e','#083c6a','#0b4a80','#0e6290','#084070'];
 
-const DATA = {
-   advogado: {
-    label: 'Advogado',
-    icon: 'ti-scale',
-    sections: [
-        { title: 'Peticionamento', tag: 'processos', videos: [
-        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
-        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
-        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
-        { title: 'Consultar publicações', duration: '1:00', url: '' },
-      ]},
-        { title: 'Intimações e prazos', tag: 'intimacao', videos: [
-        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
-        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
-        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
-      ]},
-        { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
-        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
-        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
-        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
-      ]},
-    ]
-  },
-  analista: {
-    label: 'Analista judiciário',
-    icon: 'ti-user-check',
-    sections: [
-        { title: 'Processos e dados', tag: 'processos', videos: [
-        { title: 'Assinatura de documentos - PDF', duration: '0:56', url: 'https://youtu.be/dT_Fdpagwwk' },
-        { title: 'Assinatura documento editor online', duration: '0:53', url: 'https://youtu.be/FFY7cCy3ZOQ' },
-        { title: 'Cadastrar classificador', duration: '1:22', url: 'https://youtu.be/2q4GArA0MX8', isNew: true, newSince: '2026-06-23' },
-        { title: 'Analisar prevenção', duration: '1:40', url: '' },
-        { title: 'Apensar / desapensar processo dependente', duration: '2:30', url: '' },
-        { title: 'Bloquear movimentação / arquivo', duration: '1:20', url: '' },
-        { title: 'Cadastrar processos', duration: '3:00', url: '' },
-        
-        /*{ title: 'Cadastrar modelo', duration: '0:58', url: 'https://youtu.be/wk29L_tvm4I' },
-        //{ title: 'Fazer certidão', duration: '1:44', url: 'https://youtu.be/v-MrQhyhk2k' },
-        { title: 'Analisar novas petições', duration: '2:10', url: '' },
-        { title: 'Analisar novos processos na serventia', duration: '1:55', url: '' },
-        { title: 'Analisar prevenção', duration: '1:40', url: '' },
-        { title: 'Apensar / desapensar processo dependente', duration: '2:30', url: '' },
-        { title: 'Bloquear movimentação / arquivo', duration: '1:20', url: '' },
-        { title: 'Cadastrar processos', duration: '3:00', url: '' },*/
-      ]},
-        { title: 'Audiências e agenda', tag: 'audiencias', videos: [
-        { title: 'Abrir pauta audiência', duration: '0:53', url: 'https://youtu.be/hXMhkAM6__U' },
-        { title: 'Marcar audiência', duration: '1:57', url: '' },
-        { title: 'Acompanhar pendência', duration: '1:30', url: '' },
-        { title: 'Criar pendência para uma serventia', duration: '1:15', url: '' },
-      ]},
-        { title: 'Cadastros e alteração', tag: 'cadastro', videos: [
-        { title: 'Alterar classificador do processo', duration: '0:58', url: 'https://youtu.be/lqEVMIWwKL0' },
-        { title: 'Alterar escala do plantão', duration: '0:48', url: 'https://youtu.be/R8BLdRZVHug' },
-        { title: 'Alterar senha', duration: '0:47', url: 'https://youtu.be/svTXCsmD2qw' },
-        { title: 'Cadastrar débito', duration: '1:45', url: '' },
-        { title: 'Desabilitar advogado', duration: '1:00', url: '' },
-      ]},
-        { title: 'Arquivamento', tag: 'arquivamento', videos: [
-        { title: 'Arquivar processo sigiloso', duration: '1:45', url: 'https://youtu.be/vh-OhQReqGM' },
-        { title: 'Analisar decurso de prazo', duration: '1:35', url: '' },
-        { title: 'Arquivar processo sigiloso', duration: '1:45', url: '' },
-      ]},
-    ]
-  },
- 'analista 2': {
-    label: 'Analista Judiciário 2º Grau',
-    icon: 'ti-clipboard-list',
-    sections: [
-        { title: 'Peticionamento', tag: 'processos', videos: [
-        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
-        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
-        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
-        { title: 'Consultar publicações', duration: '1:00', url: '' },
-      ]},
-      { title: 'Intimações e prazos', tag: 'intimacao', videos: [
-        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
-        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
-        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
-      ]},
-      { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
-        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
-        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
-        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
-      ]},
-    ]
-  },
- assistente: {
-    label: 'Assistente de Gabinete',
-    icon: 'ti-home-2',
-    sections: [
-      { title: 'Peticionamento', tag: 'processos', videos: [
-        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
-        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
-        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
-        { title: 'Consultar publicações', duration: '1:00', url: '' },
-      ]},
-      { title: 'Intimações e prazos', tag: 'intimacao', videos: [
-        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
-        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
-        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
-      ]},
-      { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
-        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
-        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
-        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
-      ]},
-    ]
-  },
-  autoridade: {
-    label: 'Autoridade Policial',
-    icon: 'ti-shield-lock',
-    sections: [
-        { title: 'Peticionamento', tag: 'processos', videos: [
-        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
-        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
-        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
-        { title: 'Consultar publicações', duration: '1:00', url: '' },
-      ]},
-      { title: 'Intimações e prazos', tag: 'intimacao', videos: [
-        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
-        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
-        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
-      ]},
-      { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
-        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
-        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
-        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
-      ]},
-    ]
-  },
-  conciliador: {
-    label: 'Conciliador',
-    icon: 'ti-heart-handshake',
-    sections: [
-        { title: 'Peticionamento', tag: 'processos', videos: [
-        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
-        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
-        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
-        { title: 'Consultar publicações', duration: '1:00', url: '' },
-      ]},
-        { title: 'Intimações e prazos', tag: 'intimacao', videos: [
-        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
-        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
-        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
-      ]},
-        { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
-        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
-        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
-        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
-      ]},
-    ]
-  },
-  desembargador: {
-    label: 'Desembargador',
-    icon: 'ti-building-bank',
-    sections: [
-        { title: 'Peticionamento', tag: 'processos', videos: [
-        { title: 'Peticionar em processo existente', duration: '2:15', url: '' },
-        { title: 'Protocolar petição inicial', duration: '3:10', url: '' },
-        { title: 'Acompanhar andamento processual', duration: '1:30', url: '' },
-        { title: 'Consultar publicações', duration: '1:00', url: '' },
-      ]},
-        { title: 'Intimações e prazos', tag: 'intimacao', videos: [
-        { title: 'Visualizar intimações recebidas', duration: '1:20', url: '' },
-        { title: 'Confirmar ciência de intimação', duration: '0:55', url: '' },
-        { title: 'Verificar prazos processuais', duration: '1:40', url: '' },
-      ]},
-        { title: 'Cadastro e acesso', tag: 'cadastro', videos: [
-        { title: 'Cadastrar-se no sistema', duration: '2:00', url: '' },
-        { title: 'Habilitar em cargos disponíveis', duration: '1:05', url: '' },
-        { title: 'Atualizar dados cadastrais', duration: '1:15', url: '' },
-      ]},
-    ]
-  },
-  distribuidor: {
-    label: 'Distribuidor',
-    icon: 'ti-send',
-    sections: [
-        { title: 'Distribuição e mandados', tag: 'distribuicao', videos: [
-        { title: 'Pré-distribuição do juízo das garantias', duration: '2:54', url: '' },
-        { title: 'Cadastro e distribuição de mandados via SEEU', duration: '2:38', url: '' },
-        { title: 'Intimar Ministério Público', duration: '1:00', url: '' },
-      ]},
-      { title: 'Controle e assinatura', tag: 'cadastro', videos: [
-        { title: 'Juiz autorizar assessor guardar para assinar', duration: '1:25', url: '' },
-        { title: 'Visualizar pauta de julgamentos', duration: '1:50', url: '' },
-        { title: 'Incluir processo em pauta', duration: '2:10', url: '' },
-      ]},
-    ]
-  },
-  distribuidor_gabinete: {
-    label: 'Distribuidor de Gabinete',
-    icon: 'ti-mail-forward',
-    sections: [
-        { title: 'Distribuição e mandados', tag: 'distribuicao', videos: [
-        { title: 'Pré-distribuição do juízo das garantias', duration: '2:54', url: '' },
-        { title: 'Cadastro e distribuição de mandados via SEEU', duration: '2:38', url: '' },
-        { title: 'Intimar Ministério Público', duration: '1:00', url: '' },
-      ]},
-      { title: 'Controle e assinatura', tag: 'cadastro', videos: [
-        { title: 'Juiz autorizar assessor guardar para assinar', duration: '1:25', url: '' },
-        { title: 'Visualizar pauta de julgamentos', duration: '1:50', url: '' },
-        { title: 'Incluir processo em pauta', duration: '2:10', url: '' },
-      ]},
-    ]
-  },
-  juiz: {
-    label: 'Magistrado',
-    icon: 'ti-gavel',
-    sections: [
-        { title: 'Despachos e decisões', tag: 'processos', videos: [
-        { title: 'Assinatura de documentos - PDF', duration: '0:56', url: 'https://youtu.be/dT_Fdpagwwk' },
-        { title: 'Assinar decisão monocrática', duration: '1:30', url: '' },
-        { title: 'Cadastrar assessor', duration: '2:34', url: 'https://youtu.be/TsoDoC-DJmw' },
-        { title: 'Conceder liminar', duration: '1:20', url: '' },
-      ]},
-        { title: 'Delegação e gestão', tag: 'cadastro', videos: [
-        { title: 'Delegar assinatura ao assessor', duration: '1:05', url: '' },
-        { title: 'Consultar acervo processual', duration: '1:55', url: '' },
-        { title: 'Gerar relatório de produtividade', duration: '2:30', url: '' },
-      ]},
-    ]
-  },
- 'todos usuários': {
-    label: 'Todos Usuários',
-    icon: 'ti-users',
-    sections: [
-        { title: 'Alteração e assinaturas', tag: 'alteração', videos: [
-        { title: 'Alterar senha', duration: '0:47', url: 'https://youtu.be/svTXCsmD2qw' },
-        { title: 'Assinatura de documento editor online', duration: '0:53', url: 'https://youtu.be/FFY7cCy3ZOQ' },
-        { title: 'Assinatura de documento - PDF', duration: '0:56', url: 'https://youtu.be/dT_Fdpagwwk' },
-      ]},
-      { title: 'Controle e assinatura', tag: 'cadastro', videos: [
-        { title: 'Juiz autorizar assessor guardar para assinar', duration: '1:25', url: '' },
-        { title: 'Visualizar pauta de julgamentos', duration: '1:50', url: '' },
-        { title: 'Incluir processo em pauta', duration: '2:10', url: '' },
-      ]},
-    ]
- },
-};
+// ── Dados por PERFIL DE ACESSO (organização igual ao Portal de Capacitação PROJUDI) ──
+const PERFIS = ["Todos Usuários", "Analista Judiciário", "Juiz", "Perito", "Plantão", "Distribuidor de Gabinete", "Assessor/Assistente de Gabinete", "Analista de Arquivamento", "Oficial de Justiça", "Guias", "Certidões", "Suspensão e Precedentes", "Acesso e Segurança", "Encaminhamentos e Remessas", "Mandados"];
+const PERFIL_ICONS = {"Todos Usuários": "ti-users", "Analista Judiciário": "ti-clipboard-check", "Juiz": "ti-gavel", "Perito": "ti-shield-lock", "Plantão": "ti-moon", "Distribuidor de Gabinete": "ti-mail-forward", "Assessor/Assistente de Gabinete": "ti-home-2", "Analista de Arquivamento": "ti-archive", "Oficial de Justiça": "ti-walk", "Guias": "ti-receipt", "Certidões": "ti-certificate", "Suspensão e Precedentes": "ti-player-pause", "Acesso e Segurança": "ti-lock", "Encaminhamentos e Remessas": "ti-send", "Mandados": "ti-file-description"};
+const PERFIL_SLUGS = {"Todos Usuários": "todos_usuarios", "Analista Judiciário": "analista_judiciario", "Juiz": "juiz", "Perito": "perito", "Plantão": "plantao", "Distribuidor de Gabinete": "distribuidor_de_gabinete", "Assessor/Assistente de Gabinete": "assessor_assistente_de_gabinete", "Analista de Arquivamento": "analista_de_arquivamento", "Oficial de Justiça": "oficial_de_justica", "Guias": "guias", "Certidões": "certidoes", "Suspensão e Precedentes": "suspensao_e_precedentes", "Acesso e Segurança": "acesso_e_seguranca", "Encaminhamentos e Remessas": "encaminhamentos_e_remessas", "Mandados": "mandados"};
+const PERFIS_NOVOS = ["Assessor/Assistente de Gabinete", "Analista de Arquivamento", "Oficial de Justiça"];
+const VIDEOS_RAW = [{"t": "Expedir certidão pelo acesso de Distribuidor", "y": "W60XTDDUu9U", "p": ["Certidões"], "c": "Certidões e Antecedentes"}, {"t": "Suspensão automática a partir dos movimentos de decisão de suspensão ou sobrestamento", "y": "eCHDTjBzAH4", "p": ["Suspensão e Precedentes"], "c": "Suspensão e Precedentes"}, {"t": "Evolução ou retificação de classe em processo suspenso", "y": "5I7gTniJQo8", "p": ["Analista Judiciário", "Juiz"], "c": "Suspensão e Precedentes"}, {"t": "Redistribuir mandado de Goiânia para outra comarca", "y": "vQg8WnYxBnY", "p": ["Plantão"], "c": "Mandados e Plantão"}, {"t": "Visualizar o log de acessos ao processo", "y": "9DtLRoqCAk8", "p": ["Analista Judiciário", "Acesso e Segurança"], "c": "Acesso e Segurança"}, {"t": "Tramitação direta entre o Ministério Público e a Delegacia", "y": "j9pX4vy7f7M", "p": ["Analista Judiciário"], "c": "Encaminhamentos e Remessas"}, {"t": "Baixar e visualizar recibos", "y": "I21Ubsla8FY", "p": ["Todos Usuários"], "c": "Custas, Guias e Alvarás"}, {"t": "Assinatura de documentos em PDF assinados externamente", "y": "FDD03wjdocI", "p": ["Todos Usuários"], "c": "Documentos e Movimentações"}, {"t": "Recuperar senha de acesso (usuários externos)", "y": "BC2Pr25S_5Y", "p": ["Todos Usuários"], "c": "Acesso e Segurança"}, {"t": "Recuperar senha de acesso ao BNMP", "y": "CPEXg1xXr-Q", "p": ["Acesso e Segurança"], "c": "Acesso e Segurança"}, {"t": "Fluxo da pendência de conclusão em UPJ", "y": "fK8Se5oCn_A", "p": ["Analista Judiciário", "Distribuidor de Gabinete", "Assessor/Assistente de Gabinete", "Juiz"], "c": "Encaminhamentos e Remessas"}, {"t": "Alterar o e-mail cadastrado", "y": "uk-Byo---xA", "p": ["Todos Usuários"], "c": "Documentos e Movimentações"}, {"t": "Arquivamento definitivo e desarquivamento provisório do processo", "y": "epKu6bs4qTI", "p": ["Analista Judiciário"], "c": "Arquivamento e Desarquivamento"}, {"t": "Emitir guia de locomoção complementar", "y": "Mclh0Cnhq38", "p": ["Todos Usuários", "Guias"], "c": "Mandados e Plantão"}, {"t": "Expedir alvará eletrônico da Caixa Econômica Federal", "y": "FYQ-d6RBiZI", "p": ["Juiz"], "c": "Custas, Guias e Alvarás"}, {"t": "Assinar alvará eletrônico da Caixa Econômica Federal", "y": "p2tAYG1Vm7I", "p": ["Juiz"], "c": "Custas, Guias e Alvarás"}, {"t": "Peticionar laudo pericial no processo", "y": "7iBfdLyWZ_A", "p": ["Perito"], "c": "Documentos e Movimentações"}, {"t": "Acesso ao PROJUDI com CPF e senha (usuários externos)", "y": "UHpmvQGwPjs", "p": ["Todos Usuários", "Acesso e Segurança"], "c": "Acesso e Segurança"}, {"t": "Acesso ao PROJUDI pelo acesso corporativo (usuários internos)", "y": "zT4XCWFHaEM", "p": ["Acesso e Segurança"], "c": "Acesso e Segurança"}, {"t": "Encaminhar processo para o Juízo das Garantias", "y": "7CODn00z4m8", "p": ["Analista Judiciário"], "c": "Encaminhamentos e Remessas"}, {"t": "Expedir ofício entre serventias sem processo vinculado", "y": "lzqNEX8Yvj8", "p": ["Analista Judiciário"], "c": "Encaminhamentos e Remessas"}, {"t": "Expedir ofício de pedido de depoimento especial", "y": "1ALJK8SSDIo", "p": ["Analista Judiciário", "Encaminhamentos e Remessas"], "c": "Encaminhamentos e Remessas"}, {"t": "Analisar mandados com custas no plantão", "y": "64oEN9ZUwbM", "p": ["Plantão"], "c": "Mandados e Plantão"}, {"t": "Redistribuir mandado de Goiânia para outra comarca (coordenador do plantão noturno)", "y": "IL6yqFPAEEM", "p": ["Plantão"], "c": "Mandados e Plantão"}, {"t": "Expedir mandado para o plantão noturno de 1º grau", "y": "JpAyL3tcmE4", "p": ["Analista Judiciário", "Plantão"], "c": "Mandados e Plantão"}, {"t": "Resolver mandados do plantão de 1º grau", "y": "zNLJMPNDJoY", "p": ["Plantão", "Oficial de Justiça"], "c": "Mandados e Plantão"}, {"t": "Expedição automática de intimação via e-Cartas", "y": "jrShLixreyk", "p": ["Analista Judiciário"], "c": "Citações e Intimações"}, {"t": "Expedir mandado para a Central Eletrônica de Mandados (CEM)", "y": "JpOQAHzW5ec", "p": ["Analista Judiciário", "Mandados"], "c": "Mandados e Plantão"}, {"t": "Analisar mandados gratuitos (justiça gratuita)", "y": "ftqw3uSxXj4", "p": ["Plantão"], "c": "Mandados e Plantão"}, {"t": "Alterar a escala do plantão", "y": "R8BLdRZVHug", "p": ["Plantão"], "c": "Mandados e Plantão"}, {"t": "Expedir carta precatória", "y": "t-3F-5SHCG4", "p": ["Analista Judiciário"], "c": "Citações e Intimações"}, {"t": "Reativar processo arquivado", "y": "dD68lXzFpUM", "p": ["Analista Judiciário"], "c": "Arquivamento e Desarquivamento"}, {"t": "Expedição automática de citação via e-Cartas", "y": "IFi1Xjaom2s", "p": ["Analista Judiciário"], "c": "Citações e Intimações"}, {"t": "Distribuir conclusão para assistente com fluxo", "y": "v0YoFBvOwks", "p": ["Distribuidor de Gabinete"], "c": "Distribuição e Redistribuição"}, {"t": "Módulo de objetos: cadastrar objetos no mesmo lote", "y": "UvQ_SSYJ4pY", "p": ["Analista de Arquivamento"], "c": "Controle de Objetos"}, {"t": "Resolver pendências do tipo “verificar”", "y": "rw3O7OC72Zo", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Encaminhar conclusão de processo sigiloso para assistente com fluxo", "y": "Sokphp38I9U", "p": ["Juiz"], "c": "Encaminhamentos e Remessas"}, {"t": "Intimar o Ministério Público de 2º grau (PGJ)", "y": "iMoZh9aUW0E", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Trocar o responsável pela audiência", "y": "itFhbM5vK1A", "p": ["Analista Judiciário"], "c": "Audiências e Sessões de Julgamento"}, {"t": "Encaminhar processo em diligência", "y": "At9C5Wr9Lhs", "p": ["Analista Judiciário", "Encaminhamentos e Remessas"], "c": "Encaminhamentos e Remessas"}, {"t": "Habilitar Procuradoria nos autos", "y": "1FJNbLUTdqE", "p": ["Analista Judiciário"], "c": "Encaminhamentos e Remessas"}, {"t": "Elaborar certidão", "y": "v-MrQhyhk2k", "p": ["Analista Judiciário", "Certidões"], "c": "Certidões e Antecedentes"}, {"t": "Cadastrar modelo de documento", "y": "wk29L_tvm4I", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Intimar o Ministério Público tornando-o responsável nos autos", "y": "9_Pma71bwHg", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Pré-distribuição de processos do Juízo das Garantias", "y": "C6xTqYLSi6k", "p": ["Analista Judiciário"], "c": "Mandados e Plantão"}, {"t": "Cadastrar e distribuir mandados do SEEU via sistema PROJUDI", "y": "CI6Ffek2DX8", "p": ["Analista Judiciário"], "c": "Mandados e Plantão"}, {"t": "Marcar audiência", "y": "HUHAvrJ7sAU", "p": ["Analista Judiciário"], "c": "Audiências e Sessões de Julgamento"}, {"t": "Arquivar processo sigiloso", "y": "vh-OhQReqGM", "p": ["Juiz"], "c": "Arquivamento e Desarquivamento"}, {"t": "Habilitar-se em cargos disponíveis", "y": "aTDHwRSImYU", "p": ["Analista Judiciário", "Acesso e Segurança"], "c": "Acesso e Segurança"}, {"t": "Autorizar assessor a guardar documentos para assinatura do juiz", "y": "nDxVqXPjr4Y", "p": ["Juiz"], "c": "Documentos e Movimentações"}, {"t": "Liberar pendência reservada", "y": "RyGWR0K2r7o", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Trocar o responsável pela conclusão", "y": "VhF1ebqB3uU", "p": ["Distribuidor de Gabinete"], "c": "Distribuição e Redistribuição"}, {"t": "Cadastrar assessor", "y": "TsoDoC-DJmw", "p": ["Juiz"], "c": "Acesso e Segurança"}, {"t": "Consultar locomoções disponíveis no processo", "y": "a9RFTWlvutY", "p": ["Analista Judiciário"], "c": "Mandados e Plantão"}, {"t": "Cadastrar classificador", "y": "2q4GArA0MX8", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Trocar de serventia", "y": "yV6rn8wT6ro", "p": ["Todos Usuários"], "c": "Acesso e Segurança"}, {"t": "Alterar o classificador do processo", "y": "lqEVMIWwKL0", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Alterar o assunto do processo", "y": "H7B_PD38GyA", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Habilitar grandes litigantes", "y": "m6clVJzpFfg", "p": ["Analista Judiciário"], "c": "Encaminhamentos e Remessas"}, {"t": "Inserir classificador no processo", "y": "L9VIGD5j9R8", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Revogar certificado digital", "y": "V_6SgqUeWoQ", "p": ["Todos Usuários"], "c": "Acesso e Segurança"}, {"t": "Enviar processo à instância superior", "y": "sjx4XPVTO78", "p": ["Analista Judiciário"], "c": "Encaminhamentos e Remessas"}, {"t": "Habilitar advogado nos autos", "y": "mZI19psf4M4", "p": ["Analista Judiciário"], "c": "Encaminhamentos e Remessas"}, {"t": "Enviar processo concluso", "y": "DYHX9rw3t4k", "p": ["Analista Judiciário"], "c": "Encaminhamentos e Remessas"}, {"t": "Criar pendência em movimentação", "y": "m-HGZtZtHm0", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Redistribuição direcionada de processo", "y": "lMT6IzbLrAk", "p": ["Encaminhamentos e Remessas"], "c": "Distribuição e Redistribuição"}, {"t": "Redistribuição de processo por prevenção ou conexão", "y": "8GL3kxnScgw", "p": ["Encaminhamentos e Remessas"], "c": "Distribuição e Redistribuição"}, {"t": "Redistribuição normal de processo", "y": "SqbWHe_4ZdI", "p": ["Encaminhamentos e Remessas"], "c": "Distribuição e Redistribuição"}, {"t": "Abrir pauta de audiências", "y": "hXMhkAM6__U", "p": ["Analista Judiciário"], "c": "Audiências e Sessões de Julgamento"}, {"t": "Pendência de possível prazo decorrido de trânsito em julgado", "y": "Tfw_k7Rcais", "p": ["Analista Judiciário"], "c": "Documentos e Movimentações"}, {"t": "Visualizar o log de alterações do processo", "y": "ZTZwmUOKtTA", "p": ["Analista Judiciário"], "c": "Consultas e Relatórios"}, {"t": "Pendências de citação eletrônica efetivada e não efetivada", "y": "KRj98de-s9o", "p": ["Juiz", "Analista Judiciário", "Assessor/Assistente de Gabinete"], "c": "Citações e Intimações"}, {"t": "Visualizar os responsáveis pelo processo", "y": "oJmLtverIug", "p": ["Todos Usuários"], "c": "Consultas e Relatórios"}, {"t": "Visualizar as pendências do processo", "y": "HSRNVnSf0GI", "p": ["Todos Usuários"], "c": "Consultas e Relatórios"}, {"t": "Pendência “verificar audiência marcada pelo magistrado”", "y": "jcJw5R4M5Yk", "p": ["Distribuidor de Gabinete", "Juiz", "Analista Judiciário"], "c": "Audiências e Sessões de Julgamento"}, {"t": "Limpar o cache do navegador Mozilla Firefox", "y": "jDu4JAPRrL4", "p": ["Todos Usuários"], "c": "Acesso e Segurança"}, {"t": "Redistribuir processos em lote", "y": "dhYoMV_imRI", "p": ["Encaminhamentos e Remessas"], "c": "Distribuição e Redistribuição"}, {"t": "Assinatura de documentos no editor de texto online", "y": "FFY7cCy3ZOQ", "p": ["Todos Usuários"], "c": "Documentos e Movimentações"}, {"t": "Criar certificado digital", "y": "7iXLZI-ZuTk", "p": ["Todos Usuários"], "c": "Acesso e Segurança"}, {"t": "Alterar senha de acesso", "y": "svTXCsmD2qw", "p": ["Todos Usuários"], "c": "Acesso e Segurança"}, {"t": "Assinatura de documentos em formato PDF", "y": "dT_Fdpagwwk", "p": ["Todos Usuários"], "c": "Documentos e Movimentações"}, {"t": "Criar proposta de conciliação assíncrona", "y": "BSEcrVeNulU", "p": ["Todos Usuários"], "c": "Encaminhamentos e Remessas"}, {"t": "Primeiro acesso ao sistema e criação do certificado digital (usuário interno)", "y": "ySCYSW-HXaU", "p": ["Todos Usuários"], "c": "Acesso e Segurança"}];
+
+const DATA = {};
+PERFIS.forEach(perfil => {
+  const slug = PERFIL_SLUGS[perfil];
+  const videosDoPerfil = VIDEOS_RAW.filter(v => v.p.includes(perfil)).map(v => ({
+    title: v.t,
+    url: 'https://youtu.be/' + v.y,
+    duration: '',
+    categoria: v.c
+  }));
+  DATA[slug] = {
+    label: perfil,
+    icon: PERFIL_ICONS[perfil] || 'ti-folder',
+    sections: [ { title: perfil, tag: 'all', videos: videosDoPerfil } ]
+  };
+});
 
 let currentProfile = 'todos';
 let currentTopic = null;
 let searchTerm = '';
 
-const PROFILE_META = {
-  todos: { label: 'Todos os Perfis', icon: 'ti-users' },
-  advogado: { label: 'Advogado', icon: 'ti-scale' },
-  analista: { label: 'Analista judiciário', icon: 'ti-clipboard-check' },
-  'analista 2': { label: 'Analista Judiciário 2º Grau', icon: 'ti-clipboard-list' },
-  assistente: { label: 'Assistente de Gabinete', icon: 'ti-home-2' },
-  autoridade: { label: 'Autoridade Policial', icon: 'ti-shield-lock' },
-  conciliador: { label: 'Conciliador', icon: 'ti-heart-handshake' },
-  desembargador: { label: 'Desembargador', icon: 'ti-building-bank' },
-  distribuidor: { label: 'Distribuidor', icon: 'ti-send' },
-  distribuidor_gabinete: { label: 'Distribuidor de Gabinete', icon: 'ti-mail-forward' },
-  juiz: { label: 'Magistrado', icon: 'ti-gavel' },
-  'todos usuários': { label: 'Todos Usuários', icon: 'ti-users' },
-};
+// Metadados de exibição por perfil (usado no pill de topo e no menu lateral)
+const PROFILE_META = { todos: { label: 'Todas as Categorias', icon: 'ti-layout-grid' } };
+PERFIS.forEach(perfil => {
+  PROFILE_META[PERFIL_SLUGS[perfil]] = { label: perfil, icon: PERFIL_ICONS[perfil] || 'ti-folder' };
+});
 
 function isVideoNew(v) {
   if (!v.isNew || !v.newSince) return false;
@@ -1406,11 +1144,11 @@ function render() {
             <span class="thumb-badge">PROJUDI</span>
             ${isVideoNew(v) ? '<span class="new-badge">NOVO</span>' : ''}
             <div class="play-btn"><i class="ti ti-player-play" aria-hidden="true"></i></div>
-            <span class="duration-badge">${v.duration}</span>
+            ${v.duration ? `<span class="duration-badge">${v.duration}</span>` : ''}
           </div>
           <div class="video-info">
             <div class="v-title">${v.title}</div>
-            <div class="v-meta"><i class="ti ti-video" style="font-size:12px" aria-hidden="true"></i> Capacitação</div>
+            <div class="v-meta"><i class="ti ti-folder" style="font-size:12px" aria-hidden="true"></i> ${v.categoria || 'Sem categoria'}</div>
           </div>
         </div>`;
       });
@@ -1443,9 +1181,7 @@ function render() {
   document.getElementById('search-info').textContent =
     `${totalShown} vídeo${totalShown !== 1 ? 's' : ''} disponíve${totalShown !== 1 ? 'is' : 'l'}`;
  // atualização
-document.getElementById('stat-total-videos').textContent = 
-  Object.values(DATA).reduce((a,p) => 
-    a + p.sections.reduce((b,s) => b + s.videos.length, 0), 0);
+document.getElementById('stat-total-videos').textContent = VIDEOS_RAW.length;
 }
 
 // ── MOBILE HELPERS ──
@@ -1638,13 +1374,13 @@ function resetFilters(el) {
   currentTopic = null;
   searchTerm = '';
   pdfSearchTerm = '';
+  currentInfoYear = null;
   PDF_CATEGORIES.forEach(c => c.open = false);
   activePDFItem = null;
   document.getElementById('search-input').value = '';
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
   // Não marca nenhum item ativo (o item "todos" está oculto)
-  const totalGeral = Object.values(DATA).reduce((a, p) =>
-    a + p.sections.reduce((b, s) => b + s.videos.length, 0), 0);
+  const totalGeral = VIDEOS_RAW.length;
   document.getElementById('search-info').textContent =
     `${totalGeral} vídeo${totalGeral !== 1 ? 's' : ''} disponíve${totalGeral !== 1 ? 'is' : 'l'}`;
   document.querySelector('.sidebar').classList.remove('mobile-hidden');
@@ -1653,50 +1389,42 @@ function resetFilters(el) {
 }
 
 // ── PDF INFORMATIVOS ──
-// Categorias: adicione { name, file } em cada categoria.
-// Para incluir novos PDFs, acrescente na categoria correspondente.
+// Dados reais extraídos do Portal de Capacitação PROJUDI, organizados por categoria e ano.
 
-const PDF_CATEGORIES = [
-  {
-    title: 'Cadastros e dados',
-    icon: 'ti-database',
+const CATEGORIAS = ["Acesso e Segurança", "Cadastros", "Distribuição e Redistribuição", "Encaminhamentos e Remessas", "Citações e Intimações", "Mandados e Plantão", "Audiências e Sessões de Julgamento", "Suspensão e Precedentes", "Arquivamento e Desarquivamento", "Custas, Guias e Alvarás", "Documentos e Movimentações", "Consultas e Relatórios", "Certidões e Antecedentes", "Controle de Objetos"];
+const CATEGORY_ICONS = {"Acesso e Segurança": "ti-lock", "Cadastros": "ti-database", "Distribuição e Redistribuição": "ti-arrows-shuffle", "Encaminhamentos e Remessas": "ti-send", "Citações e Intimações": "ti-mail", "Mandados e Plantão": "ti-gavel", "Audiências e Sessões de Julgamento": "ti-users-group", "Suspensão e Precedentes": "ti-player-pause", "Arquivamento e Desarquivamento": "ti-archive", "Custas, Guias e Alvarás": "ti-receipt", "Documentos e Movimentações": "ti-file-text", "Consultas e Relatórios": "ti-report", "Certidões e Antecedentes": "ti-certificate", "Controle de Objetos": "ti-box"};
+
+const INFORMATIVOS_RAW = [{"n": 104, "t": "Emissão de guia de desarquivamento de processo físico via sistema PROJUDI", "c": "Arquivamento e Desarquivamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/936594"}, {"n": 103, "t": "Melhorias relacionadas à suspensão processual no sistema PROJUDI", "c": "Suspensão e Precedentes", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/936419"}, {"n": 101, "t": "Alerta de possível ausência de coordenadas geoespaciais no sistema PROJUDI", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/936511"}, {"n": 100, "t": "Melhorias nos relatórios do perfil de coordenador da Central de Mandados do sistema PROJUDI", "c": "Mandados e Plantão", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/936418"}, {"n": 98, "t": "Movimentação mudança de assunto processual passou a conter descrição das alterações realizadas no sistema PROJUDI", "c": "Documentos e Movimentações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/934828"}, {"n": 97, "t": "Disponibilização de modelos de intimação e-Cartas para a CUC", "c": "Citações e Intimações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/934827"}, {"n": 96, "t": "Possibilidade sistêmica de criação de macrorregiões para distribuição de mandados da escala do plantão diurno no sistema PROJUDI", "c": "Mandados e Plantão", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/934818"}, {"n": 95, "t": "Conclusão automática de petições iniciais protocoladas no sistema PROJUDI", "c": "Encaminhamentos e Remessas", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/934813"}, {"n": 94, "t": "Destaque em vermelho nas guias vencidas e não recolhidas", "c": "Custas, Guias e Alvarás", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/934811"}, {"n": 93, "t": "Orientações acerca das regras e formas de acesso ao sistema eletrônico de execução unificado (SEEU)", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/930142"}, {"n": 92, "t": "Usuários acerca das funcionalidades do perfil coordenador da central eletrônica de mandados e coordenador do plantão noturno", "c": "Mandados e Plantão", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/934807"}, {"n": 91, "t": "Numeração processual completa (sem abreviação) nas operações em webservice", "c": "Consultas e Relatórios", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/936593"}, {"n": 90, "t": "Obrigatoriedade de selecionar o número do tema no lançamento dos movimentos 265, 11975, 12098 e 17968", "c": "Suspensão e Precedentes", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/928209"}, {"n": 88, "t": "Procedimentos realizados pelos perfis de coordenador no ambiente do plantão noturno 1º grau", "c": "Mandados e Plantão", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/928208"}, {"n": 87, "t": "Procedimento de autenticação em duplo fator para acesso aos sistemas PDPJ-Br, Portal Jus.br e ao sistema de autenticação unificada (SSO)", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/923665"}, {"n": 86, "t": "Procedimento de expedição de mandados para o plantão noturno 1º grau", "c": "Mandados e Plantão", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/928206"}, {"n": 85, "t": "Procedimento de expedição e de recebimento de ofícios entre serventias no sistema PROJUDI", "c": "Encaminhamentos e Remessas", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/923664"}, {"n": 84, "t": "Situação desconto realizado na guia de custas iniciais em que houver concessão de desconto", "c": "Custas, Guias e Alvarás", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/923663"}, {"n": 83, "t": "Preenchimento do movimento TPU de decisões relativas à suspensão de processos por precedentes qualificados", "c": "Suspensão e Precedentes", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/923662"}, {"n": 82, "t": "Atualização do conteúdo textual do modelo de e-Carta execução fiscal – intimação penhora", "c": "Citações e Intimações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/922166"}, {"n": 81, "t": "Inativação da pendência pedido equipe interprofissional em razão da criação da pendência pedido de depoimento especial", "c": "Encaminhamentos e Remessas", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/923661"}, {"n": 80, "t": "Implementação da autenticação em dois fatores (2FA) via código por e-mail aos usuários externos no acesso ao sistema PROJUDI", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/923660"}, {"n": 79, "t": "Melhoria para impedir a geração de citação pelo painel (online) quando a parte for ente público representado por procuradoria", "c": "Citações e Intimações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/923659"}, {"n": 77, "t": "Marca d’água com a mensagem custas iniciais pendentes nos processos em que a guia de custas iniciais estiver com status aguardando pagamento", "c": "Custas, Guias e Alvarás", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/919391"}, {"n": 76, "t": "Arquivamento de processo desarquivado provisoriamente pela pendência de arquivamento e reativação direta de processo arquivado", "c": "Arquivamento e Desarquivamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/918235"}, {"n": 74, "t": "Implementação da ampliação automática do colegiado no julgamento da apelação cível com divergência no âmbito da sessão virtual", "c": "Audiências e Sessões de Julgamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/918298"}, {"n": 73, "t": "Descarte da pendência mandado SEEU não expedida", "c": "Mandados e Plantão", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/918234"}, {"n": 72, "t": "Procedimento de resolução de mandados pelos oficiais de justiça do plantão noturno 1º grau", "c": "Mandados e Plantão", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/928203"}, {"n": 71, "t": "Alteração do fluxo para atribuir movimento de sentença ao magistrado do CEJUSC 2º grau", "c": "Documentos e Movimentações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/918303"}, {"n": 70, "t": "Alteração do alerta “Arquivados com Saldo”", "c": "Arquivamento e Desarquivamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917761"}, {"n": 69, "t": "Melhoria que possibilita a intimação via DJEN de advogados não cadastrados no sistema PROJUDI (advogados externos)", "c": "Citações e Intimações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917759"}, {"n": 68, "t": "Certificação automática de trânsito em julgado para a acusação e para a defesa (defensoria pública e advogado particular) no sistema PROJUDI", "c": "Documentos e Movimentações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917758"}, {"n": 68, "t": "Melhoria para impedir a geração de citação pelo painel (online) quando a parte for ente público representado por procuradoria", "c": "Citações e Intimações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917758"}, {"n": 67, "t": "Variável de processo do SEEU para inclusão em certidão de oficial de justiça no sistema PROJUDI", "c": "Mandados e Plantão", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917756"}, {"n": 66, "t": "Inclusão de funcionalidades de intimação em lote (perito, credor, terceiro juridicamente interessado, administrador e leiloeiro)", "c": "Citações e Intimações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/914883"}, {"n": 65, "t": "Criação do perfil DINT - logs de acesso para visualização dos logs de acesso aos processos", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917755"}, {"n": 64, "t": "Desarquivamento provisório e reativação, bem como do arquivamento de processo desarquivado provisoriamente", "c": "Arquivamento e Desarquivamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917754"}, {"n": 63, "t": "Emissão da certidão nada consta criminal quando há processo criminal arquivado com averbação de custas finais", "c": "Certidões e Antecedentes", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917753"}, {"n": 60, "t": "Permissão para que as classes de conflito de competência e de jurisdição tenham os nomes das partes editados no cadastro", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917752"}, {"n": 59, "t": "Disponibilização da ferramenta solicitar acesso para consulta a processos em segredo de justiça pelo perfil de distribuidor 2º grau", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917751"}, {"n": 58, "t": "Cadastro de objetos pelo perfil de autoridades policiais", "c": "Controle de Objetos", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917806"}, {"n": 57, "t": "Cadastro e controle de objetos", "c": "Controle de Objetos", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917805"}, {"n": 56, "t": "Atualiza o informativo nº 06 2023 - ferramentas de troca de responsável", "c": "Distribuição e Redistribuição", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917804"}, {"n": 56, "t": "Funcionalidades troca responsável, troca responsável conclusão e troca responsável (audiências)", "c": "Distribuição e Redistribuição", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917804"}, {"n": 55, "t": "Novas ferramentas disponibilizadas em opções processo para o perfil de distribuidor em serventias 2º grau", "c": "Distribuição e Redistribuição", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909637"}, {"n": 54, "t": "Opção consultar precedente e do botão de visualizar detalhes do precedente na consulta de precedentes", "c": "Consultas e Relatórios", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909636"}, {"n": 53, "t": "Melhoria para permitir o arquivamento de processos com objetos cadastrados com a movimentação encaminhado para leilão", "c": "Arquivamento e Desarquivamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909389"}, {"n": 51, "t": "Nova pendência desarquivamento provisório, criada em substituição à pendência desarquivamento", "c": "Arquivamento e Desarquivamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/915885"}, {"n": 50, "t": "Disponibilização da formatação de cores dos votos lançados durante a sessão virtual do sistema PJD", "c": "Audiências e Sessões de Julgamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/917750"}, {"n": 49, "t": "Expedição de alvará eletrônico para a caixa econômica federal", "c": "Custas, Guias e Alvarás", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/925151"}, {"n": 48, "t": "Procedimento de comprimir e cortar vídeos para adequar ao tamanho de 100mb para realizar a juntada da mídia no sistema PROJUDI", "c": "Documentos e Movimentações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909388"}, {"n": 47, "t": "Procedimento sistêmico para resposta aos ofícios recebidos pela câmara de mediação e conciliação de goiás", "c": "Encaminhamentos e Remessas", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909387"}, {"n": 46, "t": "Envio de processos para a câmara de mediação e conciliação de goiás Ltda. - CAMESGO", "c": "Encaminhamentos e Remessas", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909386"}, {"n": 45, "t": "Inclusão de mensagem de alerta no momento do protocolo da classe processo criminal -> medidas garantidoras -> Habeas Corpus criminal", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909385"}, {"n": 44, "t": "Usuários habilitados nos perfis de autoridades policiais e de delegado acerca do procedimento de juntada de mídia nos processos em tramitação no si", "c": "Documentos e Movimentações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909384"}, {"n": 43, "t": "Filtro por prioridade adicionado no menu processos → outras consultas → por outras informações", "c": "Consultas e Relatórios", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909383"}, {"n": 42, "t": "Manutenção dos votos proferidos pelo relator e pelos demais votantes nos processos adiados no PJD", "c": "Audiências e Sessões de Julgamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909382"}, {"n": 41, "t": "Melhoria na opção de voto retorno para o relator verificar possível erro materialdo módulo sessão virtual do sistema PJD", "c": "Audiências e Sessões de Julgamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/909381"}, {"n": 40, "t": "Acréscimo automático de cinco dias úteis ao decurso de prazo da pendência de carta de citação para pj de direito privado via DJE", "c": "Citações e Intimações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895098"}, {"n": 39, "t": "Melhoria que exibe o endereço de e-mail do usuário na tela inicial da serventia e permite sua alteração pelo menu segurança", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895094"}, {"n": 38, "t": "Alteração do status situação nas sessões de julgamento presencial e virtual dos sistemas PROJUDI e PJD", "c": "Audiências e Sessões de Julgamento", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895431"}, {"n": 37, "t": "Melhoria no destaque do nome da parte e grafia em itálico da filiação na capa do processo", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895092"}, {"n": 36, "t": "Nova forma de acesso ao sistema PROJUDI pelos usuários internos por meio do acesso corporativo", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895091"}, {"n": 35, "t": "Criação da pendência verificar distribuição - Habeas Corpus para o perfil de distribuidor 2º grau", "c": "Distribuição e Redistribuição", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895090"}, {"n": 34, "t": "Permanência da classe 14678 nos antecedentes criminais", "c": "Certidões e Antecedentes", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895089"}, {"n": 32, "t": "Melhoria para permitir que o assistente de gabinete (com ou sem fluxo) visualize e edite os post-its vermelhos", "c": "Documentos e Movimentações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895088"}, {"n": 31, "t": "Alterações na funcionalidade que permite ao perfil distribuidor criminal 1º grau solicitar acesso a processos em segredo de justiça", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895087"}, {"n": 30, "t": "Alterações na funcionalidade que permite ao perfil consultor - segredo de justiça solicitar acesso a processos em segredo de justiça", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895086"}, {"n": 29, "t": "Funcionalidade que permite aos membros do ministério público (promotor e procurador de justiça) solicitarem acesso a processos em segredo de justiça", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895084"}, {"n": 28, "t": "Habilitação da classe 14678 para não positivar certidão criminal", "c": "Certidões e Antecedentes", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895082"}, {"n": 27, "t": "Funcionalidades do ícone coordenadas do processo", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895081"}, {"n": 26, "t": "Procedimento de criação e inserção de logotipos externos no editor de texto do sistema PROJUDI", "c": "Documentos e Movimentações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895080"}, {"n": 25, "t": "Adição de campos na funcionalidade de mandados SEEU cadastrados e distribuídos pelo sistema PROJUDI", "c": "Mandados e Plantão", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/895079"}, {"n": 24, "t": "Disponibilidade de ferramenta para realizar o cadastro ou a alteração do RJI para a parte paciente na classe Habeas Corpus", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/887000"}, {"n": 23, "t": "Fluxo de resposta de remessas recebidas pela junta médica nos processos do sistema eletrônico de execução unificado (SEEU)", "c": "Encaminhamentos e Remessas", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/886997"}, {"n": 22, "t": "Melhorias nos documentos com selo digital e nas movimentações do sistema PROJUDI", "c": "Documentos e Movimentações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/884278"}, {"n": 21, "t": "Melhoria na ferramenta post it do sistema PROJUDI", "c": "Documentos e Movimentações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/884276"}, {"n": 20, "t": "Alteração do local em que a aba características é disponibilizada na tela de cadastro de processos", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/884274"}, {"n": 19, "t": "Retirada das permissões de cadastro dos usuários com perfil de cadastrador local e a nova dinâmica para cadastros no sistema PROJUDI", "c": "Acesso e Segurança", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/884273"}, {"n": 18, "t": "Disponibilização do menu estatística no perfil analista forense", "c": "Consultas e Relatórios", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/886999"}, {"n": 17, "t": "Alertas emitidos sobre os eventos relacionados ao controle de prisão no sistema PROJUDI", "c": "Consultas e Relatórios", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/884272"}, {"n": 15, "t": "Pré-(re)distribuição e remessa de processos do plantão judicial para o juízo das garantias", "c": "Distribuição e Redistribuição", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/884270"}, {"n": 14, "t": "Cálculo automático de idade da parte a partir da data de nascimento e a atualização automática de prioridades por idade", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/884269"}, {"n": 13, "t": "Disponibilização do movimento juntada de laudo pericial para juntada de documento do tipo laudo pericial", "c": "Documentos e Movimentações", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/878469"}, {"n": 12, "t": "Procedimento sistêmico para as serventias do CEJUSC encaminharem pendência de ofício para a central de buscas de endereços e dados eletrônicos do TJGO", "c": "Encaminhamentos e Remessas", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/884268"}, {"n": 11, "t": "Procedimento sistêmico de suspensão e finalização da suspensão de processos no sistema PROJUDI", "c": "Suspensão e Precedentes", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/878468"}, {"n": 9, "t": "Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI", "c": "Consultas e Relatórios", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/884267"}, {"n": 8, "t": "Procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência", "c": "Encaminhamentos e Remessas", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/876542"}, {"n": 7, "t": "Cadastro de precatório para o DEPRE no sistema PROJUDI", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/876541"}, {"n": 6, "t": "Procedimento sistêmico para devolução e arquivamento dos processos encaminhados para o juízo das garantias", "c": "Encaminhamentos e Remessas", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/876540"}, {"n": 5, "t": "Encaminhamento não automático de processos de competência do juízo das garantias", "c": "Encaminhamentos e Remessas", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/876539"}, {"n": 4, "t": "Melhorias relacionadas à averbação de débitos no sistema PROJUDI", "c": "Custas, Guias e Alvarás", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/876538"}, {"n": 3, "t": "Cadastro de polo passivo de processo cível sem CPF ou CNPJ por meio da inclusão obrigatória de justificativa no sistema PROJUDI", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/876537"}, {"n": 2, "t": "Às autoridades policiais sobre a seleção da área de distribuição nos processos a serem distribuídos ao juízo das garantias", "c": "Distribuição e Redistribuição", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/876536"}, {"n": 1, "t": "Disponibilização do campo comunidade quando for informada a etnia indígena e quilombola", "c": "Cadastros", "a": 2026, "l": "https://tjdocs.tjgo.jus.br/documentos/876535"}, {"n": 160, "t": "Não positivação da certidão negativa positiva cível pelas classes contidas na pasta 50 do sgtpu", "c": "Certidões e Antecedentes", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/874232"}, {"n": 159, "t": "Melhoria sistêmica que permitirá à central de custas finais (CCF) praticar atos em processo arquivado", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/873624"}, {"n": 158, "t": "Procedimento sistêmico de cadastro e distribuição de mandados do SEEU via sistema PROJUDI", "c": "Mandados e Plantão", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/873623"}, {"n": 157, "t": "Saneamento das serventias da PMGO no sistema PROJUDI", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/873622"}, {"n": 156, "t": "Procedimento sistêmico de redistribuição de procedimentos sigilosos para a UPJ das varas das garantias a partir do dia 07.01.2026", "c": "Distribuição e Redistribuição", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/873620"}, {"n": 154, "t": "Procedimento sistêmico de distribuição de processos para a UPJ das varas das garantias a partir do dia 07.01.2026", "c": "Distribuição e Redistribuição", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/873626"}, {"n": 153, "t": "Funcionalidade que permite que os membros do ministério público solicitem acesso aos processos que tramitam em segredo de justiça", "c": "Acesso e Segurança", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/873628"}, {"n": 152, "t": "Procedimento sistêmico de redistribuição de processos para a UPJ das varas das garantias a partir do dia 07.01.2026", "c": "Distribuição e Redistribuição", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/873629"}, {"n": 150, "t": "Disponibilização da pendência verificar processo - citação por hora certa", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/870472"}, {"n": 149, "t": "Permutas e vacâncias de 2º grau nos sistemas PROJUDI e PJD", "c": "Distribuição e Redistribuição", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/869119"}, {"n": 146, "t": "Adaptação tecnológica para as câmaras criminais no julgamento de Habeas Corpus na sessão virtual", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/869118"}, {"n": 145, "t": "Funcionalidade de remarcar e desmarcar sessão de julgamento em lote", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/869116"}, {"n": 144, "t": "Descarte da pendência de voto e ementa em processos cuja pendência de sessão ainda está em aberto", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/869115"}, {"n": 143, "t": "Julgamento adiado e do julgamento iniciado no sistema PJD", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/873630"}, {"n": 142, "t": "Envio de comunicações para a polícia técnico-científica diretamente no sistema PROJUDI", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868591"}, {"n": 141, "t": "Análise do arquivo com a mídia da sustentação oral gravada (SOG) em processos da sessão virtual", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/869114"}, {"n": 140, "t": "Assinatura de documentos em formatos audiovisuais mp3 e mp4 pelo assinador externo", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/869113"}, {"n": 139, "t": "Ferramenta de adiamento, da sessão virtual para sessão presencial, em lote de processos com pedido de sustentação oral deferidos", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/869112"}, {"n": 138, "t": "Ferramenta de sustentação oral gravada assíncrona na sessão virtual", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/869117"}, {"n": 137, "t": "Possibilidade de cancelameno da guia de custas finais com ou sem débito averbado", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868118"}, {"n": 136, "t": "Possibilidade de averbação da guia de custas finais de parte sucumbente beneficiária da gratuidade da justiça", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868117"}, {"n": 135, "t": "Orientações sobre o encaminhamento de processos para a corregedoria geral da justiça no sistema PROAD", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868116"}, {"n": 134, "t": "Orientações sobre o sistema de controle de processos do tribunal de justiça (CPTJ)", "c": "Consultas e Relatórios", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868115"}, {"n": 133, "t": "Bloqueio da edição manual do nome da parte no cadastro de processo no sistema PROJUDI", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868114"}, {"n": 132, "t": "Ferramenta para realizar o cadastro ou a alteração do RJI para a parte, bem como incluir a variável do RJI no PROJUDI", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868113"}, {"n": 131, "t": "Inclusão de box de cores nas caixas de votação da sessão virtual no sistema PJD (revoga o informativo nº 121)", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868112"}, {"n": 130, "t": "Atualização do módulo do controle de prisão", "c": "Consultas e Relatórios", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868111"}, {"n": 127, "t": "Melhorias na pendência verificar - petição pedido de liberdade", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/873619"}, {"n": 126, "t": "Saneamento da prisão e/ou encerramento cadastrado após o advento da nova arquitetura do controle de prisões do sistema PROJUDI", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868110"}, {"n": 125, "t": "Inclusão de sigilo nos documentos do sistema TJDOCS", "c": "Acesso e Segurança", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/868109"}, {"n": 124, "t": "Disponibilização da guia de multa contratual no sistema PROJUDI", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/863144"}, {"n": 122, "t": "Disponibilização de dez novas pendências no sistema PROJUDI", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/863141"}, {"n": 120, "t": "Disponibilização da pendência verificar audiência marcada pelo magistrado no sistema PROJUDI", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/862039"}, {"n": 119, "t": "Criação da prioridade acolhido de ordem 1 no sistema PROJUDI", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/862037"}, {"n": 118, "t": "Disponibilização das pendências citação eletrônica efetivada e citação eletrônica não efetivada no sistema PROJUDI", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/862036"}, {"n": 117, "t": "Correções na consulta de audiências pendentes no sistema PROJUDI", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/861036"}, {"n": 116, "t": "Pendência pedido contadoria - cálculo de pena de multa e do novo fluxo de remessa dos autos digitais criminais para a central única de contadores - criminal", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/863140"}, {"n": 115, "t": "Melhoria na ferramenta de resolutividade de mandados", "c": "Mandados e Plantão", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/861035"}, {"n": 114, "t": "Criação do checkbox comunicado de prisão", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/861032"}, {"n": 113, "t": "Criação do checkbox pedido de liberdade", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/861031"}, {"n": 112, "t": "Criação da pendência ofício - instituto criminalística", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/861029"}, {"n": 111, "t": "Criação da pendência ofício - DGPP", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/861028"}, {"n": 110, "t": "Criação da pendência ofício - cumprimento de alvará de soltura", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/861026"}, {"n": 109, "t": "Criação da pendênica pedido de laudo - junta médica", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/861023"}, {"n": 108, "t": "Disponibilização do status situação de julgamento denúncia recebida e denúncia rejeitada no sistema PROJUDI e no PJD", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/862035"}, {"n": 107, "t": "Inclusão da ferramenta reCAPTCHA para a realização de consulta pública processual no sistema PROJUDI", "c": "Acesso e Segurança", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/861021"}, {"n": 106, "t": "Geração da pendência verificar processo após o recadastramento cível e criminal", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/858935"}, {"n": 105, "t": "Aprimoramento do selo digital de documento gerado a partir de movimentação processual", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/858927"}, {"n": 104, "t": "Ferramenta ofício distribuidor", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/858928"}, {"n": 103, "t": "Melhorias da ferramenta de pré-análise de processos", "c": "Consultas e Relatórios", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/862055"}, {"n": 102, "t": "Disponibilização da ferramenta solicitar acesso ao perfil de oficial de justiça", "c": "Acesso e Segurança", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/857445"}, {"n": 101, "t": "Cadastros de organizadores com seleção de cor no sistema PROAD", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/862063"}, {"n": 100, "t": "Desativação de automática de usuários por meio dos perfis de cadastradores", "c": "Acesso e Segurança", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/862062"}, {"n": 99, "t": "Retirada da pendência pedido contadoria – cálculo de guia final do alerta de processos paralisados da serventia no sistema PROJUDI", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/855514"}, {"n": 98, "t": "Ferramenta de atualização automática do saldo da conta da caixa econômica federal", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/855512"}, {"n": 97, "t": "Emissão de guias de agravo de instrumento das trs, pedido de uniformização de interpretação de lei cível e criminal da tuj", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/862059"}, {"n": 95, "t": "Inclusão das variáveis data do fato e data do trânsito em julgado na informação de antecedentes criminais", "c": "Certidões e Antecedentes", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/854957"}, {"n": 94, "t": "Destaque aos movimentos de atos decisórios no sistema PROJUDI", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/854312"}, {"n": 93, "t": "Prioridade feminicídio e/ou morte violenta de mulheres", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/854273"}, {"n": 92, "t": "Redistribuição de procedimentos sigilosos no sistema PROJUDI", "c": "Distribuição e Redistribuição", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/854075"}, {"n": 91, "t": "Criação da guia leilão alienação de bens – sentença judicial", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/854074"}, {"n": 90, "t": "Liberação de locomoções complementares", "c": "Mandados e Plantão", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/858829"}, {"n": 89, "t": "Possibilidade de isenção de guia de certidão de prática forense", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/850347"}, {"n": 88, "t": "Botões de acesso ao AGAIA, Berna IA e SET", "c": "Acesso e Segurança", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/850346"}, {"n": 86, "t": "Revoga o informativo nº 30/2025 para suprimir o CNPJ do estado de goiás", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/858816"}, {"n": 84, "t": "Certificação automática de decurso de prazo decorrido", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/850339"}, {"n": 83, "t": "Audiências assíncronas de conciliação", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/855557"}, {"n": 82, "t": "Preenchimento automático do oferecimento e recebimento da denúncia", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/850337"}, {"n": 81, "t": "Disponibilização de filtro para consulta por status processual", "c": "Consultas e Relatórios", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/850336"}, {"n": 80, "t": "Complementa o informativo nº 66 sobre o saldo de locomoções na expedição de mandados", "c": "Mandados e Plantão", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/849906"}, {"n": 79, "t": "Preenchimento de complementos tabelados na redistribuição de processos", "c": "Distribuição e Redistribuição", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/849038"}, {"n": 78, "t": "Ferramenta para lançamento de prisão civil por descumprimento de dever alimentar", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/849037"}, {"n": 77, "t": "Ferramenta para consulta do status do pagamento das guias", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/849036"}, {"n": 76, "t": "Melhoria para consultar guias pelo identificador do PIX disponibilizada ao perfil de analista financeiro", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/849035"}, {"n": 75, "t": "Filtro de busca por área do processo nos perfis de distribuidor", "c": "Consultas e Relatórios", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/849034"}, {"n": 74, "t": "Melhoria na ordenação de recursos interpostos", "c": "Consultas e Relatórios", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/849033"}, {"n": 73, "t": "Emissão de guia de apelação simples e em dobro", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/851159"}, {"n": 72, "t": "Melhoria campo audiência na funcionalidade de mandados do sistema PROJUDI", "c": "Mandados e Plantão", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/846003"}, {"n": 71, "t": "Pendência penhora online renomeada para SISBAJUD", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/845403"}, {"n": 70, "t": "Desmembramento da pendência verificar ofício normal Delegacia", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/844558"}, {"n": 69, "t": "Obrigatoriedade cadastro CPF perito", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/844557"}, {"n": 68, "t": "Disponibilização das ferramentas visualizar acesso ao processo e registro de alterações nos perfis de magistrado", "c": "Consultas e Relatórios", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/844556"}, {"n": 67, "t": "Criação de campo para inclusão do número do RAI na capa dos autos", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/843028"}, {"n": 66, "t": "Melhoria da central eletrônica de mandados para verificação do saldo de locomoções - 1º e 2º grau", "c": "Mandados e Plantão", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/842641"}, {"n": 65, "t": "Funcionalidade de comunicações puras disponibilizadas no sistema PROAD", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/842644"}, {"n": 64, "t": "Pendências verificar devolução de mandado e verificar retorno do 2º grau", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/841800"}, {"n": 61, "t": "Procedimento atualizado do cadastro de carta precatória pelo perfil cidadão", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/846237"}, {"n": 60, "t": "Geração de código de acesso pelo perfil cidadão no cadastro de-Cartas precatórias", "c": "Acesso e Segurança", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/841334"}, {"n": 59, "t": "Pendências verificar novo processo APF e verificar processo cautelar MPU", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/840129"}, {"n": 58, "t": "Equipe do CNJ sobre o primeiro acesso nos sistemas PROJUDI e PROAD", "c": "Acesso e Segurança", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/840128"}, {"n": 57, "t": "Emissão das guias de agravo de instrumento ou agravo interno comum e em dobro", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/840126"}, {"n": 56, "t": "Funcionalidade que permite a inclusão do número do registro de atendimento integrado - RAI", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/840125"}, {"n": 55, "t": "Melhoria do modelo de citação e-Cartas execução fiscal - geral", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/840124"}, {"n": 54, "t": "Expedição da pendência de pedido de laudo", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/840123"}, {"n": 53, "t": "Atualização na redistribuição dos processos para as serventias do núcleo de justiça 4.0 - finalizar", "c": "Distribuição e Redistribuição", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/838397"}, {"n": 52, "t": "Funcionalidade de abreviação dos nomes das partes cadastrados como vitima e criança adolescente", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/838396"}, {"n": 51, "t": "Relatórios recursos arquivados por relator e data", "c": "Consultas e Relatórios", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/838252"}, {"n": 50, "t": "Descarte das pendências de intimação aguardando envio para o DJEN", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/838169"}, {"n": 48, "t": "Citações eletrônicas destinadas a escritórios jurídicos não poderão ser geradas", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/836608"}, {"n": 47, "t": "Fluxos de remessa dos autos digitais criminais para a central única de contadores criminal", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/836607"}, {"n": 46, "t": "Melhoria na ferramenta de marcar sessão e incluir em mesa para julgamento no sistema PJD que passou a listar somente os magistrados vinculados à serventia", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/835015"}, {"n": 43, "t": "Atualização pendência guia de execução penal opção para upload de PDF - PROAD nº 504110", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833802"}, {"n": 42, "t": "Novo status de guia - pagamento deferido para o final do processo", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833299"}, {"n": 41, "t": "Movimentos a serem utilizados em caso de recurso inexistente", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833298"}, {"n": 40, "t": "Subtipos da pendência verificar processo disponibilizados no sistema PROJUDI", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833297"}, {"n": 39, "t": "Atualização texto certidão de antecedentes infracionais emitida pelo perfil analista judiciário da infância e juventude infracional", "c": "Certidões e Antecedentes", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833296"}, {"n": 38, "t": "Intimações disponibilizadas no DJEN", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833293"}, {"n": 37, "t": "Alteração do quórum mínimo de julgamento nas seções cíveis", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833292"}, {"n": 36, "t": "Serventia da central SISBAJUD RENAJUD foi renomeada para central de autumação dos sistemas conveniados", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833291"}, {"n": 35, "t": "Emissão das guias de conciliador e mediadores, bem como sobre a emissão das guias e o relatório de audiências de conciliação e mediação com informações da guia", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833290"}, {"n": 34, "t": "Necessidade de habilitar os procuradores antes de expedir as citações eletrônicas destinadas aos entes representados pela pge pelo domicílio eletrônico", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/858814"}, {"n": 33, "t": "Cadastro dos modelos de e-Carta juiz cível-citação e intimação audiência de conciliação e juiz cível-citação e intimação audiência de conciliação tutela deferida no sistema PROJUDI", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833288"}, {"n": 32, "t": "Cadastro da pendência intimação de sentença acórdão a ser utilizada após sentença ou acórdão para que a serventia visualize processos com possível trânsito em julgado", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833285"}, {"n": 31, "t": "Melhoria na ferramenta de expedição de mandados para permitir informar a data limite para o cumprimento do mandado no sistema PROJUDI", "c": "Mandados e Plantão", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833284"}, {"n": 29, "t": "Consulta de processos por assunto e redistribuição para as unidades da comarca de goiânia no SEEU", "c": "Distribuição e Redistribuição", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833282"}, {"n": 28, "t": "Criação de pauta de audiência preliminar para conciliador", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833281"}, {"n": 27, "t": "Orientações de acesso à pesquisa de satisfação disponibilizada no sistema PROJUDI", "c": "Consultas e Relatórios", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833280"}, {"n": 26, "t": "Peticionamento intercorrente PSPJ PROJUDI - Res. 455-2022 CNJ", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833279"}, {"n": 25, "t": "Instrução sobre o envio da pendência de intimação em processos sigilosos para os perfis de analistas e técnicos judiciários de 2º grau", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833278"}, {"n": 24, "t": "Atualizaçes domicílio eletrônico CNJ - integração com e-Cartas - especificidades Res. 455-2022 CNJ - PROAD nº 609761", "c": "Citações e Intimações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833277"}, {"n": 23, "t": "Procedimento para atribuir responsabilidade ao revisor do processo", "c": "Distribuição e Redistribuição", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833276"}, {"n": 22, "t": "Procedimento para a resolução das pendências de mandado de prisão", "c": "Mandados e Plantão", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833275"}, {"n": 21, "t": "Utilização da ferramenta “Total de Conclusões e Minutas” no gabinete", "c": "Consultas e Relatórios", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833274"}, {"n": 20, "t": "Indisponibilidade da funcionalidade de expedição de alvará eletrônico para a CEF e procedimento de expedição de alvará", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833273"}, {"n": 19, "t": "Indisponibilidade temporária da funcionalidade de expedição de alvará eletrônico para a caixa econômica federal", "c": "Custas, Guias e Alvarás", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833272"}, {"n": 18, "t": "Nova prioridade ordem 1 (primeira infância) sistema PROJUDI", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833271"}, {"n": 16, "t": "Orientações sobre as funcionalidades disponíveis ao perfil consultor segredo de justiça", "c": "Acesso e Segurança", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/833269"}, {"n": 14, "t": "Orientação aos peritos a fazer juntada de documentação no sistema PROJUDI", "c": "Documentos e Movimentações", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/808886"}, {"n": 12, "t": "Utilização das prioridades nos processos judiciais e organização das prioridades cadastradas por meio de classificadores", "c": "Cadastros", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/808885"}, {"n": 8, "t": "Pedido destaque advogados", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/808883"}, {"n": 7, "t": "Tramitação direta de inquérito policial (Serventia)", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/813366"}, {"n": 6, "t": "Fluxo arquivamento em 2º grau - inclusão pendência arquivamento e pedido contadoria – cálculo de guia final", "c": "Arquivamento e Desarquivamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/808881"}, {"n": 5, "t": "Ferramenta adequada para o encaminhamento de processos para a serventia goiânia - central de controle, automação e expedição de RPVs", "c": "Encaminhamentos e Remessas", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/808880"}, {"n": 4, "t": "Inclusão do recurso de apelação com recurso adesivo e recurso adesivo em pauta de julgamento", "c": "Audiências e Sessões de Julgamento", "a": 2025, "l": "https://tjdocs.tjgo.jus.br/documentos/808879"}, {"n": 79, "t": "Cadastro dos peritos em outras partes sujeitos e acesso dos peritos pelo perfil cidadão e peticionamento no processo", "c": "Cadastros", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801329"}, {"n": 78, "t": "Relatórios de avaliação de resolutividade, de autorização de pagamento, de afastamento de oficiais de justiça e de mandados por oficial companheiro", "c": "Mandados e Plantão", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801327"}, {"n": 77, "t": "Alteração da nomenclatura dos movimentos gerados a partir das pendências retornar à serventia de origem e encaminhar processo (CEJUSC diligência)", "c": "Documentos e Movimentações", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801326"}, {"n": 76, "t": "Adequações realizadas na sessão virtual em atendimento à resolução - CNJ nº 591 2024", "c": "Audiências e Sessões de Julgamento", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801325"}, {"n": 75, "t": "Forma correta de cadastrar vítima de violência doméstica e familiar contra a mulher no processo", "c": "Cadastros", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801206"}, {"n": 74, "t": "Nova funcionalidade abreviação nome outras partes vítima e menor na consulta externa", "c": "Cadastros", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801205"}, {"n": 73, "t": "Expedição de alvará para o presidente assinar no DEPRE", "c": "Custas, Guias e Alvarás", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801203"}, {"n": 72, "t": "Elaboração do ofício precatório, revisão, assinatura do presidente e encaminhamento para o processo de origem", "c": "Encaminhamentos e Remessas", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801202"}, {"n": 71, "t": "Elaboração de despacho para o presidente assinar no DEPRE", "c": "Documentos e Movimentações", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801201"}, {"n": 70, "t": "Devolução de precatório pelo departamento de precatórios – DEPRE no sistema PROJUDI", "c": "Encaminhamentos e Remessas", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801200"}, {"n": 69, "t": "Saneamento dos processos da classe precatórios na serventia DEPRE no sistema PROJUDI", "c": "Cadastros", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801199"}, {"n": 68, "t": "Expedição do ofício precatório na serventia de origem para gerar o processo de precatório para o DEPRE", "c": "Cadastros", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/820009"}, {"n": 67, "t": "Melhoria que permite que a UPJ inclua o classificador na pendência de conclusão, que será exibido para os usuários do gabinete", "c": "Documentos e Movimentações", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801197"}, {"n": 66, "t": "Assinatura em lote dos mandados expedidos para a CEM no sistema PROJUDI", "c": "Mandados e Plantão", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801196"}, {"n": 65, "t": "Permissão para listar 500 (quinhentas) pendências por página, no relatório de cumprimentos abertos na serventia", "c": "Consultas e Relatórios", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801195"}, {"n": 64, "t": "Baixa de parte individualizada em processos criminais no sistema PROJUDI", "c": "Cadastros", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801194"}, {"n": 63, "t": "Alteração do local da ferramenta de cadastro dos classificadores no 2º grau", "c": "Documentos e Movimentações", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801193"}, {"n": 62, "t": "Disponibilização do novo tipo de prisão recambiamento, no sistema PROJUDI", "c": "Cadastros", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801192"}, {"n": 57, "t": "Coordenador de escritório jurídico definir usuário master e outros procedimentos", "c": "Acesso e Segurança", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/801188"}, {"n": 36, "t": "Novas funcionalidades de alerta no sistema PROJUDI", "c": "Consultas e Relatórios", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/777993"}, {"n": 33, "t": "Cadastro de nome social para a parte", "c": "Cadastros", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/777971"}, {"n": 32, "t": "Limpeza de cookies e cache navegador Mozilla", "c": "Acesso e Segurança", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/777970"}, {"n": 11, "t": "Forma correta de aposição de segredo de justiça nos processos", "c": "Acesso e Segurança", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/766043"}, {"n": 10, "t": "Encaminhar processo sigiloso ao assistente de gabinete de desembargador para pré-análise, no sistema PROJUDI", "c": "Encaminhamentos e Remessas", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/766042"}, {"n": 9, "t": "Emissão de certidão negativa positiva criminal com abrangência ao sistema eletrônico de execução no ambiente de produção do sistema PROJUDI", "c": "Certidões e Antecedentes", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/744885"}, {"n": 8, "t": "Bloqueio da área de distribuição Recursos Constitucionais e o procedimento adequado para envio dos autos para a assessoria para assuntos de Recursos Constitucionais", "c": "Distribuição e Redistribuição", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/744884"}, {"n": 6, "t": "Pedido contadoria - cálculo guia final", "c": "Custas, Guias e Alvarás", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/723268"}, {"n": 5, "t": "Remessa do processo para a contadoria única no procedimento de cobrança de custas finais", "c": "Custas, Guias e Alvarás", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/723260"}, {"n": 3, "t": "Procedimento de agendamento automático de audências no sistema PROJUDI", "c": "Audiências e Sessões de Julgamento", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/723255"}, {"n": 2, "t": "Melhorias nos extratos de ata da sessão presencial no sistema PROJUDI", "c": "Audiências e Sessões de Julgamento", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/723254"}, {"n": 1, "t": "CNPJ do polo passivo campo obrigatório no sistema PROJUDI", "c": "Cadastros", "a": 2024, "l": "https://tjdocs.tjgo.jus.br/documentos/718774"}];
+
+const ANOS_INFORMATIVOS = Array.from(new Set(INFORMATIVOS_RAW.map(i => i.a))).sort((a,b) => b - a);
+
+const PDF_CATEGORIES = CATEGORIAS.map(cat => {
+  const itens = INFORMATIVOS_RAW
+    .filter(i => i.c === cat)
+    .sort((a, b) => b.a - a.a || b.n - a.n)
+    .map(i => ({
+      name: `Informativo nº ${i.n}/${i.a} — ${i.t}`,
+      file: i.l,
+      numero: i.n,
+      ano: i.a,
+      categoria: i.c
+    }));
+  return {
+    title: cat,
+    icon: CATEGORY_ICONS[cat] || 'ti-folder',
     open: false,
-    items: [
-      { name: 'Informativo nº 01 — Disponibilização do campo comunidade quando for informada a etnia indígena e quilombola', file: 'https://tjdocs.tjgo.jus.br/documentos/876535' },
-      { name: 'Informativo nº 03 — Cadastro de polo passivo de processo cível sem CPF ou CNPJ com justificativa obrigatória', file: 'Informativo nº 03 - Cadastro de polo passivo de processo cível sem CPF ou CNPJ por meio da inclusão obrigatória de justificativa no sistema PROJUDI.pdf' },
-      { name: 'Informativo nº 07 — Cadastro de Precatório para o DEPRE no sistema PROJUDI', file: 'Informativo nº 07 - Cadastro de Precatório para o DEPRE no sistema PROJUDI.pdf' },
-    ]
-  },
-  {
-    title: 'Juízo das Garantias',
-    icon: 'ti-shield-check',
-    open: false,
-    items: [
-      { name: 'Informativo nº 02 — Orientação às autoridades policiais sobre a seleção da área de distribuição ao Juízo das Garantias', file: 'Informativo nº 02 - Orienta às autoridades policiais sobre a seleção da área de distribuição nos processos a serem distribuídos ao Juízo das Garantias.pdf' },
-      { name: 'Informativo nº 05 — Encaminhamento não automático de processos de competência do Juízo das Garantias', file: 'Informativo nº 05 - Comunica acerca do encaminhamento não automático de processos de competência do Juízo das Garantias.pdf' },
-      { name: 'Informativo nº 06 — Devolução e arquivamento dos processos encaminhados para o Juízo das Garantias', file: 'Informativo nº 06 - Comunica acerca do procedimento sistêmico para devolução e arquivamento dos processos encaminhados para o Juízo das Garantias.pdf' },
-    ]
-  },
-  {
-    title: 'Melhorias do sistema',
-    icon: 'ti-settings',
-    open: false,
-    items: [
-      { name: 'Informativo nº 04 — Melhorias relacionadas à averbação de débitos no sistema PROJUDI', file: 'Informativo nº 04 - Melhorias relacionadas à averbação de débitos no sistema PROJUDI.pdf' },
-      { name: 'Informativo nº 09 — Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI', file: 'Informativo nº 09 - Consulta de precedentes via novos campos de pesquisa no sistema PROJUDI.pdf' },
-    ]
-  },
-  {
-    title: 'Encaminhamentos',
-    icon: 'ti-send',
-    open: false,
-    items: [
-      { name: 'Informativo nº 08 — Procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência', file: 'Informativo nº 08 - Orienta acerca do procedimento sistêmico de encaminhamento de processos para os gabinetes dos juízes auxiliares da presidência.pdf' },
-    ]
-  },
-];
+    items: itens
+  };
+});
+
+let currentInfoYear = null; // null = todos os anos
 
 let pdfSearchTerm = '';
+
+// Retorna os itens de uma categoria respeitando o filtro de ANO selecionado
+function visibleItems(cat) {
+  return currentInfoYear ? cat.items.filter(p => p.ano === currentInfoYear) : cat.items;
+}
 
 function toggleCategory(idx) {
   activePDFItem = null;
@@ -1717,7 +1445,7 @@ function toggleCategory(idx) {
   mobileSelectContent();
   document.querySelector('.profile-header').style.display = 'flex';
   const cat = PDF_CATEGORIES[idx];
-  document.getElementById('profile-pill').innerHTML = `<i class="ti ${cat.icon}" aria-hidden="true"></i> ${cat.title}`;
+  document.getElementById('profile-pill').innerHTML = `<i class="ti ${cat.icon}" aria-hidden="true"></i> ${cat.title}${currentInfoYear ? ' — ' + currentInfoYear : ''}`;
 }
 
 function switchPDFTodos(el) {
@@ -1729,8 +1457,8 @@ function switchPDFTodos(el) {
   renderPDFCardsTodos();
   renderPDFList();
   document.querySelector('.profile-header').style.display = 'flex';
-  document.getElementById('profile-pill').innerHTML = `<i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos`;
-  const total = PDF_CATEGORIES.reduce((a,c) => a + c.items.length, 0);
+  document.getElementById('profile-pill').innerHTML = `<i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos${currentInfoYear ? ' — ' + currentInfoYear : ''}`;
+  const total = PDF_CATEGORIES.reduce((a,c) => a + visibleItems(c).length, 0);
   // document.getElementById('result-count').textContent = `${total} informativo${total !== 1 ? 's' : ''}`;
   mobileSelectContent();
 }
@@ -1740,29 +1468,35 @@ function renderPDFCardsTodos() {
   document.getElementById('pdf-viewer-panel').style.display = 'none';
   let html = '';
   PDF_CATEGORIES.forEach((cat, ci) => {
+    const itens = visibleItems(cat);
+    if (itens.length === 0) return;
     html += `<div class="profile-group-title">
       <i class="ti ${cat.icon}" style="font-size:18px;color:var(--tjgo-navy)" aria-hidden="true"></i>
       <span>${cat.title}</span>
-      <span class="total-badge">${cat.items.length} informativo${cat.items.length !== 1 ? 's' : ''}</span>
+      <span class="total-badge">${itens.length} informativo${itens.length !== 1 ? 's' : ''}</span>
     </div>
     <div class="section-block">
       <div class="section-header">
-        <h3>Informativos em PDF</h3>
-        <span class="section-tag">${cat.items.length} arquivo${cat.items.length !== 1 ? 's' : ''}</span>
+        <h3>Informativos em PDF${currentInfoYear ? ' — ' + currentInfoYear : ''}</h3>
+        <span class="section-tag">${itens.length} arquivo${itens.length !== 1 ? 's' : ''}</span>
       </div>
       <div class="pdf-cards-grid">`;
-    cat.items.forEach((p, pi) => {
+    itens.forEach((p) => {
+      const pi = cat.items.indexOf(p);
       const cardId = `pdf-card-${ci}-${pi}`;
       html += `<div class="pdf-card" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${ci},${pi})">
         <div class="pdf-card-icon"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
         <div class="pdf-card-body">
           <div class="pdf-card-title">${p.name}</div>
-          <div class="pdf-card-meta"><i class="ti ti-eye" style="font-size:11px" aria-hidden="true"></i> Clique para visualizar</div>
+          <div class="pdf-card-meta"><i class="ti ti-calendar" style="font-size:11px" aria-hidden="true"></i> Ano ${p.ano} <span style="margin:0 4px">·</span> <i class="ti ti-folder" style="font-size:11px" aria-hidden="true"></i> ${cat.title}</div>
         </div>
       </div>`;
     });
     html += `</div></div>`;
   });
+  if (!html) {
+    html = `<div class="empty-state"><i class="ti ti-file-type-pdf" aria-hidden="true"></i><p>Nenhum informativo encontrado para o ano selecionado.</p></div>`;
+  }
   container.innerHTML = html;
   container.style.display = '';
 }
@@ -1771,6 +1505,7 @@ function renderPDFCards(idx) {
   const cat = PDF_CATEGORIES[idx];
   const container = document.getElementById('videos-container');
   const panel = document.getElementById('pdf-viewer-panel');
+  const itens = visibleItems(cat);
 
   panel.style.display = 'none';
   document.querySelector('.profile-header').style.display = 'none';
@@ -1778,12 +1513,12 @@ function renderPDFCards(idx) {
   let html = `<div class="profile-group-title">
     <i class="ti ${cat.icon}" style="font-size:18px;color:var(--tjgo-navy)" aria-hidden="true"></i>
     <span>${cat.title}</span>
-    <span class="total-badge">${cat.items.length} informativo${cat.items.length !== 1 ? 's' : ''}</span>
+    <span class="total-badge">${itens.length} informativo${itens.length !== 1 ? 's' : ''}</span>
   </div>
   <div class="section-block">
     <div class="section-header" style="flex-wrap:wrap;gap:8px;">
-      <h3>Informativos em PDF</h3>
-      <span class="section-tag" id="pdf-cards-count">${cat.items.length} arquivo${cat.items.length !== 1 ? 's' : ''}</span>
+      <h3>Informativos em PDF${currentInfoYear ? ' — ' + currentInfoYear : ''}</h3>
+      <span class="section-tag" id="pdf-cards-count">${itens.length} arquivo${itens.length !== 1 ? 's' : ''}</span>
       <div style="margin-left:auto;position:relative;min-width:200px;">
         <i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);pointer-events:none" aria-hidden="true"></i>
         <input type="text" id="pdf-card-search" placeholder="Buscar informativo..." oninput="filterPDFCards(this.value, ${idx})"
@@ -1792,16 +1527,21 @@ function renderPDFCards(idx) {
     </div>
     <div class="pdf-cards-grid" id="pdf-cards-grid">`;
 
-  cat.items.forEach((p, pi) => {
+  itens.forEach((p) => {
+    const pi = cat.items.indexOf(p);
     const cardId = `pdf-card-${idx}-${pi}`;
     html += `<div class="pdf-card" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${idx},${pi})">
       <div class="pdf-card-icon"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
       <div class="pdf-card-body">
         <div class="pdf-card-title">${p.name}</div>
-        <div class="pdf-card-meta"><i class="ti ti-eye" style="font-size:11px" aria-hidden="true"></i> Clique para visualizar</div>
+        <div class="pdf-card-meta"><i class="ti ti-calendar" style="font-size:11px" aria-hidden="true"></i> Ano ${p.ano} <span style="margin:0 4px">·</span> <i class="ti ti-folder" style="font-size:11px" aria-hidden="true"></i> ${cat.title}</div>
       </div>
     </div>`;
   });
+
+  if (itens.length === 0) {
+    html += `<div class="pdf-empty" style="padding:1rem 0">Nenhum informativo encontrado para o ano selecionado</div>`;
+  }
 
   html += `</div></div>`;
   container.innerHTML = html;
@@ -1817,16 +1557,17 @@ function filterPDFCards(val, idx) {
 
   let shown = 0;
   let html = '';
-  cat.items.forEach((p, pi) => {
+  visibleItems(cat).forEach((p) => {
     if (term && !p.name.toLowerCase().includes(term)) return;
     shown++;
+    const pi = cat.items.indexOf(p);
     const cardId = `pdf-card-${idx}-${pi}`;
     const isActive = activePDFItem === cardId;
     html += `<div class="pdf-card${isActive ? ' active' : ''}" id="${cardId}" onclick="openPDFViewer('${p.file.replace(/'/g,"\\'")}','${p.name.replace(/'/g,"\\'")}',${idx},${pi})">
       <div class="pdf-card-icon"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
       <div class="pdf-card-body">
         <div class="pdf-card-title">${p.name}</div>
-        <div class="pdf-card-meta"><i class="ti ti-eye" style="font-size:11px" aria-hidden="true"></i> Clique para visualizar</div>
+        <div class="pdf-card-meta"><i class="ti ti-calendar" style="font-size:11px" aria-hidden="true"></i> Ano ${p.ano} <span style="margin:0 4px">·</span> <i class="ti ti-folder" style="font-size:11px" aria-hidden="true"></i> ${cat.title}</div>
       </div>
     </div>`;
   });
@@ -1857,7 +1598,8 @@ function filterPDFs(val) {
 
   let allItems = [];
   PDF_CATEGORIES.forEach((cat, ci) => {
-    cat.items.forEach((p, pi) => {
+    visibleItems(cat).forEach((p) => {
+      const pi = cat.items.indexOf(p);
       if (p.name.toLowerCase().includes(pdfSearchTerm)) {
         allItems.push({ ...p, ci, pi, catTitle: cat.title, catIcon: cat.icon });
       }
@@ -1885,7 +1627,7 @@ function filterPDFs(val) {
         <div class="pdf-card-icon"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
         <div class="pdf-card-body">
           <div class="pdf-card-title">${p.name}</div>
-          <div class="pdf-card-meta"><i class="ti ti-folder" style="font-size:11px" aria-hidden="true"></i> ${p.catTitle}</div>
+          <div class="pdf-card-meta"><i class="ti ti-calendar" style="font-size:11px" aria-hidden="true"></i> Ano ${p.ano} <span style="margin:0 4px">·</span> <i class="ti ti-folder" style="font-size:11px" aria-hidden="true"></i> ${p.catTitle}</div>
         </div>
       </div>`;
     });
@@ -1902,9 +1644,10 @@ function renderPDFList() {
   let totalShown = 0;
 
   PDF_CATEGORIES.forEach((cat, ci) => {
+    const base = visibleItems(cat);
     const filtered = pdfSearchTerm
-      ? cat.items.filter(p => p.name.toLowerCase().includes(pdfSearchTerm))
-      : cat.items;
+      ? base.filter(p => p.name.toLowerCase().includes(pdfSearchTerm))
+      : base;
     if (filtered.length === 0) return;
     totalShown += filtered.length;
 
@@ -1921,10 +1664,57 @@ function renderPDFList() {
 
   list.innerHTML = html;
 
-  // Atualiza o card TOTAL DE INFORMATIVOS com o total geral (sempre)
-  const totalGeral = PDF_CATEGORIES.reduce((a, c) => a + c.items.length, 0);
+  // Atualiza o card TOTAL DE INFORMATIVOS com o total geral (respeitando o ano selecionado)
+  const totalGeral = PDF_CATEGORIES.reduce((a, c) => a + visibleItems(c).length, 0);
   const statPdfEl = document.getElementById('stat-total-pdfs');
   if (statPdfEl) statPdfEl.textContent = totalGeral;
+  const pdfTodosCountEl = document.getElementById('pdf-todos-count');
+  if (pdfTodosCountEl) pdfTodosCountEl.textContent = totalGeral;
+
+  renderYearList();
+}
+
+// ── Filtro por ANO ──
+function renderYearList() {
+  const list = document.getElementById('pdf-year-list');
+  if (!list) return;
+  let html = '';
+  ANOS_INFORMATIVOS.forEach(ano => {
+    const count = PDF_CATEGORIES.reduce((a, c) => a + c.items.filter(p => p.ano === ano).length, 0);
+    const isActive = currentInfoYear === ano;
+    html += `<div class="sidebar-item${isActive ? ' active' : ''}" onclick="switchYear(${ano}, this)" data-pdf-year="${ano}">
+        <i class="ti ti-calendar" style="font-size:13px" aria-hidden="true"></i>
+        ${ano}
+        <span class="count">${count}</span>
+      </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function switchYear(ano, el) {
+  currentInfoYear = (currentInfoYear === ano) ? null : ano; // clique de novo remove o filtro
+  activePDFItem = null;
+  closePDFViewer();
+
+  document.querySelectorAll('[data-pdf-year]').forEach(i => i.classList.remove('active'));
+  if (currentInfoYear !== null && el) el.classList.add('active');
+
+  renderPDFList();
+
+  // Mantém a categoria ativa (se houver) ou volta para "todos"
+  const activeCat = document.querySelector('[data-pdf-cat].active');
+  if (activeCat && activeCat.id !== 'pdf-todos-item') {
+    const idx = parseInt(activeCat.getAttribute('onclick').match(/\d+/)[0]);
+    renderPDFCards(idx);
+  } else {
+    document.querySelectorAll('[data-pdf-cat]').forEach(i => i.classList.remove('active'));
+    document.getElementById('pdf-todos-item').classList.add('active');
+    renderPDFCardsTodos();
+    document.querySelector('.profile-header').style.display = 'flex';
+    document.getElementById('profile-pill').innerHTML =
+      `<i class="ti ti-layout-list" aria-hidden="true"></i> Todos os informativos${currentInfoYear ? ' — ' + currentInfoYear : ''}`;
+  }
+  mobileSelectContent();
 }
 
 let activePDFItem = null;
@@ -1985,7 +1775,7 @@ function getYouTubeEmbedUrl(url) {
   // Extrai também list= para playlist
   const listMatch = url.match(/[?&]list=([^&]+)/);
   const list = listMatch ? `&list=${listMatch[1]}` : '';
-  return id ? `https://www.youtube.com/embed/${id}?autoplay=1&modestbranding=1&rel=0&color=white&iv_load_policy=3${list}` : url;
+  return id ? `https://www.youtube.com/embed/${id}?autoplay=1&modestbranding=1&rel=0&color=white&iv_load_policy=3&vq=hd1080${list}` : url;
 }
 
 function openVideoPlayer(url, title, cardId) {
@@ -2004,6 +1794,8 @@ function openVideoPlayer(url, title, cardId) {
   document.getElementById('video-player-title').textContent = title;
   document.getElementById('video-player-frame').src = getYouTubeEmbedUrl(url);
   document.getElementById('video-open-yt').href = url;
+  const hint = document.getElementById('video-player-hint');
+  if (hint) hint.style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
   const panel = document.getElementById('video-player-panel');
   panel.style.display = 'block';
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2097,14 +1889,14 @@ function setTheme(theme) {
 
 // Atualiza os counts da sidebar com base nos dados reais
 function updateSidebarCounts() {
-  // Monta mapa: chave do DATA -> contagem
+  // Monta mapa: chave do DATA -> contagem (um vídeo pode contar em mais de um perfil)
   const countMap = {};
   Object.keys(DATA).forEach(pid => {
     countMap[pid] = DATA[pid].sections.reduce((a, s) => a + s.videos.length, 0);
   });
 
-  // Total geral (soma de todos os perfis)
-  const total = Object.values(countMap).reduce((a, v) => a + v, 0);
+  // Total geral de vídeos únicos (não soma dos perfis, pois um vídeo pode pertencer a vários)
+  const total = VIDEOS_RAW.length;
 
   // Atualiza o card TOTAL DE VÍDEOS com o total geral (sempre)
   const statEl = document.getElementById('stat-total-videos');
@@ -2125,7 +1917,27 @@ function updateSidebarCounts() {
   });
 }
 
+// Gera dinamicamente os itens de categoria no painel de Vídeos
+function renderVideoCategoryList() {
+  const list = document.getElementById('video-cat-list');
+  if (!list) return;
+  let html = '';
+  PERFIS.forEach(perfil => {
+    const slug = PERFIL_SLUGS[perfil];
+    const icon = PERFIL_ICONS[perfil] || 'ti-folder';
+    const novoBadge = PERFIS_NOVOS.includes(perfil)
+      ? ' <span style="background:#e8b012;color:#1a1a1a;font-weight:700;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:4px">NOVO</span>'
+      : '';
+    html += `<div class="sidebar-item" onclick="switchProfile('${slug}', this)" data-profile="${slug}">
+        <i class="ti ${icon}" aria-hidden="true"></i> ${perfil}${novoBadge}
+        <span class="count">0</span>
+      </div>`;
+  });
+  list.innerHTML = html;
+}
+
 // DEPOIS:
+renderVideoCategoryList();
 renderPDFList();
 updateSidebarCounts();
 render();
@@ -2138,8 +1950,8 @@ const STORAGE_KEY_READ  = 'notif_read_ids';
 const STORAGE_KEY_CACHE = 'notif_yt_cache';   // cache dos vídeos buscados
 const CACHE_TTL_MS      = 30 * 60 * 1000;     // reusa cache por 30 minutos
 const NEW_WINDOW_DAYS   = 3;                   // vídeo é "novo" por N dias após publicação
-const YT_API_KEY        = 'AIzaSyBZhDyyrxdJuZHKPwNj5OknBeg0iavzO1s';
-const YT_PLAYLIST_ID    = 'PLUVnM63H4XbX2FEU8kw2i4z0v3_kPuLdu';
+const YT_API_KEY        = '';
+const YT_PLAYLIST_ID    = '';
 const YT_MAX_RESULTS    = 50; // máximo de vídeos por página da API
 
 let _notifVideos = [];
@@ -2381,8 +2193,13 @@ function checkPlaylist(forceRefresh) {
         var published = snippet.publishedAt || '';
         var pubTime   = published ? new Date(published).getTime() : 0;
 
-        // Ignora vídeos fora da janela de novidade ou sem ID
-        if (!videoId || pubTime < cutoffTime) return;
+        // Ignora vídeos deletados, privados ou indisponíveis
+        // A API retorna esses casos com títulos reservados específicos
+        var DELETED_TITLES = ['Deleted video', 'Private video', 'Vídeo excluído', 'Vídeo privado'];
+        if (!videoId || !title || DELETED_TITLES.indexOf(title) !== -1) return;
+
+        // Ignora vídeos fora da janela de novidade
+        if (pubTime < cutoffTime) return;
 
         videos.push({
           id:       videoId,
